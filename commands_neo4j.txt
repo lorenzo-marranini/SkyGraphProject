@@ -1,0 +1,33 @@
+
+LOAD CSV WITH HEADERS FROM 'file:///cities_cleaned.csv' AS row
+FIELDTERMINATOR ';'
+WITH row
+WHERE row.city IS NOT NULL  // Failsafe to skip empty lines
+MERGE (c:City {name: row.city_ascii, state: row.state_id})
+ON CREATE SET 
+    c.population = toInteger(row.population),
+    c.latitude = toFloat(row.lat),
+    c.longitude = toFloat(row.lng),
+    c.timezone = row.timezone,
+    c.density = toInteger(row.density);
+
+
+
+
+LOAD CSV WITH HEADERS FROM 'file:///airports_clean_full.csv' AS row
+FIELDTERMINATOR ';'
+
+// 1. Find the existing City node (must match Name and State exactly)
+MATCH (c:City {name: row.CITY, state: row.STATE})
+
+// 2. Create or Find the Airport node
+MERGE (a:Airport {iata: row.IATA_CODE})
+ON CREATE SET
+    a.name = row.AIRPORT,
+    a.country = row.COUNTRY,
+    // FIX: Remove all dots, convert to integer, divide by 100,000 to get decimal
+    a.latitude = toInteger(replace(row.LATITUDE, '.', '')) / 100000.0,
+    a.longitude = toInteger(replace(row.LONGITUDE, '.', '')) / 100000.0
+
+// 3. Connect them
+MERGE (a)<-[:LOCATED_IN]-(c);
