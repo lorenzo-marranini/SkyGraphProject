@@ -1,4 +1,4 @@
-package com.skygraph.dto;
+package it.unipi.SkyGraph.dto;
 
 public interface CityStatsDTO {
     String getCityName();
