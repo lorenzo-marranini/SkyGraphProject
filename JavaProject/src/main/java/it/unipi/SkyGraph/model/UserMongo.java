@@ -1,5 +1,6 @@
 package it.unipi.SkyGraph.model;
 
+import it.unipi.SkyGraph.enums.Role;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
@@ -8,7 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
 @NoArgsConstructor
-@Document(collection = "users")
+@Document(collection = "Users")
 public class UserMongo {
 
     @Id
@@ -21,5 +22,5 @@ public class UserMongo {
     private String email;
 
     private String password;
-    private String role;
+    private Role role;
 }
