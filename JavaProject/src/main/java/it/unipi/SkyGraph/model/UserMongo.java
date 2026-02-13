@@ -23,4 +23,5 @@ public class UserMongo {
 
     private String password;
     private Role role;
+
 }
