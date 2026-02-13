@@ -1,0 +1,45 @@
+CREATE CONSTRAINT FOR (c:City) REQUIRE c.city_state IS UNIQUE;
+CREATE CONSTRAINT FOR (a:Airport) REQUIRE a.iata_code IS UNIQUE;
+
+LOAD CSV WITH HEADERS FROM 'file:///neo4j_cities.csv' AS row
+WITH row WHERE row.city_state IS NOT NULL
+MERGE (c:City {city_state: row.city_state})
+SET 
+    c.name = row.city,
+    c.state_id = row.state_id,
+    c.state_name = row.state_name,
+    c.population = toInteger(row.population),
+    c.density = toFloat(row.density),
+    c.timezone = row.timezone,
+    c.country = row.country;
+
+
+
+LOAD CSV WITH HEADERS FROM 'file:///neo4j_cities.csv' AS row
+WITH row WHERE row.city_state IS NOT NULL
+MERGE (c:City {city_state: row.city_state})
+SET 
+    c.name = row.city,
+    c.state_id = row.state_id,
+    c.state_name = row.state_name,
+    c.population = toInteger(row.population),
+    c.density = toFloat(row.density),
+    c.timezone = row.timezone,
+    c.country = row.country;
+
+
+
+LOAD CSV WITH HEADERS FROM 'file:///neo4j_airports.csv' AS row
+WITH row WHERE row.iata_code IS NOT NULL
+
+// Crea l'Aeroporto
+MERGE (a:Airport {iata_code: row.iata_code})
+SET 
+    a.name = row.airport,
+    a.latitude = toFloat(row.latitude),
+    a.longitude = toFloat(row.longitude)
+
+// Collega alla Città (se esiste nel DB)
+WITH a, row
+MATCH (c:City {city_state: row.city_state})
+MERGE (a)-[:LOCATED_IN]->(c);
