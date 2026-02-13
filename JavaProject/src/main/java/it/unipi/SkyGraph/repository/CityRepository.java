@@ -1,7 +1,7 @@
-package com.skygraph.repository;
+package it.unipi.SkyGraph.repository;
 
-import com.skygraph.model.City;
-import com.skygraph.dto.CityStatsDTO;
+import it.unipi.SkyGraph.dto.AirportDTO;
+import it.unipi.SkyGraph.model.City;
 import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.neo4j.repository.query.Query;
 import org.springframework.data.repository.query.Param;
@@ -15,7 +15,7 @@ public interface CityRepository extends Neo4jRepository<City, String> {
             "sum(r.num_flights) AS totalFlights, count(DISTINCT a) AS airportCount " +
             "ORDER BY totalFlights DESC " +
             "LIMIT 20")
-    List<CityStatsDTO> findMostTraffickedCities();
+    List<com.skygraph.dto.CityStatsDTO> findMostTraffickedCities();
 
     // 2. Cerca tutti gli aeroporti di una specifica città
     @Query("MATCH (c:City {name: $cityName})<-[:LOCATED_IN]-(a:Airport) " +

@@ -1,7 +1,9 @@
-package com.skygraph.repository;
+package it.unipi.SkyGraph.repository;
 
-import com.skygraph.model.Airport;
-import com.skygraph.dto.AirportStatsDTO;
+import it.unipi.SkyGraph.dto.AirportDTO;
+import it.unipi.SkyGraph.dto.AirportRankingDTO;
+import it.unipi.SkyGraph.dto.RouteStatsDTO;
+import it.unipi.SkyGraph.model.Airport;
 import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.neo4j.repository.query.Query;
 import org.springframework.data.repository.query.Param;

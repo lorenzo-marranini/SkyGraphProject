@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Node("Airport")
-@Data // <--- Genera Getters, Setters, toString, ecc. in automatico!
+@Data
 public class Airport {
 
     @Id

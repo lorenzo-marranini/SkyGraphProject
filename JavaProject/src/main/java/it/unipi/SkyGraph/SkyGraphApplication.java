@@ -15,7 +15,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
         bearerFormat = "JWT",
         scheme = "bearer"
 )
-// 2. Apply it globally to all your APIs
 @OpenAPIDefinition(
         info = @Info(title = "SkyGraph API", version = "1.0"),
         security = @SecurityRequirement(name = "Bearer Authentication")
