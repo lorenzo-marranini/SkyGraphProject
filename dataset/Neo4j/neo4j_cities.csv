@@ -1,0 +1,338 @@
+Name,State,State_ID,Latitude,Longitude,Population,Density,Timezone,join_key
+Aberdeen,South Dakota,SD,454.646,-98.468,28257,680.0,America/Chicago,ABERDEEN_SD
+Abilene,Texas,TX,324.543,-997.384,123420,446.0,America/Chicago,ABILENE_TX
+Adak,Alaska,AK,518.815,-1.766.295,326,3.0,America/Adak,ADAK_AK
+Agana,Guam,GU,13.4833,144.7933,1000,500.0,Pacific/Guam,AGANA_GU
+Aguadilla,Puerto Rico,PR,184.382,-671.536,10739,1654.0,America/Puerto_Rico,AGUADILLA_PR
+Akron,Ohio,OH,410.798,-815.219,565208,1231.0,America/New_York,AKRON_OH
+Albany,Georgia,GA,31.5785,-84.1557,69647,466.0,America/New_York,ALBANY_GEORGIA
+Albany,New York,NY,426.664,-737.987,586383,1740.0,America/New_York,ALBANY_NY
+Albuquerque,New Mexico,NM,351.053,-1.066.464,761195,1155.0,America/Denver,ALBUQUERQUE_NM
+Alexandria,Louisiana,LA,312.923,-924.702,80129,625.0,America/Chicago,ALEXANDRIA_LA
+Allentown,Pennsylvania,PA,405.961,-754.756,683794,2672.0,America/New_York,ALLENTOWN_PA
+Alpena,Michigan,MI,45.074,-834.399,13541,470.0,America/Detroit,ALPENA_MI
+Amarillo,Texas,TX,351.988,-1.018.311,205603,756.0,America/Chicago,AMARILLO_TX
+Amsterdam,North Holland,NH,523.676,49.041,921402,5277.0,Europe/Amsterdam,AMSTERDAM_NH
+Anchorage,Alaska,AK,611.508,-1.491.091,288000,65.0,America/Anchorage,ANCHORAGE_AK
+Appleton,Wisconsin,WI,442.779,-883.891,220570,1156.0,America/Chicago,APPLETON_WI
+Arcata/Eureka,California,CA,40.9781,-124.1086,45000,500.0,America/Los_Angeles,ARCATA/EUREKA_CA
+Arlington,Virginia,VA,388.786,-771.011,233464,3467.0,America/New_York,ARLINGTON_VA
+Asheville,North Carolina,NC,355.704,-825.536,312507,786.0,America/New_York,ASHEVILLE_NC
+Aspen,Colorado,CO,39.195,-1.068.369,8569,736.0,America/Denver,ASPEN_CO
+Atlanta,Georgia,GA,337.627,-844.224,5449398,1441.0,America/New_York,ATLANTA_GA
+Atlantic City,New Jersey,NJ,393.797,-744.527,237054,1354.0,America/New_York,ATLANTIC CITY_NJ
+Auckland,Auckland,AUK,-368.509,1.747.645,1470100,2700.0,Pacific/Auckland,AUCKLAND_AUK
+Augusta,Georgia,GA,333.645,-820.708,390809,252.0,America/New_York,AUGUSTA_GA
+Austin,Texas,TX,303.004,-977.522,1687311,1181.0,America/Chicago,AUSTIN_TX
+Bakersfield,California,CA,353.529,-1.190.359,579295,990.0,America/Los_Angeles,BAKERSFIELD_CA
+Baltimore,Maryland,MD,393.051,-766.144,2106068,2830.0,America/New_York,BALTIMORE_MD
+Bangor,Maine,ME,448.322,-687.906,59772,363.0,America/New_York,BANGOR_ME
+Barrow,Alaska,AK,71.2906,-156.7886,4900,50.0,America/Anchorage,BARROW_AK
+Baton Rouge,Louisiana,LA,304.418,-91.131,570308,983.0,America/Chicago,BATON ROUGE_LA
+Beaumont/Port Arthur,Texas,TX,29.9508,-94.0207,115000,550.0,America/Chicago,BEAUMONT/PORT ARTHUR_TX
+Bellingham,Washington,WA,487.543,-1.224.687,130641,1287.0,America/Los_Angeles,BELLINGHAM_WA
+Bemidji,Minnesota,MN,474.828,-948.796,16807,409.0,America/Chicago,BEMIDJI_MN
+Bethel,Alaska,AK,607.928,-1.617.917,6586,57.0,America/Anchorage,BETHEL_AK
+Billings,Montana,MT,457.891,-1.085.524,120728,948.0,America/Denver,BILLINGS_MT
+Binghamton,New York,NY,421.014,-759.093,148145,1635.0,America/New_York,BINGHAMTON_NY
+Birmingham,Alabama,AL,335.277,-867.987,739573,553.0,America/Chicago,BIRMINGHAM_AL
+Bismarck,North Dakota,ND,468.144,-1.007.694,98345,827.0,America/Chicago,BISMARCK_ND
+Bloomington,Illinois,IL,404.757,-889.703,133846,1100.0,America/Chicago,BLOOMINGTON_IL
+Boise,Idaho,ID,436.007,-1.162.312,389280,1056.0,America/Boise,BOISE_ID
+Boston,Massachusetts,MA,423.188,-710.846,4688346,5532.0,America/New_York,BOSTON_MA
+Bozeman,Montana,MT,456.832,-1.110.552,57695,945.0,America/Denver,BOZEMAN_MT
+Brainerd,Minnesota,MN,463.553,-941.982,19583,426.0,America/Chicago,BRAINERD_MN
+Brisbane,Queensland,QLD,-274.705,153.026,2280000,145.0,Australia/Brisbane,BRISBANE_QLD
+Bristol,Tennessee,TN,365.572,-822.154,70243,318.0,America/New_York,BRISTOL_TN
+Brownsville,Texas,TX,25.998,-974.565,227239,533.0,America/Matamoros,BROWNSVILLE_TX
+Brunswick,Georgia,GA,31.145,-81.474,53914,367.0,America/New_York,BRUNSWICK_GA
+Buenos Aires,Buenos Aires,ARG,-34.6037,-58.3816,15000000,15000.0,America/Argentina/Buenos_Aires,BUENOS AIRES_ARG
+Buffalo,New York,NY,429.016,-788.487,914341,2441.0,America/New_York,BUFFALO_NY
+Burbank,California,CA,341.879,-1.183.235,102511,2285.0,America/Los_Angeles,BURBANK_CA
+Burlington,Vermont,VT,444.877,-732.314,109763,1604.0,America/New_York,BURLINGTON_VT
+Butte,Montana,MT,45.902,-1.126.571,34207,18.0,America/Denver,BUTTE_MT
+Cancún,Mexico,MX,21.0405,-86.8483,888797,1500.0,America/Cancun,CANCÚN_MX
+Casper,Wyoming,WY,42.842,-1.063.207,67598,843.0,America/Denver,CASPER_WY
+Cedar City,Utah,UT,376.834,-1.130.956,39995,374.0,America/Denver,CEDAR CITY_UT
+Cedar Rapids,Iowa,IA,419.665,-916.782,188038,720.0,America/Chicago,CEDAR RAPIDS_IA
+Champaign/Urbana,Illinois,IL,40.0397,-88.2789,126000,1200.0,America/Chicago,CHAMPAIGN/URBANA_IL
+Chantilly,Virginia,VA,388.868,-774.453,24368,783.0,America/New_York,CHANTILLY_VA
+Charleston,West Virginia,WV,38.3498,-81.6326,46536,580.0,America/New_York,CHARLESTON_WV
+Charleston,South Carolina,SC,328.153,-799.628,628377,480.0,America/New_York,CHARLESTON_SC
+Charlotte,North Carolina,NC,35.208,-808.304,1512923,1113.0,America/New_York,CHARLOTTE_NC
+Charlotte Amalie,Virgin Islands,VI,18.3419,-64.9307,18000,800.0,America/St_Thomas,CHARLOTTE AMALIE_VI
+Charlottesville,Virginia,VA,380.375,-784.855,100416,1781.0,America/New_York,CHARLOTTESVILLE_VA
+Chattanooga,Tennessee,TN,350.657,-852.488,415501,493.0,America/New_York,CHATTANOOGA_TN
+Chicago,Illinois,IL,418.373,-876.862,8604203,4574.0,America/Chicago,CHICAGO_IL
+Christiansted,Virgin Islands,VI,17.7466,-64.7032,3000,500.0,America/St_Thomas,CHRISTIANSTED_VI
+Cleveland,Ohio,OH,414.767,-816.804,1710093,1893.0,America/New_York,CLEVELAND_OH
+Cody,Wyoming,WY,445.212,-1.090.549,9788,369.0,America/Denver,CODY_WY
+College Station,Texas,TX,305.852,-96.296,215243,890.0,America/Chicago,COLLEGE STATION_TX
+Colorado Springs,Colorado,CO,388.674,-1.047.606,642413,946.0,America/Denver,COLORADO SPRINGS_CO
+Columbia,South Carolina,SC,340.376,-809.037,560041,373.0,America/New_York,COLUMBIA_SC
+Columbia,Missouri,MO,38.9517,-92.3341,126254,747.0,America/Chicago,COLUMBIA_MO
+Columbus,Georgia,GA,32.461,-84.9877,206922,360.0,America/New_York,COLUMBUS_GA
+Columbus,Ohio,OH,399.862,-82.985,1562009,1582.0,America/New_York,COLUMBUS_OH
+Columbus-Starkville-West Point,Mississippi,MS,33.4504,-88.5804,60000,200.0,America/Chicago,COLUMBUS-STARKVILLE-WEST POINT_MS
+Cordova,Alaska,AK,605.348,-1.456.092,2169,13.0,America/Anchorage,CORDOVA_AK
+Corpus Christi,Texas,TX,27.726,-973.755,342464,789.0,America/Chicago,CORPUS CHRISTI_TX
+Covington,Kentucky,KY,390.334,-845.166,40341,1180.0,America/New_York,COVINGTON_KY
+Crescent City,California,CA,417.727,-1.241.902,16849,1334.0,America/Los_Angeles,CRESCENT CITY_CA
+Dallas,Texas,TX,327.936,-967.662,5743938,1526.0,America/Chicago,DALLAS_TX
+Dallas-Fort Worth,Texas,TX,32.8998,-97.0403,7500000,1500.0,America/Chicago,DALLAS-FORT WORTH_TX
+Dayton,Ohio,OH,397.797,-841.998,718353,978.0,America/New_York,DAYTON_OH
+Daytona Beach,Florida,FL,291.994,-810.982,69186,406.0,America/New_York,DAYTONA BEACH_FL
+Deadhorse,Alaska,AK,70.2002,-148.4597,50,1.0,America/Anchorage,DEADHORSE_AK
+Denver,Colorado,CO,397.621,-1.048.759,2876625,1831.0,America/Denver,DENVER_CO
+Des Moines,Iowa,IA,415.725,-936.105,473957,938.0,America/Chicago,DES MOINES_IA
+Detroit,Michigan,MI,423.834,-831.024,3506126,1864.0,America/Detroit,DETROIT_MI
+Devils Lake,North Dakota,ND,481.131,-98.875,7631,408.0,America/Chicago,DEVILS LAKE_ND
+Dickinson,North Dakota,ND,468.917,-1.027.924,23133,631.0,America/Denver,DICKINSON_ND
+Dillingham,Alaska,AK,59.055,-1.585.379,2360,27.0,America/Anchorage,DILLINGHAM_AK
+Dothan,Alabama,AL,312.335,-854.069,72396,296.0,America/Chicago,DOTHAN_AL
+Dubai,Dubai,DU,252.048,552.708,3331420,860.0,Asia/Dubai,DUBAI_DU
+Dubuque,Iowa,IA,425.008,-907.067,68109,729.0,America/Chicago,DUBUQUE_IA
+Duluth,Minnesota,MN,467.756,-921.392,119476,461.0,America/Chicago,DULUTH_MN
+Durango,Colorado,CO,372.659,-1.078.782,20203,498.0,America/Denver,DURANGO_CO
+Eagle,Colorado,CO,396.368,-1.068.123,6986,478.0,America/Denver,EAGLE_CO
+Eau Claire,Wisconsin,WI,448.199,-914.949,107404,812.0,America/Chicago,EAU CLAIRE_WI
+El Paso,Texas,TX,318.479,-1.064.309,843386,1022.0,America/Denver,EL PASO_TX
+Elko,Nevada,NV,408.387,-1.157.674,21179,442.0,America/Los_Angeles,ELKO_NV
+Elmira,New York,NY,420.938,-768.097,62989,1440.0,America/New_York,ELMIRA_NY
+Erie,Pennsylvania,PA,421.168,-800.733,184484,1926.0,America/New_York,ERIE_PA
+Escanaba,Michigan,MI,457.477,-87.09,20094,368.0,America/Detroit,ESCANABA_MI
+Eugene,Oregon,OR,440.563,-1.231.173,273439,1510.0,America/Los_Angeles,EUGENE_OR
+Evansville,Indiana,IN,379.881,-875.341,230427,962.0,America/Chicago,EVANSVILLE_IN
+Fairbanks,Alaska,AK,648.353,-1.476.534,63245,375.0,America/Anchorage,FAIRBANKS_AK
+Fargo,North Dakota,ND,468.652,-968.292,208675,967.0,America/Chicago,FARGO_ND
+Fayetteville,North Carolina,NC,350.846,-789.776,327435,552.0,America/New_York,FAYETTEVILLE_NC
+Fayetteville/Springdale/Rogers,Arkansas,AR,36.2573,-94.161,250000,700.0,America/Chicago,FAYETTEVILLE/SPRINGDALE/ROGERS_AR
+Flagstaff,Arizona,AZ,351.872,-1.116.195,81974,438.0,America/Phoenix,FLAGSTAFF_AZ
+Flint,Michigan,MI,430.235,-836.922,332190,1103.0,America/Detroit,FLINT_MI
+Fort Smith,Arkansas,AR,353.493,-943.695,125354,536.0,America/Chicago,FORT SMITH_AR
+Fort Wayne,Indiana,IN,410.886,-851.437,334122,943.0,America/Indiana/Indianapolis,FORT WAYNE_IN
+Frankfurt,Hesse,HE,501.109,86.821,753056,3000.0,Europe/Berlin,FRANKFURT_HE
+Fresno,California,CA,367.831,-1.197.941,703498,1789.0,America/Los_Angeles,FRESNO_CA
+Ft. Lauderdale,Florida,FL,26.1224,-80.1373,182000,1800.0,America/New_York,FT. LAUDERDALE_FL
+Ft. Myers,Florida,FL,26.6406,-81.8723,87000,1000.0,America/New_York,FT. MYERS_FL
+Gainesville,Florida,FL,296.804,-823.458,202335,820.0,America/New_York,GAINESVILLE_FL
+Garden City,Kansas,KS,379.754,-1.008.529,29659,945.0,America/Chicago,GARDEN CITY_KS
+Gillette,Wyoming,WY,442.752,-1.054.983,36032,538.0,America/Denver,GILLETTE_WY
+Grand Forks,North Dakota,ND,479.218,-970.886,64748,784.0,America/Chicago,GRAND FORKS_ND
+Grand Island,Nebraska,NE,409.214,-983.584,53296,665.0,America/Chicago,GRAND ISLAND_NE
+Grand Junction,Colorado,CO,390.876,-1.085.673,139143,621.0,America/Denver,GRAND JUNCTION_CO
+Grand Rapids,Michigan,MI,42.962,-856.562,609314,1734.0,America/Detroit,GRAND RAPIDS_MI
+Great Falls,Montana,MT,475.022,-1.112.995,65131,982.0,America/Denver,GREAT FALLS_MT
+Green Bay,Wisconsin,WI,44.515,-879.896,207557,887.0,America/Chicago,GREEN BAY_WI
+Greensboro,North Carolina,NC,360.956,-798.269,343090,887.0,America/New_York,GREENSBORO_NC
+Greer,South Carolina,SC,349.313,-822.315,33373,563.0,America/New_York,GREER_SC
+Gulfport-Biloxi,Mississippi,MS,30.4073,-89.0701,110000,600.0,America/Chicago,GULFPORT-BILOXI_MS
+Gunnison,Colorado,CO,385.455,-1.069.225,7195,612.0,America/Denver,GUNNISON_CO
+Gustavus,Alaska,AK,584.275,-1.357.492,447,4.0,America/Juneau,GUSTAVUS_AK
+Hailey,Idaho,ID,435.141,-114.3,11409,853.0,America/Boise,HAILEY_ID
+Hancock,Michigan,MI,471.355,-885.987,4506,675.0,America/Detroit,HANCOCK_MI
+Harlingen,Texas,TX,261.917,-976.976,136037,626.0,America/Chicago,HARLINGEN_TX
+Harrisburg,Pennsylvania,PA,402.752,-768.843,442289,2343.0,America/New_York,HARRISBURG_PA
+Hattiesburg-Laurel,Mississippi,MS,31.4671,-89.337,70000,400.0,America/Chicago,HATTIESBURG-LAUREL_MS
+Hayden,Colorado,CO,404.851,-1.072.391,1979,232.0,America/Denver,HAYDEN_CO
+Hays,Kansas,KS,388.815,-993.218,21421,955.0,America/Chicago,HAYS_KS
+Helena,Montana,MT,465.965,-1.120.202,52936,760.0,America/Denver,HELENA_MT
+Hibbing,Minnesota,MN,473.981,-929.487,15855,33.0,America/Chicago,HIBBING_MN
+Hilo,Hawaii,HI,196.886,-1.550.864,45056,325.0,Pacific/Honolulu,HILO_HI
+Hobbs,New Mexico,NM,327.282,-103.16,42095,572.0,America/Denver,HOBBS_NM
+Honolulu,Hawaii,HI,213.294,-157.846,820987,2200.0,Pacific/Honolulu,HONOLULU_HI
+Houston,Texas,TX,297.863,-953.889,5464251,1399.0,America/Chicago,HOUSTON_TX
+Huntsville,Alabama,AL,346.988,-866.412,319249,361.0,America/Chicago,HUNTSVILLE_AL
+Hyannis,Massachusetts,MA,41.6525,-70.2872,14000,600.0,America/New_York,HYANNIS_MA
+Idaho Falls,Idaho,ID,434.872,-1.120.362,100442,1011.0,America/Boise,IDAHO FALLS_ID
+Indianapolis,Indiana,IN,397.771,-861.458,1588961,935.0,America/Indiana/Indianapolis,INDIANAPOLIS_IN
+International Falls,Minnesota,MN,485.884,-934.083,6382,350.0,America/Winnipeg,INTERNATIONAL FALLS_MN
+Iron Mountain/Kingsford,Michigan,MI,45.821,-88.0652,12000,300.0,America/Chicago,IRON MOUNTAIN/KINGSFORD_MI
+Islip,New York,NY,40.7298,-73.2104,330000,1200.0,America/New_York,ISLIP_NY
+Ithaca,New York,NY,424.442,-765.032,55137,2209.0,America/New_York,ITHACA_NY
+Jackson,Wyoming,WY,43.4799,-110.7624,10760,1400.0,America/Denver,JACKSON_WY
+Jackson,Mississippi,MS,323.163,-902.124,325350,558.0,America/Chicago,JACKSON_MS
+Jacksonville,North Carolina,NC,34.7541,-77.4302,72800,500.0,America/New_York,JACKSONVILLE_NC
+Jacksonville,Florida,FL,303.322,-816.749,1181496,470.0,America/New_York,JACKSONVILLE_FL
+Jamestown,North Dakota,ND,469.063,-986.936,15084,438.0,America/Chicago,JAMESTOWN_ND
+Joplin,Missouri,MO,370.758,-945.018,84048,515.0,America/Chicago,JOPLIN_MO
+Juneau,Alaska,AK,584.546,-1.341.739,31974,4.0,America/Juneau,JUNEAU_AK
+Kahului,Hawaii,HI,208.715,-1.564.603,31336,841.0,Pacific/Honolulu,KAHULUI_HI
+Kailua/Kona,Hawaii,HI,19.6499,-156.0029,23000,200.0,Pacific/Honolulu,KAILUA/KONA_HI
+Kalamazoo,Michigan,MI,422.749,-855.882,215193,1192.0,America/Detroit,KALAMAZOO_MI
+Kalispell,Montana,MT,482.156,-1.143.262,39182,789.0,America/Denver,KALISPELL_MT
+Kansas City,Missouri,MO,391.239,-945.541,1636715,607.0,America/Chicago,KANSAS CITY_MO
+Ketchikan,Alaska,AK,553.556,-1.316.698,10652,838.0,America/Sitka,KETCHIKAN_AK
+Key West,Florida,FL,245.637,-817.768,31401,1665.0,America/New_York,KEY WEST_FL
+Killeen,Texas,TX,310.754,-977.296,258009,1073.0,America/Chicago,KILLEEN_TX
+King Salmon,Alaska,AK,58.753,-1.565.061,361,0.0,America/Anchorage,KING SALMON_AK
+Knoxville,Tennessee,TN,359.692,-839.496,586048,733.0,America/New_York,KNOXVILLE_TN
+Kodiak,Alaska,AK,577.934,-152.406,8851,571.0,America/Anchorage,KODIAK_AK
+Kotzebue,Alaska,AK,668.766,-1.625.231,3246,50.0,America/Nome,KOTZEBUE_AK
+La Crosse,Wisconsin,WI,43.824,-912.268,100693,911.0,America/Chicago,LA CROSSE_WI
+Lafayette,Louisiana,LA,302.084,-920.323,264357,877.0,America/Chicago,LAFAYETTE_LA
+Lake Charles,Louisiana,LA,302.012,-932.122,156181,674.0,America/Chicago,LAKE CHARLES_LA
+Lansing,Michigan,MI,427.142,-845.601,324286,1164.0,America/Detroit,LANSING_MI
+Laramie,Wyoming,WY,413.099,-1.056.085,33929,688.0,America/Denver,LARAMIE_WY
+Laredo,Texas,TX,275.629,-994.875,262491,958.0,America/Chicago,LAREDO_TX
+Las Vegas,Nevada,NV,362.333,-1.152.654,2104198,1773.0,America/Los_Angeles,LAS VEGAS_NV
+Latrobe,Pennsylvania,PA,403.125,-793.826,7830,1305.0,America/New_York,LATROBE_PA
+Lawton,Oklahoma,OK,346.176,-984.203,93025,441.0,America/Chicago,LAWTON_OK
+Lewiston,Idaho,ID,463.934,-1.169.934,53384,731.0,America/Los_Angeles,LEWISTON_ID
+Lexington,Kentucky,KY,380.423,-844.587,323152,439.0,America/New_York,LEXINGTON_KY
+Lihue,Hawaii,HI,219.728,-1.593.541,7267,420.0,Pacific/Honolulu,LIHUE_HI
+Lima,Lima,LMA,-120.464,-770.428,10750000,3000.0,America/Lima,LIMA_LMA
+Lincoln,Nebraska,NE,40.809,-966.788,289490,1160.0,America/Chicago,LINCOLN_NE
+Little Rock,Arkansas,AR,347.256,-923.576,439815,634.0,America/Chicago,LITTLE ROCK_AR
+London,England,England,515.074,-0.1278,9002488,5701.0,Europe/London,LONDON_ENGLAND
+Long Beach,California,CA,337.981,-1.181.675,462628,3523.0,America/Los_Angeles,LONG BEACH_CA
+Longview,Texas,TX,325.193,-947.621,100330,565.0,America/Chicago,LONGVIEW_TX
+Los Angeles,California,CA,341.139,-1.184.068,12750807,3276.0,America/Los_Angeles,LOS ANGELES_CA
+Louisville,Kentucky,KY,381.663,-856.485,1005654,905.0,America/New_York,LOUISVILLE_KY
+Lubbock,Texas,TX,335.659,-1.018.878,267648,741.0,America/Chicago,LUBBOCK_TX
+Madison,Wisconsin,WI,430.826,-893.931,447245,1263.0,America/Chicago,MADISON_WI
+Mammoth Lakes,California,CA,376.273,-118.99,8235,127.0,America/Los_Angeles,MAMMOTH LAKES_CA
+Manchester,New Hampshire,NH,429.848,-714.447,162877,1315.0,America/New_York,MANCHESTER_NH
+Manhattan,Kansas,KS,391.886,-966.046,57046,1062.0,America/Chicago,MANHATTAN_KS
+Marquette,Michigan,MI,46.544,-874.082,26491,715.0,America/Detroit,MARQUETTE_MI
+Marthas Vineyard,Massachusetts,MA,41.3805,-70.6118,17000,150.0,America/New_York,MARTHAS VINEYARD_MA
+McAllen,Texas,TX,262.273,-982.471,804114,841.0,America/Chicago,MCALLEN_TX
+Medellín,Colombia,CO,6.2442,-75.5812,2500000,6000.0,America/Bogota,MEDELLÍN_CO
+Medford,Oregon,OR,423.372,-1.228.537,170876,1243.0,America/Los_Angeles,MEDFORD_OR
+Melbourne,Florida,FL,281.085,-806.627,83029,727.0,America/New_York,MELBOURNE_FL
+Memphis,Tennessee,TN,351.046,-899.773,1066967,792.0,America/Chicago,MEMPHIS_TN
+Meridian,Mississippi,MS,323.846,-886.896,36686,261.0,America/Chicago,MERIDIAN_MS
+Mexico City,Mexico City,CMX,194.326,-991.332,21804000,6000.0,America/Mexico_City,MEXICO CITY_CMX
+Miami,Florida,FL,257.839,-802.102,6445545,5019.0,America/New_York,MIAMI_FL
+Midland,Texas,TX,320.249,-1.021.137,154793,758.0,America/Chicago,MIDLAND_TX
+Milwaukee,Wisconsin,WI,430.642,-879.673,1365787,2369.0,America/Chicago,MILWAUKEE_WI
+Minneapolis,Minnesota,MN,449.635,-932.678,2977172,3071.0,America/Chicago,MINNEAPOLIS_MN
+Minot,North Dakota,ND,482.375,-1.012.781,49425,671.0,America/Chicago,MINOT_ND
+Missoula,Montana,MT,46.875,-1.140.214,92895,845.0,America/Denver,MISSOULA_MT
+Moab,Utah,UT,385.701,-1.095.477,7278,429.0,America/Denver,MOAB_UT
+Mobile,Alabama,AL,306.783,-881.162,315502,522.0,America/Chicago,MOBILE_AL
+Moline,Illinois,IL,414.821,-904.921,41356,953.0,America/Chicago,MOLINE_IL
+Monroe,Louisiana,LA,325.183,-920.774,112891,623.0,America/Chicago,MONROE_LA
+Monterey,California,CA,365.922,-1.218.807,28178,1259.0,America/Los_Angeles,MONTEREY_CA
+Montgomery,Alabama,AL,323.473,-862.666,254634,479.0,America/Chicago,MONTGOMERY_AL
+Montreal,Quebec,QC,455.017,-735.673,4247000,4517.0,America/Montreal,MONTREAL_QC
+Montrose,Colorado,CO,38.469,-107.859,23478,413.0,America/Denver,MONTROSE_CO
+Mosinee,Wisconsin,WI,447.874,-896.839,4072,200.0,America/Chicago,MOSINEE_WI
+Muskegon,Michigan,MI,432.281,-862.563,153565,998.0,America/Detroit,MUSKEGON_MI
+Myrtle Beach,South Carolina,SC,337.096,-788.843,275579,568.0,America/New_York,MYRTLE BEACH_SC
+Nantucket,Massachusetts,MA,41.2835,-70.0995,14255,120.0,America/New_York,NANTUCKET_MA
+Nashville,Tennessee,TN,361.715,-867.843,1081903,544.0,America/Chicago,NASHVILLE_TN
+New Bern,North Carolina,NC,350.955,-770.723,51308,409.0,America/New_York,NEW BERN_NC
+New Orleans,Louisiana,LA,300.687,-899.288,1020886,889.0,America/Chicago,NEW ORLEANS_LA
+New York,New York,NY,406.943,-739.249,18713220,10715.0,America/New_York,NEW YORK_NY
+Newark,New Jersey,NJ,407.245,-741.725,282011,4509.0,America/New_York,NEWARK_NJ
+Newburgh,New York,NY,41.5034,-74.0104,28000,2500.0,America/New_York,NEWBURGH_NY
+Newport News,Virginia,VA,371.051,-765.185,179225,1002.0,America/New_York,NEWPORT NEWS_VA
+Niagara Falls,New York,NY,430.921,-790.147,47720,1308.0,America/Toronto,NIAGARA FALLS_NY
+Nome,Alaska,AK,645.213,-1.654.053,3870,116.0,America/Nome,NOME_AK
+Norfolk,Virginia,VA,368.945,-76.259,242742,1759.0,America/New_York,NORFOLK_VA
+North Bend,Oregon,OR,434.075,-1.242.364,9768,959.0,America/Los_Angeles,NORTH BEND_OR
+Oakland,California,CA,377.903,-1.222.165,433031,2991.0,America/Los_Angeles,OAKLAND_CA
+Oklahoma City,Oklahoma,OK,354.676,-975.136,972943,417.0,America/Chicago,OKLAHOMA CITY_OK
+Omaha,Nebraska,NE,412.627,-960.522,847819,1309.0,America/Chicago,OMAHA_NE
+Ontario,California,CA,340.393,-1.176.064,185010,1429.0,America/Los_Angeles,ONTARIO_CA
+Orlando,Florida,FL,284.772,-813.369,1822394,1003.0,America/New_York,ORLANDO_FL
+Paducah,Kentucky,KY,370.711,-886.436,48481,475.0,America/Chicago,PADUCAH_KY
+Pago Pago,American Samoa,AS,-14.2794,-170.7005,3600,200.0,Pacific/Pago_Pago,PAGO PAGO_AS
+Palm Springs,California,CA,338.017,-1.165.382,48518,198.0,America/Los_Angeles,PALM SPRINGS_CA
+Panama City,Florida,FL,301.995,-856.004,136133,382.0,America/Chicago,PANAMA CITY_FL
+Paris,Île-de-France,FR,488.566,23.522,11020000,20000.0,Europe/Paris,PARIS_FR
+Pasco,Washington,WA,462.506,-1.191.304,75432,858.0,America/Los_Angeles,PASCO_WA
+Pellston,Michigan,MI,455.519,-84.783,843,166.0,America/Detroit,PELLSTON_MI
+Pensacola,Florida,FL,304.427,-871.886,346921,903.0,America/Chicago,PENSACOLA_FL
+Peoria,Illinois,IL,40.752,-896.153,256286,888.0,America/Chicago,PEORIA_IL
+Petersburg,Alaska,AK,567.566,-1.328.727,3136,27.0,America/Sitka,PETERSBURG_AK
+Philadelphia,Pennsylvania,PA,400.077,-751.339,5649300,4554.0,America/New_York,PHILADELPHIA_PA
+Phoenix,Arizona,AZ,335.722,-1.120.891,4219697,1253.0,America/Phoenix,PHOENIX_AZ
+Pittsburgh,Pennsylvania,PA,404.396,-799.762,1703266,2093.0,America/New_York,PITTSBURGH_PA
+Plattsburgh,New York,NY,446.951,-734.563,28740,1495.0,America/New_York,PLATTSBURGH_NY
+Pocatello,Idaho,ID,428.724,-1.124.646,72878,657.0,America/Boise,POCATELLO_ID
+Ponce,Puerto Rico,PR,18.012,-666.198,113401,1426.0,America/Puerto_Rico,PONCE_PR
+Portland,Maine,ME,43.6615,-70.2553,68408,1200.0,America/New_York,PORTLAND_ME
+Portland,Oregon,OR,455.372,-122.65,2074775,1894.0,America/Los_Angeles,PORTLAND_OR
+Providence,Rhode Island,RI,41.823,-714.187,1203230,3773.0,America/New_York,PROVIDENCE_RI
+Pueblo,Colorado,CO,382.705,-1.046.112,143932,789.0,America/Denver,PUEBLO_CO
+Raleigh,North Carolina,NC,358.325,-786.435,1038738,1254.0,America/New_York,RALEIGH_NC
+Rapid City,South Dakota,SD,440.716,-1.032.204,92664,546.0,America/Denver,RAPID CITY_SD
+Redding,California,CA,405.698,-122.365,121313,599.0,America/Los_Angeles,REDDING_CA
+Redmond,Oregon,OR,442.631,-1.211.798,34240,744.0,America/Los_Angeles,REDMOND_OR
+Reno,Nevada,NV,395.497,-1.198.483,445020,907.0,America/Los_Angeles,RENO_NV
+Rhinelander,Wisconsin,WI,456.361,-894.256,8830,354.0,America/Chicago,RHINELANDER_WI
+Richmond,Virginia,VA,375.295,-774.756,1075798,1484.0,America/New_York,RICHMOND_VA
+Roanoke,Virginia,VA,372.785,-79.958,214674,900.0,America/New_York,ROANOKE_VA
+Rochester,Minnesota,MN,44.0121,-92.4802,121395,800.0,America/Chicago,ROCHESTER_MN
+Rochester,New York,NY,43.168,-776.162,703952,2220.0,America/New_York,ROCHESTER_NY
+Rock Springs,Wyoming,WY,415.951,-1.092.238,25913,451.0,America/Denver,ROCK SPRINGS_WY
+Roswell,New Mexico,NM,33.373,-1.045.294,48889,617.0,America/Denver,ROSWELL_NM
+Sacramento,California,CA,385.667,-1.214.683,1898019,2029.0,America/Los_Angeles,SACRAMENTO_CA
+Saginaw,Michigan,MI,434.199,-839.501,117958,1087.0,America/Detroit,SAGINAW_MI
+Salt Lake City,Utah,UT,407.777,-1.119.306,1098526,699.0,America/Denver,SALT LAKE CITY_UT
+San Angelo,Texas,TX,314.424,-1.004.506,101004,653.0,America/Chicago,SAN ANGELO_TX
+San Antonio,Texas,TX,294.658,-985.253,2049293,1231.0,America/Chicago,SAN ANTONIO_TX
+San Diego,California,CA,328.312,-1.171.225,3220118,1686.0,America/Los_Angeles,SAN DIEGO_CA
+San Francisco,California,CA,377.562,-122.443,3592294,7256.0,America/Los_Angeles,SAN FRANCISCO_CA
+San Jose,California,CA,373.019,-1.218.486,1798103,2218.0,America/Los_Angeles,SAN JOSE_CA
+San José,Costa Rica,CR,9.9281,-84.0907,340000,7000.0,America/Costa_Rica,SAN JOSÉ_CR
+San Juan,Puerto Rico,PR,184.037,-660.636,323279,3157.0,America/Puerto_Rico,SAN JUAN_PR
+San Luis Obispo,California,CA,352.669,-1.206.691,62290,1374.0,America/Los_Angeles,SAN LUIS OBISPO_CA
+Santa Ana,California,CA,337.366,-1.178.819,332318,4689.0,America/Los_Angeles,SANTA ANA_CA
+Santa Barbara,California,CA,344.285,-1.197.202,202401,1808.0,America/Los_Angeles,SANTA BARBARA_CA
+Santa Fe,New Mexico,NM,356.619,-1.059.819,111269,625.0,America/Denver,SANTA FE_NM
+Santa Maria,California,CA,349.334,-1.204.432,140545,1815.0,America/Los_Angeles,SANTA MARIA_CA
+Sarasota,Florida,FL,273.386,-825.431,722243,1528.0,America/New_York,SARASOTA_FL
+Sault Ste. Marie,Michigan,MI,464.817,-843.723,13420,351.0,America/Detroit,SAULT STE. MARIE_MI
+Savannah,Georgia,GA,320.281,-811.784,276295,536.0,America/New_York,SAVANNAH_GA
+Seattle,Washington,WA,476.211,-1.223.244,3789215,3469.0,America/Los_Angeles,SEATTLE_WA
+Seoul,Seoul, Incheon ,375.665,126.978,9962000,16000.0,Asia/Seoul,SEOUL_INCHEON
+Shreveport,Louisiana,LA,324.656,-937.956,280062,672.0,America/Chicago,SHREVEPORT_LA
+Sioux City,Iowa,IA,424.959,-963.901,106455,545.0,America/Chicago,SIOUX CITY_IA
+Sioux Falls,South Dakota,SD,435.397,-96.732,187239,907.0,America/Chicago,SIOUX FALLS_SD
+Sitka,Alaska,AK,572.401,-1.353.153,8493,1.0,America/Sitka,SITKA_AK
+South Bend,Indiana,IN,416.767,-862.696,280498,938.0,America/Indiana/Indianapolis,SOUTH BEND_IN
+Spokane,Washington,WA,476.671,-117.433,412275,1247.0,America/Los_Angeles,SPOKANE_WA
+Springfield,Illinois,IL,39.7817,-89.6501,114394,700.0,America/Chicago,SPRINGFIELD_IL
+Springfield,Missouri,MO,371.943,-932.916,288090,786.0,America/Chicago,SPRINGFIELD_MO
+St Cloud,Minnesota,MN,45.5579,-94.1632,68000,800.0,America/Chicago,ST CLOUD_MN
+St George,Utah,UT,37.0965,-113.5684,95000,500.0,America/Denver,ST GEORGE_UT
+St Louis,Missouri,MO,38.627,-90.1994,300000,1800.0,America/Chicago,ST LOUIS_MO
+St. Augustine,Florida,FL,298.977,-81.31,82180,629.0,America/New_York,ST. AUGUSTINE_FL
+State College,Pennsylvania,PA,407.909,-778.568,87723,3572.0,America/New_York,STATE COLLEGE_PA
+Sydney,New South Wales,NSW,-338.688,1.512.093,5312000,430.0,Australia/Sydney,SYDNEY_NSW
+Syracuse,New York,NY,430.409,-761.438,404223,2195.0,America/New_York,SYRACUSE_NY
+São Paulo,Brazil,BR,-23.5505,-46.6333,12300000,7000.0,America/Sao_Paulo,SÃO PAULO_BR
+Taipei,Taoyuan,TW,25.033,121.5654,2600000,9600.0,Asia/Taipei,TAIPEI_TAOYUAN
+Tallahassee,Florida,FL,304.551,-842.526,257601,747.0,America/New_York,TALLAHASSEE_FL
+Tampa,Florida,FL,279.942,-824.451,2908063,1353.0,America/New_York,TAMPA_FL
+Texarkana,Arkansas,AR,334.361,-93.996,29657,273.0,America/Chicago,TEXARKANA_AR
+Tokyo,Tokyo,Tokyo,356.762,1.396.503,37274000,6300.0,Asia/Tokyo,TOKYO_TOKYO
+Toledo,Ohio,OH,416.639,-835.822,482111,1308.0,America/New_York,TOLEDO_OH
+Traverse City,Michigan,MI,447.547,-856.035,50522,729.0,America/Detroit,TRAVERSE CITY_MI
+Trenton,New Jersey,NJ,402.236,-747.641,290716,4238.0,America/New_York,TRENTON_NJ
+Tucson,Arizona,AZ,321.545,-1.108.782,888486,889.0,America/Phoenix,TUCSON_AZ
+Tulsa,Oklahoma,OK,361.284,-959.042,671033,784.0,America/Chicago,TULSA_OK
+Twin Falls,Idaho,ID,425.645,-1.144.615,55556,1008.0,America/Boise,TWIN FALLS_ID
+Tyler,Texas,TX,323.184,-953.062,143796,718.0,America/Chicago,TYLER_TX
+Valdosta,Georgia,GA,308.502,-832.788,79820,606.0,America/New_York,VALDOSTA_GA
+Valparaiso,Florida,FL,304.926,-865.079,5401,176.0,America/Chicago,VALPARAISO_FL
+Vernal,Utah,UT,404.517,-1.095.379,19893,871.0,America/Denver,VERNAL_UT
+Waco,Texas,TX,315.598,-971.881,192315,605.0,America/Chicago,WACO_TX
+Waterloo,Iowa,IA,42.492,-923.522,111631,423.0,America/Chicago,WATERLOO_IA
+West Palm Beach,Florida,FL,267.468,-801.316,111955,803.0,America/New_York,WEST PALM BEACH_FL
+West Yellowstone,Montana,MT,446.627,-1.111.057,1376,673.0,America/Denver,WEST YELLOWSTONE_MT
+White Plains,New York,NY,41.022,-737.549,58109,2291.0,America/New_York,WHITE PLAINS_NY
+Wichita,Kansas,KS,376.896,-973.442,482249,931.0,America/Chicago,WICHITA_KS
+Wichita Falls,Texas,TX,339.072,-985.291,104683,561.0,America/Chicago,WICHITA FALLS_TX
+Wilkes-Barre/Scranton,Pennsylvania,PA,41.3385,-75.7234,117000,1000.0,America/New_York,WILKES-BARRE/SCRANTON_PA
+Williston,North Dakota,ND,481.814,-1.036.364,29844,483.0,America/Chicago,WILLISTON_ND
+Wilmington,Delaware,DE,39.7447,-75.5484,70635,2500.0,America/New_York,WILMINGTON_DE
+Wilmington,North Carolina,NC,34.21,-778.866,255616,929.0,America/New_York,WILMINGTON_NC
+Windsor Locks,Connecticut,CT,41.9245,-72.6869,12900,400.0,America/New_York,WINDSOR LOCKS_CT
+Worcester,Massachusetts,MA,422.705,-718.079,498328,1916.0,America/New_York,WORCESTER_MA
+Wrangell,Alaska,AK,563.317,-1.320.223,2502,0.0,America/Sitka,WRANGELL_AK
+Yakutat,Alaska,AK,59.567,-1.395.966,649,2.0,America/Yakutat,YAKUTAT_AK
+Yuma,Arizona,AZ,325.992,-1.145.488,142847,313.0,America/Phoenix,YUMA_AZ
