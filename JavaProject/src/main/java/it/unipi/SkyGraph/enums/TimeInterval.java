@@ -1,4 +1,4 @@
-package it.unipi.SkyGraph.model;
+package it.unipi.SkyGraph.enums;
 
 public enum TimeInterval {
     LAST_DAY,

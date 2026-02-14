@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 @Validated
 @RestController
 @RequestMapping("/api/users")
-@Tag(name = "User Management", description = "Operations for managing user accounts and profiles")
 public class UserController {
 
     private final UserService userService;

@@ -69,14 +69,5 @@ public class UserService {
         return new UserNoPwdDto(user.getUsername(), user.getEmail(), user.getRole());
     }
 
-    /**
-     * Simple role-based promotion logic.
-     */
-    public String promoteUser(String userId) {
-        UserMongo user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
-
-
-        return "User " + userId + " promoted successfully.";
-    }
+   
 }
