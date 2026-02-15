@@ -12,11 +12,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class AuthService {
@@ -24,7 +26,6 @@ public class AuthService {
     private final AuthenticationManager authManager;
     private final UserRepository userRepository;
     private final PasswordEncoder encoder;
-    // private final UserNeo4jRepository userNeo4jRepository;
 
     @Autowired
     public AuthService(AuthenticationManager authManager,
@@ -36,7 +37,6 @@ public class AuthService {
     }
 
     public void registerUser(UserRegistrationDto user) {
-        // Validation using the repository from your structure
         if (userRepository.existsByUsername(user.username())) {
             throw new IllegalArgumentException("Username already exists");
         }
@@ -46,14 +46,12 @@ public class AuthService {
 
         String userId = UUID.randomUUID().toString();
 
-        // Creating the UserMongo entity
         UserMongo newUserMongo = new UserMongo();
         newUserMongo.setId(userId);
         newUserMongo.setUsername(user.username());
         newUserMongo.setPassword(encoder.encode(user.password()));
         newUserMongo.setEmail(user.email());
-        // newUserMongo.setBirthdate(user.birthdate()); // Ensure UserMongo has this field
-        newUserMongo.setRole(Role.REGISTERED_USER); // Matches your 'enums' package
+        newUserMongo.setRole(Role.REGISTERED_USER);
 
         userRepository.save(newUserMongo);
     }
@@ -65,8 +63,16 @@ public class AuthService {
 
         if (auth.isAuthenticated()) {
             UserPrincipal userPrincipal = (UserPrincipal) auth.getPrincipal();
-            return JwtUtils.generateToken(userPrincipal.getUser().getId());
+
+            // 1. Estrai le authorities (ruoli) dall'utente autenticato
+            List<String> roles = userPrincipal.getAuthorities().stream()
+                    .map(GrantedAuthority::getAuthority)
+                    .collect(Collectors.toList());
+
+            // 2. Passa sia l'ID che la lista dei ruoli al generatore di token
+            return JwtUtils.generateToken(userPrincipal.getUser().getId(), roles);
         }
+
         throw new RuntimeException("Invalid credentials");
     }
 }

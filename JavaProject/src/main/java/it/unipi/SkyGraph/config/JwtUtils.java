@@ -8,18 +8,15 @@ import io.jsonwebtoken.security.Keys;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import java.security.NoSuchAlgorithmException;
-import java.util.Base64;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
 public class JwtUtils {
     private static final String secretKey;
-    private static final long JWT_TOKEN_VALIDITY = 2 * 60 * 60 * 1000; // 2 hour in milliseconds
+    private static final long JWT_TOKEN_VALIDITY = 2 * 60 * 60 * 1000; // 2 ore
 
     static {
-        // Every time the application starts, a new secret key is generated
+
         try {
             KeyGenerator keyGen = KeyGenerator.getInstance("HmacSHA256");
             SecretKey sk = keyGen.generateKey();
@@ -30,32 +27,34 @@ public class JwtUtils {
     }
 
     private JwtUtils() {
-        throw new UnsupportedOperationException("JWTUtils is a utility class and cannot be instantiated");
+        throw new UnsupportedOperationException("Utility class");
     }
 
-    public static String generateToken(String sub) {
+    public static String generateToken(String sub, List<String> roles) {
         Map<String, Object> claims = new HashMap<>();
+        claims.put("roles", roles);
+
         return Jwts.builder()
-                .claims()
-                .add(claims)
+                .claims(claims)
                 .subject(sub)
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY))
-                .and()
                 .signWith(getKey())
                 .compact();
     }
 
+    public static List<String> extractAuthorities(String token) {
+        return extractClaim(token, claims -> claims.get("roles", List.class));
+    }
     public static boolean validateToken(String token) {
         try {
-            final String username = extractUserId(token);
             return !isTokenExpired(token);
         } catch (Exception e) {
-            return false; // Invalid token
+            return false;
         }
     }
 
-    public static  String extractUserId(String token) {
+    public static String extractUserId(String token) {
         return extractClaim(token, Claims::getSubject);
     }
 
@@ -84,5 +83,4 @@ public class JwtUtils {
     private static Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
     }
-
 }

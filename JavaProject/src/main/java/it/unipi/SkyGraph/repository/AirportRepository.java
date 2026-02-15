@@ -33,14 +33,14 @@ public interface AirportRepository extends Neo4jRepository<Airport, String> {
 
     // 3. Rotte ordinate per Durata Media
     @Query("MATCH (start:Airport)-[r:ROUTE]->(end:Airport) " +
-            "RETURN start.name AS origin, end.name AS destination, r.mean_scheduled_time AS metric " +
+            "RETURN start.name AS origin, end.name AS destination, r.mean_scheduled_time AS score " +
             "ORDER BY score DESC " +
             "LIMIT 20")
     List<RouteStatsDTO> findLongestRoutes();
 
     // 4. Rotte ordinate per Volume di Traffico
     @Query("MATCH (start:Airport)-[r:ROUTE]->(end:Airport) " +
-            "RETURN start.name AS origin, end.name AS destination, r.num_flights AS metric " +
+            "RETURN start.name AS origin, end.name AS destination, r.num_flights AS score " +
             "ORDER BY score DESC " +
             "LIMIT 20")
     List<RouteStatsDTO> findBusiestRoutes();
