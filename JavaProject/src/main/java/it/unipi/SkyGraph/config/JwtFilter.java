@@ -47,8 +47,6 @@ public class JwtFilter extends OncePerRequestFilter {
 
                 // 3. Creiamo un oggetto User standard di Spring (più leggero di UserMongo)
                 UserDetails userDetails = new User(userId, "", authorities);
-                System.out.println("DEBUG TOKEN: " + token);
-                System.out.println("DEBUG AUTHORITIES CREATE: " + authorities);
                 // 4. Creiamo il token di autenticazione passando le authorities
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                         userDetails,

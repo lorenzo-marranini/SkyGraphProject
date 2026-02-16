@@ -1,6 +1,8 @@
 package it.unipi.SkyGraph.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import it.unipi.SkyGraph.dto.user.UserIdUsernameDto;
 import it.unipi.SkyGraph.dto.user.UserNoPwdDto;
@@ -13,6 +15,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -48,12 +51,14 @@ public class UserController {
     public ResponseEntity<UserNoPwdDto> getUserById(@PathVariable String userId) {
         return ResponseEntity.ok(userService.getUserById(userId, true));
     }
+
+
     @Operation(summary = "Promote or Demote a user (ADMIN Only)")
     @PutMapping("/assign-role")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> updateUserRole(
             @RequestParam String email,
-            @RequestParam String roleName 
+            @RequestParam String roleName
     ) {
         try {
             userService.updateUserRole(email, roleName);
@@ -65,5 +70,13 @@ public class UserController {
             return ResponseEntity.internalServerError().body("Error updating user role");
         }
     }
+    @Operation(summary = "Delete your own account")
+    @DeleteMapping("/me")
+    public ResponseEntity<?> deleteMyAccount(
+            @Parameter(hidden = true) @AuthenticationPrincipal UserDetails currentUser
+    ) {
+        String userId = currentUser.getUsername();
+        userService.deleteUser(userId);
+        return ResponseEntity.noContent().build();
+    }
 }
-

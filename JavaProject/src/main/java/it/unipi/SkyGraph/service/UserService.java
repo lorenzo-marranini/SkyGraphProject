@@ -65,11 +65,13 @@ public class UserService {
     /**
      * Deletes a user from the database.
      */
-    public UserNoPwdDto deleteUser(UserMongo user) {
-        userRepository.delete(user);
-        return new UserNoPwdDto(user.getUsername(), user.getEmail(), user.getRole());
-    }
+    public void deleteUser(String userId) {
+        if (!userRepository.existsById(userId)) {
+            throw new IllegalArgumentException("User not found");
+        }
 
+        userRepository.deleteById(userId);
+    }
 
     public void updateUserRole(String email, String roleName) {
         UserMongo user = userRepository.findByEmail(email)
