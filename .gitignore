@@ -1,3 +1,4 @@
+dataset/*
 flights
 python/.vevn/*
 .DS_Store
