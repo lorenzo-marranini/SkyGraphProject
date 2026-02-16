@@ -11,6 +11,7 @@ import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Slice;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -47,5 +48,22 @@ public class UserController {
     public ResponseEntity<UserNoPwdDto> getUserById(@PathVariable String userId) {
         return ResponseEntity.ok(userService.getUserById(userId, true));
     }
-
+    @Operation(summary = "Promote or Demote a user (ADMIN Only)")
+    @PutMapping("/assign-role")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> updateUserRole(
+            @RequestParam String email,
+            @RequestParam String roleName 
+    ) {
+        try {
+            userService.updateUserRole(email, roleName);
+            return ResponseEntity.ok("User role updated successfully to " + roleName.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            // Se il ruolo non esiste o l'email non è valida
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Error updating user role");
+        }
+    }
 }
+

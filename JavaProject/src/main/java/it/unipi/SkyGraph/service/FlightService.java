@@ -1,7 +1,7 @@
 package it.unipi.SkyGraph.service;
 
 import it.unipi.SkyGraph.dto.AirlineStatDto;
-import it.unipi.SkyGraph.enums.TimeIntervall;
+import it.unipi.SkyGraph.enums.TimeInterval;
 import it.unipi.SkyGraph.repository.FlightRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,8 +33,6 @@ public class FlightService {
             case LAST_YEAR:
                 calculatedDate = now.minusYears(1);
                 break;
-            case ALL_TIME:
-                return "2025-01-01"; // Una data molto vecchia
             default:
                 throw new IllegalArgumentException("Invalid Time Range");
         }

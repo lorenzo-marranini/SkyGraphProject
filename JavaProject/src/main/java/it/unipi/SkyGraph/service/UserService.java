@@ -3,6 +3,7 @@ package it.unipi.SkyGraph.service;
 import it.unipi.SkyGraph.dto.user.UserIdUsernameDto;
 import it.unipi.SkyGraph.dto.user.UserNoPwdDto;
 import it.unipi.SkyGraph.dto.user.UserUpdateDto;
+import it.unipi.SkyGraph.enums.Role;
 import it.unipi.SkyGraph.model.UserMongo;
 import it.unipi.SkyGraph.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,5 +70,19 @@ public class UserService {
         return new UserNoPwdDto(user.getUsername(), user.getEmail(), user.getRole());
     }
 
-   
+
+    public void updateUserRole(String email, String roleName) {
+        UserMongo user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("User with email " + email + " not found"));
+
+        try {
+            Role newRole = Role.valueOf(roleName.toUpperCase());
+
+            user.setRole(newRole);
+            userRepository.save(user);
+
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Invalid role name: " + roleName + ". Allowed roles: REGISTERED_USER, AIRLINE_REPRESENTATIVE, ADMIN");
+        }
+    }
 }
