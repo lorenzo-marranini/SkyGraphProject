@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
+
+import java.time.Instant;
 import java.util.List;
 
 @Data
@@ -21,52 +23,96 @@ public class FlightMongo {
     private FlightInfo flightInfo;
 
     private Route route;
+
     private Stats stats;
 
     @Field("flight_log")
-    private Object flightLog;
+    private String flightLog; //attenzione, questo sarà da completare quando avremo flightlog
 
     @Data
     @NoArgsConstructor
+    @AllArgsConstructor
     public static class FlightInfo {
-        @Field("airline_code") private String airlineCode;
-        @Field("airline_name") private String airlineName;
-        @Field("flight_number") private String flightNumber;
-        private String date;
-        @Field("scheduled_departure") private String scheduledDeparture;
-        @Field("scheduled_arrival") private String scheduledArrival;
+        @Field("flight_key")
+        private String flightKey;
+
+        private Airline airline;
+
+        private Schedule schedule;
     }
 
     @Data
     @NoArgsConstructor
-    public static class Route {
-        private AirportInfo origin;
-        private AirportInfo destination;
-        private Integer distance;
-    }
-
-    @Data
-    @NoArgsConstructor
-    public static class AirportInfo {
+    @AllArgsConstructor
+    public static class Airline {
         private String iata;
-        @Field("airport_name") private String airportName;
+        private String name;
+    }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Schedule {
+        @Field("duration_minutes")
+        private Integer durationMinutes;
+
+        @Field("departure_datetime")
+        private Instant departureDatetime;
+
+        @Field("arrival_datetime")
+        private Instant arrivalDatetime;
+    }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Route {
+        private AirportDetails origin;
+
+        private AirportDetails destination;
+
+        @Field("distance_km")
+        private Double distanceKm;
+    }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class AirportDetails {
+        private String iata;
+
+        @Field("airport_name")
+        private String airportName;
+
         private String city;
-        private Location location;
+        private String state;
+        private String country;
+
+        private GeoLocation location;
     }
 
     @Data
     @NoArgsConstructor
-    public static class Location {
-        private String type;
-        private List<Double> coordinates;
+    @AllArgsConstructor
+    public static class GeoLocation {
+        private String type; // "Point"
+        private List<Double> coordinates; // [Long, Lat]
     }
 
     @Data
     @NoArgsConstructor
+    @AllArgsConstructor
     public static class Stats {
-        @Field("tot_delay") private Integer totDelay;
-        private String cancelled;
-        private String diverted;
-        @Field("air_time") private Integer airTime;
+        @Field("tot_delay_minutes")
+        private Integer totalDelayMinutes;
+
+        @Field("is_cancelled")
+        private Integer isCancelled;
+
+        @Field("is_diverted")
+        private Integer isDiverted;
+
+        @Field("air_time_minutes")
+        private Integer airTimeMinutes;
     }
 }

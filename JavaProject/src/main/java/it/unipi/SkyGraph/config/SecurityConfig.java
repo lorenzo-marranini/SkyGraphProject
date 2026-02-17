@@ -48,6 +48,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(request -> request
                         .requestMatchers("/api-docs.html", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/search/**").permitAll()
                         .requestMatchers(
                                 "/api/neo4j/rankings/**",
                                 "/api/neo4j/routes/**",

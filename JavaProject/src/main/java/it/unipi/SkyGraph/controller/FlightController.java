@@ -1,8 +1,12 @@
 package it.unipi.SkyGraph.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import it.unipi.SkyGraph.dto.AirlineStatDto;
-import it.unipi.SkyGraph.repository.FlightRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import it.unipi.SkyGraph.dto.AirportStatDto;
+import it.unipi.SkyGraph.enums.TimeInterval;
+import it.unipi.SkyGraph.model.FlightMongo;
+import it.unipi.SkyGraph.service.FlightService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,66 +14,87 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/stats")
+@RequiredArgsConstructor
 public class FlightController {
 
-    private final FlightRepository flightRepository;
+    private final FlightService flightService;
 
-    @Autowired
-    public FlightController(FlightRepository flightRepository) {
-        this.flightRepository = flightRepository;
+    // --- 0. RICERCA VOLI ---
+    @Operation(summary = "Search flights by origin IATA, destination IATA and date (YYYY-MM-DD)")
+    @GetMapping("/search")
+    public ResponseEntity<List<FlightMongo>> searchFlights(
+            @RequestParam String origin,
+            @RequestParam String destination,
+            @RequestParam String date
+    ) {
+        List<FlightMongo> flights = flightService.searchFlights(origin, destination, date);
+        if (flights.isEmpty()) return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(flights);
     }
 
+    // --- AIRLINE REPRESENTATIVE ENDPOINTS ---
 
-
-    // 1. Get airlines ordered by average delay (ascending)
-
+    // 1. Ritardo Medio
     @GetMapping("/airlines/by-delay")
-    public ResponseEntity<List<AirlineStatDto>> getAirlinesByAvgDelay(
-            @RequestParam("minDate") String minDate) {
-        List<AirlineStatDto> stats = flightRepository.findAirlinesByAvgDelay(minDate);
-        return ResponseEntity.ok(stats);
+    public ResponseEntity<?> getAirlinesByAvgDelay(@RequestParam(defaultValue = "LAST_WEEK") String range) {
+        return handleAirlineRequest(range, flightService::getAirlinesByAvgDelay);
     }
 
-    // 2. Get airlines ordered by total number of flights (descending)
+    // 2. Voli Totali
     @GetMapping("/airlines/by-flights")
-    public ResponseEntity<List<AirlineStatDto>> getAirlinesByTotalFlights(
-            @RequestParam("minDate") String minDate) {
-        List<AirlineStatDto> stats = flightRepository.findAirlinesByTotalFlights(minDate);
-        return ResponseEntity.ok(stats);
+    public ResponseEntity<?> getAirlinesByTotalFlights(@RequestParam(defaultValue = "LAST_WEEK") String range) {
+        return handleAirlineRequest(range, flightService::getAirlinesByTotalFlights);
     }
 
-    // 3. Get airlines ordered by total distance traveled (descending)
-    // Usage: GET /api/stats/airlines/by-distance?minDate=2023-01-01
+    // 3. Distanza Totale
     @GetMapping("/airlines/by-distance")
-    public ResponseEntity<List<AirlineStatDto>> getAirlinesByTotalDistance(
-            @RequestParam("minDate") String minDate) {
-        List<AirlineStatDto> stats = flightRepository.findAirlinesByTotalDistance(minDate);
-        return ResponseEntity.ok(stats);
+    public ResponseEntity<?> getAirlinesByTotalDistance(@RequestParam(defaultValue = "LAST_WEEK") String range) {
+        return handleAirlineRequest(range, flightService::getAirlinesByTotalDistance);
     }
 
-    // 4. Get airlines for a specific route ordered by flight volume
-    // Usage: GET /api/stats/routes/by-flights?origin=JFK&dest=LHR
-    @GetMapping("/routes/by-flights")
-    public ResponseEntity<List<AirlineStatDto>> getAirlinesByRouteFlights(
-            @RequestParam("origin") String originIata,
-            @RequestParam("dest") String destIata) {
-        List<AirlineStatDto> stats = flightRepository.findAirlinesByRouteFlights(originIata, destIata);
-        if (stats.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.ok(stats);
-    }
-
-    // 5. Get airlines for a specific route ordered by average delay
-    // Usage: GET /api/stats/routes/by-delay?origin=JFK&dest=LHR
+    // 4. Ritardo medio su rotta
     @GetMapping("/routes/by-delay")
     public ResponseEntity<List<AirlineStatDto>> getAirlinesByRouteDelay(
-            @RequestParam("origin") String originIata,
-            @RequestParam("dest") String destIata) {
-        List<AirlineStatDto> stats = flightRepository.findAirlinesByRouteDelay(originIata, destIata);
-        if (stats.isEmpty()) {
-            return ResponseEntity.noContent().build();
+            @RequestParam String origin, @RequestParam String dest) {
+        return ResponseEntity.ok(flightService.getAirlinesByRouteDelay(origin, dest));
+    }
+
+    // 5. Deviazioni
+    @GetMapping("/airlines/by-diverted")
+    public ResponseEntity<?> getAirlinesByDiverted(@RequestParam(defaultValue = "LAST_WEEK") String range) {
+        return handleAirlineRequest(range, flightService::getAirlinesByDiverted);
+    }
+
+    // 6. Mean Route Distance per Airline
+    @GetMapping("/airlines/by-avg-route-distance")
+    public ResponseEntity<?> getAirlinesByAvgRouteDistance(@RequestParam(defaultValue = "LAST_WEEK") String range) {
+        return handleAirlineRequest(range, flightService::getAirlinesByAvgRouteDistance);
+    }
+
+    // 7. Top Aeroporti per ritardi
+    @GetMapping("/airports/by-delay")
+    public ResponseEntity<?> getAirportsByAvgDelay(@RequestParam(defaultValue = "LAST_WEEK") String range) {
+        try {
+            TimeInterval interval = TimeInterval.valueOf(range.toUpperCase());
+            List<AirportStatDto> stats = flightService.getAirportsByAvgDelay(interval);
+            return ResponseEntity.ok(stats);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body("Invalid time range");
         }
-        return ResponseEntity.ok(stats);
+    }
+
+    // 8. Efficienza
+    @GetMapping("/airlines/efficiency")
+    public ResponseEntity<?> getAirlinesByEfficiency(@RequestParam(defaultValue = "LAST_WEEK") String range) {
+        return handleAirlineRequest(range, flightService::getAirlinesByEfficiency);
+    }
+
+    private ResponseEntity<?> handleAirlineRequest(String range, java.util.function.Function<TimeInterval, List<AirlineStatDto>> serviceMethod) {
+        try {
+            TimeInterval interval = TimeInterval.valueOf(range.toUpperCase());
+            return ResponseEntity.ok(serviceMethod.apply(interval));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body("Invalid time range. Allowed: LAST_DAY, LAST_WEEK, LAST_MONTH, LAST_YEAR");
+        }
     }
 }
