@@ -1,3 +1,24 @@
+# Mongo query list
+
+# Guest
+
+1. Trovare voli in base a filtri
+  - dato un aeroporto di partenza
+  - dato un aeroporto di arrivo
+  - data una data
+
+# Airline Representative
+
+1. Compagnie ordinate per ritardo medio
+2. Compagnie ordinate per numero di voli totali
+3. Compagnie ordinate per km percorsi
+4. Data una rotta quali sono le compagnie con ritardo medio minore
+5. Data una rotta quali compagnie anno più voli su quella rotta
+6. Compagnie ordinate per deviazioni
+7. Mean route distance per specific airline
+8. Top aeroporti per ritardi medi
+9. Airline efficiencty (distance/air_time)
+
 # Sort routes by mean airtime
 
 ```javascript
