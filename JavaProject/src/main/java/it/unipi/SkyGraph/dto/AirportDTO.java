@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AirportDTO {
-    private String getIataCode();
-    private String getName();
+    private String IataCode;
+    private String Name;
 }
 

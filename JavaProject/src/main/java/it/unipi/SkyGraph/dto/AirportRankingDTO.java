@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AirportRankingDTO {
-    private String getIataCode();
-    private String getName();
-    private Double getScore(); // Questo terrà conto dello score con cui sono restituiti i dati ordinati
+    private String IataCode;
+    private String Name;
+    private Double Score; // Questo terrà conto dello score con cui sono restituiti i dati ordinati
 }

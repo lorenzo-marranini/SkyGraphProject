@@ -56,29 +56,11 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String> {
     })
     List<AirlineStatDTO> findAirlinesByTotalDistance(Instant start, Instant end);
 
-    // 4) Restituisce gli aeroporti ordinati per numero di voli totali in uscita dall'aeroporto
-    // TODO: da capire se ha senso sul grafo o su mongo
-    @Aggregation(pipeline = {
-            "{ '$match': { 'flight_info.schedule.departure_datetime': { '$gte': ?0, '$lte': ?1 } } }",
-            "{ '$group': { '_id': '$route.origin.name', 'score': { '$sum': 1 } } }",
-            "{ '$sort': { 'score': -1 } }",
-            "{ '$project': { '_id': 0, 'airportName': '$_id', 'score': 1 } }"
-    })
-    List<AirportStatDto> findBusiestAirports(Instant start, Instant end);
 
-    // 5) Restituisce gli aeroporti ordinati per numero di aeroporti raggiunti (connessioni) in uscita dall'aeroporto
-    // Su Neo4j in AirportRepository è scritta senza intervallo di tempo
-    // Fatta su Mongo con l'intervallo di tempo
-    @Aggregation(pipeline = {
-            "{ '$match': { 'flight_info.schedule.departure_datetime': { '$gte': ?0, '$lte': ?1 } } }",
-            "{ '$group': { '_id': { 'origin': '$route.origin.iata', 'dest': '$route.destination.iata' } } }",
-            "{ '$group': { '_id': '$_id.origin', 'score': { '$sum': 1 } } }",
-            "{ '$sort': { 'score': -1 } }",
-            "{ '$project': { '_id': 0, 'airportCode': '$_id', 'score': 1 } }"
-    })
-    List<AirportStatDto> findAirportConnections(Instant start, Instant end);
+    // 4) Restituisce gli aeroporti ordinati per numero di aeroporti raggiunti (connessioni) in uscita dall'aeroporto
+    // Su Neo4j in AirportRepository
 
-    // 6) Restituiscce le airlines ordinate per numero di voli su una specifica rotta ( origin -> destination )
+    // 5) Restituiscce le airlines ordinate per numero di voli su una specifica rotta ( origin -> destination )
     @Aggregation(pipeline = {
             "{ '$match': { 'route.origin.iata': ?0, 'route.destination.iata': ?1, 'flight_info.schedule.departure_datetime': { '$gte': ?2, '$lte': ?3 } } }",
             "{ '$group': { '_id': '$flight_info.airline.name', 'score': { '$sum': 1 } } }",
@@ -87,7 +69,7 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String> {
     })
     List<AirlineStatDTO> findAirlinesFlightsByRoute(String origin, String destination, Instant start, Instant end);
 
-    // 7) Restituisce le airlines ordinate per AVG Delay su una specifica rotta ( origin -> destination )
+    // 6) Restituisce le airlines ordinate per AVG Delay su una specifica rotta ( origin -> destination )
     @Aggregation(pipeline = {
             "{ '$match': { 'route.origin.iata': ?0, 'route.destination.iata': ?1, 'flight_info.schedule.departure_datetime': { '$gte': ?2, '$lte': ?3 } } }",
             "{ '$group': { '_id': '$flight_info.airline.name', 'score': { '$avg': '$stats.tot_delay_minutes' } } }",
@@ -96,7 +78,7 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String> {
     })
     List<AirlineStatDTO> findAirlinesByRouteDelay(String originIata, String destIata, Instant start, Instant end);
 
-    // 8)  Restituisce le airlines ordiante per AVG KM percorsi in volo
+    // 7)  Restituisce le airlines ordiante per AVG KM percorsi in volo
     @Aggregation(pipeline = {
             "{ '$match': { 'flight_info.schedule.departure_datetime': { '$gte': ?0, '$lte': ?1 } } }",
             "{ '$group': { '_id': '$flight_info.airline.name', 'score': { '$avg': '$route.distance_km' } } }",
@@ -106,15 +88,12 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String> {
     List<AirlineStatDTO> findAirlinesByAvgRouteDistance(Instant start, Instant end);
 
 
-    // 9) Restituisce dato un flight_key in volo adesso, gli aeroporti ordinati per distanza dalla posizione attuale
+    // 8) Restituisce dato un flight_key in volo adesso, gli aeroporti ordinati per distanza dalla posizione attuale - Emergency landing
     // TO DO: Query
 
-    // 10) Restituisce dato origin e destination, una rotta alternativa che non passa da un aeroporto chiuso
+    // 9) Restituisce dato origin e destination, una rotta alternativa che non passa da un aeroporto chiuso
     // Fatta su Neo4j  TO DO: Da capire il senso dell implementazione ( troppo simile a 9-TC e a 1-AR )
-
-
-
-
+    // Dato un aeroporto chiuso, trovare un altro aeroporto che abbia il piu alto rapporto tra connessioni in comune fratto distanza
 
 
     //------------------------AIRLINE REPRESENTATIVE-----------------------------

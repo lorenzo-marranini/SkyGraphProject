@@ -23,8 +23,7 @@ public interface AirportRepository extends Neo4jRepository<Airport, String> {
 
     // ------------------------- Traffic Controller ---------------------
 
-    // 5) Aeroporti ordinati per numero di rotte , senza intervallo di tempo
-    // 5) con intervallo di tempo fatta su mongo in FlighRepository
+    // 4) Aeroporti ordinati per numero di rotte , senza intervallo di tempo
 
     @Query("MATCH (a:Airport)-[r:ROUTE]->() " +
             "RETURN a.iata_code AS iataCode, a.name AS name, count(r) AS score " +

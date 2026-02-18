@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class DayStatsDTO {
-    private Integer getDayOfWeek();
-    private Double getAvgDelay();
+    private Integer DayOfWeek;
+    private Double AvgDelay;
 }
 
