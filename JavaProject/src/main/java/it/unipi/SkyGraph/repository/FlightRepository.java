@@ -27,9 +27,6 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String> {
     @Query("{ 'flight_info.schedule.departure_datetime': { $gte: ?0, $lt: ?1 }, 'flight_log': { $ne: null } }")
     List<FlightMongo> searchFlightsLive(Instant start, Instant end);
 
-
-
-
     // -------------------------------- TRAFFIC CONTROLLER ------------------------------
 
     // 1) Restituisce le airlines ordinate per AVG delay
@@ -39,7 +36,7 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String> {
             "{ '$sort': { 'score': 1 } }",
             "{ '$project': { '_id': 0, 'airlineName': '$_id', 'score': 1 } }"
     })
-    List<AirlineStatDto> findAirlinesByAvgDelay(Instant start, Instant end);
+    List<AirlineStatDTO> findAirlinesByAvgDelay(Instant start, Instant end);
 
     // 2) Restituisce le airlines ordinate per numero di voli
     @Aggregation(pipeline = {
@@ -48,7 +45,7 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String> {
             "{ '$sort': { 'score': -1 } }",
             "{ '$project': { '_id': 0, 'airlineName': '$_id', 'score': 1 } }"
     })
-    List<AirlineStatDto> findAirlinesByTotalFlights(Instant start, Instant end);
+    List<AirlineStatDTO> findAirlinesByTotalFlights(Instant start, Instant end);
 
     // 3) Restituisce le airlines ordinate per km volati
     @Aggregation(pipeline = {
@@ -57,7 +54,7 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String> {
             "{ '$sort': { 'score': -1 } }",
             "{ '$project': { '_id': 0, 'airlineName': '$_id', 'score': 1 } }"
     })
-    List<AirlineStatDto> findAirlinesByTotalDistance(Instant start, Instant end);
+    List<AirlineStatDTO> findAirlinesByTotalDistance(Instant start, Instant end);
 
     // 4) Restituisce gli aeroporti ordinati per numero di voli totali in uscita dall'aeroporto
     // TODO: da capire se ha senso sul grafo o su mongo
@@ -88,7 +85,7 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String> {
             "{ '$sort': { 'score': -1 } }",
             "{ '$project': { '_id': 0, 'airlineName': '$_id', 'score': 1 } }"
     })
-    List<AirlineStatDto> findAirlinesFlightsByRoute(String origin, String destination, Instant start, Instant end);
+    List<AirlineStatDTO> findAirlinesFlightsByRoute(String origin, String destination, Instant start, Instant end);
 
     // 7) Restituisce le airlines ordinate per AVG Delay su una specifica rotta ( origin -> destination )
     @Aggregation(pipeline = {
@@ -97,7 +94,7 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String> {
             "{ '$sort': { 'score': 1 } }",
             "{ '$project': { '_id': 0, 'airlineName': '$_id', 'score': 1 } }"
     })
-    List<AirlineStatDto> findAirlinesByRouteDelay(String originIata, String destIata, Instant start, Instant end);
+    List<AirlineStatDTO> findAirlinesByRouteDelay(String originIata, String destIata, Instant start, Instant end);
 
     // 8)  Restituisce le airlines ordiante per AVG KM percorsi in volo
     @Aggregation(pipeline = {
@@ -106,7 +103,7 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String> {
             "{ '$sort': { 'score': -1 } }",
             "{ '$project': { '_id': 0, 'airlineName': '$_id', 'score': 1 } }"
     })
-    List<AirlineStatDto> findAirlinesByAvgRouteDistance(Instant start, Instant end);
+    List<AirlineStatDTO> findAirlinesByAvgRouteDistance(Instant start, Instant end);
 
 
     // 9) Restituisce dato un flight_key in volo adesso, gli aeroporti ordinati per distanza dalla posizione attuale
@@ -253,7 +250,7 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String> {
                     "}" +
                     "} }"
     })
-    Optional<AirlineReportDto> generateAirlineReport(Instant start, Instant end, String AirlineName);
+    Optional<AirlineReportDTO> generateAirlineReport(Instant start, Instant end, String AirlineName);
 
     // 7) Restituisce gli aeroporti ordinati per ritardo medio
     @Aggregation(pipeline = {
@@ -263,5 +260,6 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String> {
             "{ '$sort': { 'score': -1 } }",
             "{ '$project': { '_id': 0, 'airportName': '$_id', 'score': 1 } }"
     })
-    List<AirportStatDto> findAirportsByAvgDelay(Instant start, Instant end);
+    List<AirportStatDTO> findAirportsByAvgDelay(Instant start, Instant end);
     }
+

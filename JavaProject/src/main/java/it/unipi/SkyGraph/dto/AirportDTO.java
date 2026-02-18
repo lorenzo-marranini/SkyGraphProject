@@ -1,7 +1,14 @@
 package it.unipi.SkyGraph.dto;
 
-public interface AirportDTO {
-    String getIataCode();
-    String getName();
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class AirportDTO {
+    private String getIataCode();
+    private String getName();
 }
 

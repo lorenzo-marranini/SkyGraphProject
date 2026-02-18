@@ -1,8 +1,15 @@
 package it.unipi.SkyGraph.dto;
 
-public interface CityStatsDTO {
-    String getCityName();
-    String getCountry();
-    Long getTotalFlights();   // Somma dei voli di tutti gli aeroporti della città
-    Integer getAirportCount(); // Quanti aeroporti ci sono in quella città
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class CityStatsDTO {
+    private String getCityName();
+    private String getCountry();
+    private Long getTotalFlights();   // Somma dei voli di tutti gli aeroporti della città
+    private Integer getAirportCount(); // Quanti aeroporti ci sono in quella città
 }
