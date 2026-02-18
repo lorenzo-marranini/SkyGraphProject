@@ -23,13 +23,10 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String> {
     List<FlightMongo> searchFlights(String origin, String destination, Instant startOfDay, Instant endOfDay);
 
     //2)  Cerca per range di data (start -> end) tutti i voli che hanno qualcosa dentro il campo flightlog
-    @Query("{ 'flight_info.schedule.departure_datetime': { $gte: ?0, $lt: ?1 }, 'flightlog': { $ne: null } }")
+    @Query("{ 'flight_info.schedule.departure_datetime': { $gte: ?0, $lt: ?1 }, 'flight_log': { $ne: null } }")
     List<FlightMongo> searchFlightsLive(Instant start, Instant end);
 
     // ----------------------------- Traffic Controller ------------------
-
-    // --- QUERY ESISTENTI (1-4) ---
-    // (Omesse per brevità, lasciale come erano nel codice precedente)
 
     // 1)
     @Aggregation(pipeline = {
@@ -58,7 +55,7 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String> {
     })
     List<AirlineStatDto> findAirlinesByTotalDistance(Instant minDate);
 
-    // 4)
+    // 4) TODO: da capire se ha senso sul grafo o su mongo
     @Aggregation(pipeline = {
             "{ '$match': { 'flight_info.schedule.departure_datetime': { '$gte': ?0 } } }",
             "{ '$group': { '_id': '$route.origin.name', 'score': { '$sum': 1 } } }",
@@ -69,7 +66,7 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String> {
 
     // 5) Su Neo4j in AirportRepository senza intervallo di tempo
     // 5) Fatta su Mongo con l'intervallo di tempo
-
+    // TODO: capire cosa sia
     @Aggregation(pipeline = {
             "{ '$match': { 'flight_info.schedule.departure_datetime': { '$gte': ?0 } } }",
             "{ '$group': { '_id': { 'origin': '$route.origin.iata', 'dest': '$route.destination.iata' } } }",
