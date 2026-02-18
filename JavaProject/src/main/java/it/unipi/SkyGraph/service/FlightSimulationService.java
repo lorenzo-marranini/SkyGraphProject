@@ -11,9 +11,9 @@ import java.util.PriorityQueue;
 @Service
 public class FlightSimulationService {
 
-    private final FlightMongoService flightMongoService;
+    private final FlightService flightMongoService;
 
-    public FlightSimulationService(FlightMongoService flightMongoService) {
+    public FlightSimulationService(FlightService flightMongoService) {
         this.flightMongoService = flightMongoService;
     }
 
@@ -21,8 +21,8 @@ public class FlightSimulationService {
     public void startSimulation(PriorityQueue<FlightLogDTO> originalQueue) {
         // 1. Verifica se la coda originale ha elementi all'inizio
         System.out.println("Elementi totali caricati per la simulazione: " + originalQueue.size());
-
-        while (true) {
+        boolean loop = true;
+        while (loop) {
 
             // RESET timestamp
             LocalDate date = LocalDate.of(2026, 2, 25);
@@ -51,6 +51,7 @@ public class FlightSimulationService {
 
             System.out.println("Ciclo terminato. La coda originale ha ancora " + originalQueue.size() + " elementi.");
             try { Thread.sleep(2000); } catch (InterruptedException e) { return; }
+            loop = false;
         }
     }
 }

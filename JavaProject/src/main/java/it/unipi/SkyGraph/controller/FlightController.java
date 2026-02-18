@@ -53,11 +53,11 @@ public class FlightController {
     }
 
     // 4. Ritardo medio su rotta
-    @GetMapping("/routes/by-delay")
-    public ResponseEntity<List<AirlineStatDto>> getAirlinesByRouteDelay(
-            @RequestParam String origin, @RequestParam String dest) {
-        return ResponseEntity.ok(flightService.getAirlinesByRouteDelay(origin, dest));
-    }
+//    @GetMapping("/routes/by-delay")
+//    public ResponseEntity<List<AirlineStatDto>> getAirlinesByRouteDelay(
+//            @RequestParam String origin, @RequestParam String dest) {
+//        return ResponseEntity.ok(flightService.getAirlinesByRouteDelay(origin, dest));
+//    }
 
     // 5. Deviazioni
     @GetMapping("/airlines/by-diverted")

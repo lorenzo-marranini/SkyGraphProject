@@ -2,10 +2,15 @@ package it.unipi.SkyGraph.service;
 
 import it.unipi.SkyGraph.dto.AirlineStatDto;
 import it.unipi.SkyGraph.dto.AirportStatDto;
+import it.unipi.SkyGraph.dto.FlightLogDTO;
 import it.unipi.SkyGraph.enums.TimeInterval;
 import it.unipi.SkyGraph.model.FlightMongo;
 import it.unipi.SkyGraph.repository.FlightRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -21,6 +26,7 @@ import java.time.temporal.ChronoUnit;
 public class FlightService {
 
     private final FlightRepository flightRepository;
+    private final MongoTemplate mongoTemplate;
 
     private Instant calculateMinDate(TimeInterval range) {
         LocalDate now = LocalDate.of(2026, 2, 25);
@@ -51,17 +57,17 @@ public class FlightService {
         return flightRepository.searchFlights(origin, destination, startOfDay, endOfDay);
     }
 
-    // 2. Visualizzare i voli in tempo reale
-    public List<FlightMongo> viewFlightsLive() {
-
-
-        Instant now = Instant.now();
-        Instant startWindow = now.minus(24, ChronoUnit.HOURS);
-        Instant endWindow = now.plus(12, ChronoUnit.HOURS);
-        // check dei voli live tra 24 ore prima e 12 ore dopo per essere sicuri in casi di ritardi / anticipi
-
-        return flightRepository.viewFlightsLive(startWindow, endWindow );
-    }
+//    // 2. Visualizzare i voli in tempo reale
+//    public List<FlightMongo> viewFlightsLive() {
+//
+//
+//        Instant now = Instant.now();
+//        Instant startWindow = now.minus(24, ChronoUnit.HOURS);
+//        Instant endWindow = now.plus(12, ChronoUnit.HOURS);
+//        // check dei voli live tra 24 ore prima e 12 ore dopo per essere sicuri in casi di ritardi / anticipi
+//
+//        return flightRepository.viewFlightsLive(startWindow, endWindow );
+//    }
 
     // --- METODI STATISTICI ---
 
@@ -76,9 +82,9 @@ public class FlightService {
     public List<AirlineStatDto> getAirlinesByTotalDistance(TimeInterval range) {
         return flightRepository.findAirlinesByTotalDistance(calculateMinDate(range));
     }
-    public List<AirlineStatDto> getAirlinesByRouteDelay(String origin, String dest) {
-        return flightRepository.findAirlinesByRouteDelay(origin, dest);
-    }
+//    public List<AirlineStatDto> getAirlinesByRouteDelay(String origin, String dest) {
+//        return flightRepository.findAirlinesByRouteDelay(origin, dest);
+//    }
 
     public List<AirlineStatDto> getAirlinesByDiverted(TimeInterval range) {
         return flightRepository.findAirlinesByDiverted(calculateMinDate(range));
@@ -94,5 +100,29 @@ public class FlightService {
 
     public List<AirlineStatDto> getAirlinesByEfficiency(TimeInterval range) {
         return flightRepository.findAirlinesByEfficiency(calculateMinDate(range));
+    }
+
+    public void updateFlightLog(FlightLogDTO dto) {
+
+        Query query = new Query(
+                Criteria.where("flight_info.flight_key")
+                        .is(dto.getFlightKey())
+        );
+
+        FlightMongo.FlightLog log = new FlightMongo.FlightLog(
+                new FlightMongo.GeoLocation(
+                        "Point",
+                        List.of(dto.getLon(), dto.getLat())
+                ),
+                dto.getAlt(),
+                dto.getGspeed(),
+                dto.getTimestamp(),
+                dto.getEta()
+        );
+
+        Update update = new Update()
+                .set("flight_log", log);
+
+        mongoTemplate.updateFirst(query, update, FlightMongo.class);
     }
 }

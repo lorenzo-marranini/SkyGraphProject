@@ -31,10 +31,10 @@ public class AirportController {
     }
 
     // 2. Classifica aeroporti per numero di rotte
-    @GetMapping("/rankings/connections")
-    public ResponseEntity<List<AirportRankingDTO>> getAirportsByRoutesCount() {
-        return ResponseEntity.ok(airportRepository.findAirportsByRoutesCount());
-    }
+//    @GetMapping("/rankings/connections")
+//    public ResponseEntity<List<AirportRankingDTO>> getAirportsByRoutesCount() {
+//        return ResponseEntity.ok(airportRepository.findAirportsByRoutesCount());
+//    }
 
     // 3. Classifica aeroporti per volume voli totali
     @GetMapping("/rankings/volume")
