@@ -1,8 +1,6 @@
 package it.unipi.SkyGraph.service;
 
-import it.unipi.SkyGraph.dto.AirlineStatDTO;
-import it.unipi.SkyGraph.dto.AirportStatDTO;
-import it.unipi.SkyGraph.dto.FlightLogDTO;
+import it.unipi.SkyGraph.dto.*;
 import it.unipi.SkyGraph.enums.TimeInterval;
 import it.unipi.SkyGraph.model.FlightMongo;
 import it.unipi.SkyGraph.repository.FlightRepository;
@@ -29,7 +27,6 @@ public class FlightService {
 
     // Definiamo la data di riferimento "ADESSO" statica per la simulazione
     private static final LocalDate SIMULATED_NOW = LocalDate.of(2026, 2, 25);
-    private static final Instant SIMULATED_NOW_INSTANT = SIMULATED_NOW.toInstant();
 
     /**
      * Calcola la data di inizio (minDate) basata sull'intervallo richiesto
@@ -74,12 +71,12 @@ public class FlightService {
     public List<FlightMongo> viewFlightsLive() {
 
 
-        Instant now = SIMULATED_NOW;
+        Instant now = getSimulatedNowInstant();
         Instant startWindow = now.minus(24, ChronoUnit.HOURS);
         Instant endWindow = now.plus(12, ChronoUnit.HOURS);
         // check dei voli live tra 24 ore prima e 12 ore dopo per essere sicuri in casi di ritardi / anticipi
 
-        return flightRepository.viewFlightsLive(startWindow, endWindow );
+        return flightRepository.searchFlightsLive(startWindow, endWindow );
     }
 
     //----------------------------------- TRAFFIC CONTROLLER -----------------------
@@ -132,9 +129,7 @@ public class FlightService {
 
     // 7)
     public List<AirlineStatDTO> getAirlinesByRouteDistance(String origin, String destination,TimeInterval range) {
-        return flightRepository.findAirlinesByRouteDistance(
-                origin,
-                destination,
+        return flightRepository.findAirlinesByAvgRouteDistance(
                 calculateMinDate(range),
                 getSimulatedNowInstant()
         );

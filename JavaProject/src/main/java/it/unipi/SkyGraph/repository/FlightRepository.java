@@ -67,7 +67,7 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String> {
             "{ '$sort': { 'score': -1 } }",
             "{ '$project': { '_id': 0, 'airlineName': '$_id', 'score': 1 } }"
     })
-    List<AirlineStatDTO> findAirlinesFlightsByRoute(String origin, String destination, Instant start, Instant end);
+    List<AirlineStatDTO> findAirlinesByRoute(String origin, String destination, Instant start, Instant end);
 
     // 6) Restituisce le airlines ordinate per AVG Delay su una specifica rotta ( origin -> destination )
     @Aggregation(pipeline = {
@@ -228,7 +228,14 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String> {
                     "}" +
                     "} }"
     })
-    Optional<AirlineReportDTO> generateAirlineReport(Instant start, Instant end, String AirlineName);
+    List<AirlineReportDTO> generateAirlineReport(Instant start, Instant end, String AirlineName);
+
+    FlightMongo findFirstByRouteOriginIataAndRouteDestinationIataAndFlightInfoScheduleDepartureDatetimeGreaterThanOrderByFlightInfoScheduleDepartureDatetimeAsc(
+            String origin,
+            String destination,
+            Instant minDepartureTime
+    );
+
 
     // 7) Restituisce gli aeroporti ordinati per ritardo medio
     @Aggregation(pipeline = {

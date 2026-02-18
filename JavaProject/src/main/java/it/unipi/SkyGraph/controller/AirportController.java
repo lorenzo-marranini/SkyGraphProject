@@ -38,9 +38,7 @@ public class AirportController {
 //    }
 
 
-    // --- ENDPOINT PROTETTI (Airline Representative) ---
 
-    @PreAuthorize("hasAnyRole('AIRLINE_REPRESENTATIVE', 'ADMIN')")
     @GetMapping("/quickest-path")
     public ResponseEntity<QuickestPathDTO> getQuickestPath(
             @RequestParam String origin,

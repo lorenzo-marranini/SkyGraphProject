@@ -40,7 +40,7 @@ public interface AirportRepository extends Neo4jRepository<Airport, String> {
     // parte in neo4j TO DO
 
     // QUERY: Rotta più veloce (Weighted Shortest Path basato su mean_scheduled_time)
-    @Query("MATCH p = (start:Airport {iata_code: $origin})-[:ROUTE*1..6]->(end:Airport {iata_code: $dest}) " +
+    @Query("MATCH p = (start:Airport {iata_code: $origin})-[:ROUTE*1..3]->(end:Airport {iata_code: $dest}) " +
             "WHERE length(p) <= $maxHops " +
             "WITH p, reduce(weight = 0.0, r in relationships(p) | weight + r.mean_scheduled_time) AS totalTime " +
             "ORDER BY totalTime ASC " +
@@ -71,6 +71,15 @@ public interface AirportRepository extends Neo4jRepository<Airport, String> {
             "ORDER BY score DESC LIMIT 30")
     List<AirportRankingDTO> findTopHubsByPageRank();
 
+
+
+    @Query("MATCH p = (start:Airport {iata_code: $origin})-[:ROUTE*1..3]->(end:Airport {iata_code: $dest}) " +
+            "WHERE length(p) <= $maxHops " +
+            "RETURN [n in nodes(p) | n.iata_code] AS iatas " +
+            "LIMIT 10") // Limit to 10 candidates to avoid overloading Mongo
+    List<List<String>> findCandidatePaths(@Param("origin") String origin,
+                                          @Param("dest") String dest,
+                                          @Param("maxHops") int maxHops);
 
     // 3) Restituisce la lista di città collegate ad una specifica con un numero di scali dato
     // Neo4j TO DO

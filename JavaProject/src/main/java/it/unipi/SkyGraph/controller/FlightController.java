@@ -65,11 +65,12 @@ public class FlightController {
         return handleAirlineRequest(range, flightService::getAirlinesByDiverted);
     }
 */
+    /*
     // 6. Mean Route Distance per Airline
     @GetMapping("/airlines/by-avg-route-distance")
     public ResponseEntity<?> getAirlinesByAvgRouteDistance(@RequestParam(defaultValue = "LAST_WEEK") String range) {
         return handleAirlineRequest(range, flightService::getAirlinesByAvgRouteDistance);
-    }
+    }*/
 
     // 7. Top Aeroporti per ritardi
     @GetMapping("/airports/by-delay")
