@@ -91,9 +91,8 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String> {
     // 8) Restituisce dato un flight_key in volo adesso, gli aeroporti ordinati per distanza dalla posizione attuale - Emergency landing
     // TO DO: Query
 
-    // 9) Restituisce dato origin e destination, una rotta alternativa che non passa da un aeroporto chiuso
-    // Fatta su Neo4j  TO DO: Da capire il senso dell implementazione ( troppo simile a 9-TC e a 1-AR )
-    // Dato un aeroporto chiuso, trovare un altro aeroporto che abbia il piu alto rapporto tra connessioni in comune fratto distanza
+    // 9) Dato un aeroporto chiuso, trovare un altro aeroporto che abbia il piu alto rapporto tra connessioni in comune fratto distanza
+    // Fatta su Neo4j  TO DO:
 
 
     //------------------------AIRLINE REPRESENTATIVE-----------------------------
@@ -105,8 +104,8 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String> {
     // 2) Restituisce gli aeroporti ordinati per betwenness centrality
     // Fatta su neo4j
 
-    // 3) Restituisce il numero di partenze e di arrivi totali data una città
-    // Da capire se mongo o neo4j
+    // 3) Restituisce la lista di città collegate ad una specifica con un numero di scali dato
+    // Neo4j
 
 
     // 4) Restituisce le rotte ordinate per numero di voli nel time intervall

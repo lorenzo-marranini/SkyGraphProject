@@ -16,15 +16,15 @@ public interface AirportRepository extends Neo4jRepository<Airport, String> {
     // Ricerca base per IATA
     Optional<Airport> findByIataCode(String iataCode);
 
-    // ---------- GUEST-----------------
+    // --------------------------- GUEST-------------------------
 
 
 
 
 
-    // ------------------------- Traffic Controller ---------------------
+    // ------------------------------- TRAFFIC CONTROLLER ------------------------
 
-    // 4) Aeroporti ordinati per numero di rotte , senza intervallo di tempo
+    // 4) Aeroporti ordinati per numero di rotte
 
     @Query("MATCH (a:Airport)-[r:ROUTE]->() " +
             "RETURN a.iata_code AS iataCode, a.name AS name, count(r) AS score " +
@@ -32,45 +32,33 @@ public interface AirportRepository extends Neo4jRepository<Airport, String> {
             "LIMIT 20")
     List<AirportRankingDTO> findAirportsConnections();
 
-    // 2. Aeroporti ordinati per numero di voli totali
-    @Query("MATCH (a:Airport)-[r:ROUTE]->() " +
-            "RETURN a.iata_code AS iataCode, a.name AS name, sum(r.num_flights) AS score " +
-            "ORDER BY score DESC " +
-            "LIMIT 20")
-    List<AirportRankingDTO> findAirportsByTotalFlights();
-
-    // 3. Rotte ordinate per Durata Media
-    @Query("MATCH (start:Airport)-[r:ROUTE]->(end:Airport) " +
-            "RETURN start.name AS origin, end.name AS destination, r.mean_scheduled_time AS score " +
-            "ORDER BY score DESC " +
-            "LIMIT 20")
-    List<RouteStatsDTO> findLongestRoutes();
-
-    // 4. Rotte ordinate per Volume di Traffico
-    @Query("MATCH (start:Airport)-[r:ROUTE]->(end:Airport) " +
-            "RETURN start.name AS origin, end.name AS destination, r.num_flights AS score " +
-            "ORDER BY score DESC " +
-            "LIMIT 20")
-    List<RouteStatsDTO> findBusiestRoutes();
+    // 9) Dato un aeroporto chiuso, trovare un altro aeroporto che abbia il piu alto rapporto tra connessioni in comune fratto distanza
+    // TO DO: Qeery in Neo4j
 
 
 
-    // --- QUERY PER IL TRAFFIC CONTROLLER ---
+    // ----------------------- AIRLINE REPRESENTATIVE ------------------------------------
 
 
+    // 1) Given origin* destination* stops*(scali) and date* (default=today), find the possible flights with less time flown.
+    // parte in neo4j TO DO
 
-    // --- QUERY PER L'AIRLINE REPRESENTATIVE ---
+    // QUERY: Rotta più veloce (Weighted Shortest Path basato su mean_scheduled_time)
+    @Query("MATCH p = (start:Airport {iata_code: $origin})-[:ROUTE*1..6]->(end:Airport {iata_code: $dest}) " +
+            "WHERE length(p) <= $maxHops " +
+            "WITH p, reduce(weight = 0.0, r in relationships(p) | weight + r.mean_scheduled_time) AS totalTime " +
+            "ORDER BY totalTime ASC " +
+            "LIMIT 1 " +
+            "RETURN totalTime AS totalDuration, " +
+            "       [n in nodes(p) | {iataCode: n.iata_code, name: n.name}] AS path")
+    Optional<QuickestPathDTO> findQuickestRoute(
+            @Param("origin") String origin,
+            @Param("dest") String dest,
+            @Param("maxHops") int maxHops
+    );
+}
 
-
-    // 1. Trova il percorso più breve (meno scali) tra due aeroporti [DA SISTEMARE CON LA PARTE IN MONGO]
-    @Query("MATCH (start:Airport {iata_code: $origin}), (end:Airport {iata_code: $dest}) " +
-            "MATCH p = shortestPath((start)-[:ROUTE*..5]->(end)) " +
-            "RETURN p")
-    List<AirportDTO> findShortestPath(@Param("origin") String origin, @Param("dest") String dest);
-
-
-
-    // 2. Visualizzare gli aeroporti ordinati per il network centrality score
+    // 2) Visualizzare gli aeroporti ordinati per il betweenness centrality score
     @Query("CALL gds.pageRank.stream({ " +
             "  nodeProjection: 'Airport', " +
             "  relationshipProjection: { " +
@@ -87,17 +75,7 @@ public interface AirportRepository extends Neo4jRepository<Airport, String> {
             "ORDER BY score DESC LIMIT 30")
     List<AirportRankingDTO> findTopHubsByPageRank();
 
-        // QUERY: Rotta più veloce (Weighted Shortest Path basato su mean_scheduled_time)
-    @Query("MATCH p = (start:Airport {iata_code: $origin})-[:ROUTE*1..6]->(end:Airport {iata_code: $dest}) " +
-            "WHERE length(p) <= $maxHops " +
-            "WITH p, reduce(weight = 0.0, r in relationships(p) | weight + r.mean_scheduled_time) AS totalTime " +
-            "ORDER BY totalTime ASC " +
-            "LIMIT 1 " +
-            "RETURN totalTime AS totalDuration, " +
-            "       [n in nodes(p) | {iataCode: n.iata_code, name: n.name}] AS path")
-        Optional<QuickestPathDTO> findQuickestRoute(
-                @Param("origin") String origin,
-                @Param("dest") String dest,
-                @Param("maxHops") int maxHops
-        );
-    }
+
+    // 3) Restituisce la lista di città collegate ad una specifica con un numero di scali dato
+    // Neo4j TO DO
+
