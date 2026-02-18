@@ -1,8 +1,8 @@
 package it.unipi.SkyGraph.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
-import it.unipi.SkyGraph.dto.AirlineStatDto;
-import it.unipi.SkyGraph.dto.AirportStatDto;
+import it.unipi.SkyGraph.dto.AirlineStatDTO;
+import it.unipi.SkyGraph.dto.AirportStatDTO;
 import it.unipi.SkyGraph.enums.TimeInterval;
 import it.unipi.SkyGraph.model.FlightMongo;
 import it.unipi.SkyGraph.service.FlightService;
@@ -76,7 +76,7 @@ public class FlightController {
     public ResponseEntity<?> getAirportsByAvgDelay(@RequestParam(defaultValue = "LAST_WEEK") String range) {
         try {
             TimeInterval interval = TimeInterval.valueOf(range.toUpperCase());
-            List<AirportStatDto> stats = flightService.getAirportsByAvgDelay(interval);
+            List<AirportStatDTO> stats = flightService.getAirportsByAvgDelay(interval);
             return ResponseEntity.ok(stats);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body("Invalid time range");
@@ -89,7 +89,7 @@ public class FlightController {
         return handleAirlineRequest(range, flightService::getAirlinesByEfficiency);
     }
 */
-    private ResponseEntity<?> handleAirlineRequest(String range, java.util.function.Function<TimeInterval, List<AirlineStatDto>> serviceMethod) {
+    private ResponseEntity<?> handleAirlineRequest(String range, java.util.function.Function<TimeInterval, List<AirlineStatDTO>> serviceMethod) {
         try {
             TimeInterval interval = TimeInterval.valueOf(range.toUpperCase());
             return ResponseEntity.ok(serviceMethod.apply(interval));

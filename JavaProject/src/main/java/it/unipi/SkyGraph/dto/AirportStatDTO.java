@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AirlineStatDto {
-    private String airlineName;
-    private Double score;
+public class AirportStatDTO {
+    private String airportName;
+    private double score; // Usato per ritardo medio, etc.
 }

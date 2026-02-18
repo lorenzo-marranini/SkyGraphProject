@@ -1,7 +1,7 @@
 package it.unipi.SkyGraph.service;
 
-import it.unipi.SkyGraph.dto.AirlineStatDto;
-import it.unipi.SkyGraph.dto.AirportStatDto;
+import it.unipi.SkyGraph.dto.AirlineStatDTO;
+import it.unipi.SkyGraph.dto.AirportStatDTO;
 import it.unipi.SkyGraph.dto.FlightLogDTO;
 import it.unipi.SkyGraph.enums.TimeInterval;
 import it.unipi.SkyGraph.model.FlightMongo;
@@ -56,21 +56,21 @@ public class FlightService {
 
     // --- METODI STATISTICI ---
 
-    public List<AirlineStatDto> getAirlinesByAvgDelay(TimeInterval range) {
+    public List<AirlineStatDTO> getAirlinesByAvgDelay(TimeInterval range) {
         return flightRepository.findAirlinesByAvgDelay(
                 calculateMinDate(range),
                 getSimulatedNowInstant()
         );
     }
 
-    public List<AirlineStatDto> getAirlinesByTotalFlights(TimeInterval range) {
+    public List<AirlineStatDTO> getAirlinesByTotalFlights(TimeInterval range) {
         return flightRepository.findAirlinesByTotalFlights(
                 calculateMinDate(range),
                 getSimulatedNowInstant()
         );
     }
 
-    public List<AirlineStatDto> getAirlinesByTotalDistance(TimeInterval range) {
+    public List<AirlineStatDTO> getAirlinesByTotalDistance(TimeInterval range) {
         return flightRepository.findAirlinesByTotalDistance(
                 calculateMinDate(range),
                 getSimulatedNowInstant()
@@ -84,14 +84,14 @@ public class FlightService {
         );
     }
 */
-    public List<AirlineStatDto> getAirlinesByAvgRouteDistance(TimeInterval range) {
+    public List<AirlineStatDTO> getAirlinesByAvgRouteDistance(TimeInterval range) {
         return flightRepository.findAirlinesByAvgRouteDistance(
                 calculateMinDate(range),
                 getSimulatedNowInstant()
         );
     }
 
-    public List<AirportStatDto> getAirportsByAvgDelay(TimeInterval range) {
+    public List<AirportStatDTO> getAirportsByAvgDelay(TimeInterval range) {
         return flightRepository.findAirportsByAvgDelay(
                 calculateMinDate(range),
                 getSimulatedNowInstant()
