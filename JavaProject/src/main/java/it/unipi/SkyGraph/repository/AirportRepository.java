@@ -19,9 +19,6 @@ public interface AirportRepository extends Neo4jRepository<Airport, String> {
     // --------------------------- GUEST-------------------------
 
 
-
-
-
     // ------------------------------- TRAFFIC CONTROLLER ------------------------
 
     // 4) Aeroporti ordinati per numero di rotte
@@ -34,7 +31,6 @@ public interface AirportRepository extends Neo4jRepository<Airport, String> {
 
     // 9) Dato un aeroporto chiuso, trovare un altro aeroporto che abbia il piu alto rapporto tra connessioni in comune fratto distanza
     // TO DO: Qeery in Neo4j
-
 
 
     // ----------------------- AIRLINE REPRESENTATIVE ------------------------------------
@@ -56,7 +52,7 @@ public interface AirportRepository extends Neo4jRepository<Airport, String> {
             @Param("dest") String dest,
             @Param("maxHops") int maxHops
     );
-}
+
 
     // 2) Visualizzare gli aeroporti ordinati per il betweenness centrality score
     @Query("CALL gds.pageRank.stream({ " +
@@ -79,3 +75,4 @@ public interface AirportRepository extends Neo4jRepository<Airport, String> {
     // 3) Restituisce la lista di città collegate ad una specifica con un numero di scali dato
     // Neo4j TO DO
 
+}

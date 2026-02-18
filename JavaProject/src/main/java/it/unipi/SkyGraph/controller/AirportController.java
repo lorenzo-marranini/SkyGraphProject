@@ -37,40 +37,9 @@ public class AirportController {
 //        return ResponseEntity.ok(airportRepository.findAirportsByRoutesCount());
 //    }
 
-    // 3. Classifica aeroporti per volume voli totali
-    @GetMapping("/rankings/volume")
-    public ResponseEntity<List<AirportRankingDTO>> getAirportsByTotalFlights() {
-        return ResponseEntity.ok(airportRepository.findAirportsByTotalFlights());
-    }
-
-    // 4. Classifica rotte più lunghe (Durata media)
-    @GetMapping("/routes/longest")
-    public ResponseEntity<List<RouteStatsDTO>> getLongestRoutes() {
-        return ResponseEntity.ok(airportRepository.findLongestRoutes());
-    }
-
-    // 5. Classifica rotte più trafficate
-    @GetMapping("/routes/busiest")
-    public ResponseEntity<List<RouteStatsDTO>> getBusiestRoutes() {
-        return ResponseEntity.ok(airportRepository.findBusiestRoutes());
-    }
-
 
     // --- ENDPOINT PROTETTI (Airline Representative) ---
 
-    // 6. Percorso più breve (Shortest Path)
-    @PreAuthorize("hasAnyRole('AIRLINE_REPRESENTATIVE', 'ADMIN')")
-    @GetMapping("/shortest-path")
-    public ResponseEntity<List<AirportDTO>> getShortestPath(
-            @RequestParam String origin,
-            @RequestParam String dest) {
-
-        List<AirportDTO> path = airportRepository.findShortestPath(origin, dest);
-        if (path.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.ok(path);
-    }
     @PreAuthorize("hasAnyRole('AIRLINE_REPRESENTATIVE', 'ADMIN')")
     @GetMapping("/quickest-path")
     public ResponseEntity<QuickestPathDTO> getQuickestPath(
