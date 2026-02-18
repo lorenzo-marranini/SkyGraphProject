@@ -13,6 +13,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
+import java.time.temporal.ChronoUnit;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
@@ -28,6 +29,7 @@ public class FlightService {
 
     // Definiamo la data di riferimento "ADESSO" statica per la simulazione
     private static final LocalDate SIMULATED_NOW = LocalDate.of(2026, 2, 25);
+    private static final Instant SIMULATED_NOW_INSTANT = SIMULATED_NOW.toInstant();
 
     /**
      * Calcola la data di inizio (minDate) basata sull'intervallo richiesto
@@ -54,8 +56,35 @@ public class FlightService {
         return SIMULATED_NOW.plusDays(1).atStartOfDay(ZoneOffset.UTC).toInstant();
     }
 
-    // --- METODI STATISTICI ---
+    // ------------------ METODI --------------------------------
 
+    // ------------------------ GUEST ------------------------
+
+    // 1)
+    public List<FlightMongo> searchFlights(String origin, String destination, String dateString) {
+
+        LocalDate date = LocalDate.parse(dateString, DateTimeFormatter.ISO_LOCAL_DATE);
+        Instant startOfDay = date.atStartOfDay(ZoneOffset.UTC).toInstant();
+        Instant endOfDay = date.plusDays(1).atStartOfDay(ZoneOffset.UTC).toInstant();
+
+        return flightRepository.searchFlights(origin, destination, startOfDay, endOfDay);
+    }
+
+    // 2)
+    public List<FlightMongo> viewFlightsLive() {
+
+
+        Instant now = SIMULATED_NOW;
+        Instant startWindow = now.minus(24, ChronoUnit.HOURS);
+        Instant endWindow = now.plus(12, ChronoUnit.HOURS);
+        // check dei voli live tra 24 ore prima e 12 ore dopo per essere sicuri in casi di ritardi / anticipi
+
+        return flightRepository.viewFlightsLive(startWindow, endWindow );
+    }
+
+    //----------------------------------- TRAFFIC CONTROLLER -----------------------
+
+    // 1)
     public List<AirlineStatDTO> getAirlinesByAvgDelay(TimeInterval range) {
         return flightRepository.findAirlinesByAvgDelay(
                 calculateMinDate(range),
@@ -63,6 +92,7 @@ public class FlightService {
         );
     }
 
+    // 2)
     public List<AirlineStatDTO> getAirlinesByTotalFlights(TimeInterval range) {
         return flightRepository.findAirlinesByTotalFlights(
                 calculateMinDate(range),
@@ -70,20 +100,123 @@ public class FlightService {
         );
     }
 
+    // 3)
     public List<AirlineStatDTO> getAirlinesByTotalDistance(TimeInterval range) {
         return flightRepository.findAirlinesByTotalDistance(
                 calculateMinDate(range),
                 getSimulatedNowInstant()
         );
     }
-/*
-    public List<AirlineStatDto> getAirlinesByDiverted(TimeInterval range) {
-        return flightRepository.findAirlinesByDiverted(
+
+    // 4) TO DO
+
+    // 5)
+    public List<AirlineStatDTO> getAirlinesByRoute(String origin, String destination,TimeInterval range) {
+        return flightRepository.findAirlinesByRoute(
+                origin,
+                destination,
                 calculateMinDate(range),
                 getSimulatedNowInstant()
         );
     }
-*/
+
+    // 6)
+    public List<AirlineStatDTO> getAirlinesByRouteDelay(String origin, String destination,TimeInterval range) {
+        return flightRepository.findAirlinesByRouteDelay(
+                origin,
+                destination,
+                calculateMinDate(range),
+                getSimulatedNowInstant()
+        );
+    }
+
+    // 7)
+    public List<AirlineStatDTO> getAirlinesByRouteDistance(String origin, String destination,TimeInterval range) {
+        return flightRepository.findAirlinesByRouteDistance(
+                origin,
+                destination,
+                calculateMinDate(range),
+                getSimulatedNowInstant()
+        );
+    }
+
+    // 8) TO DO
+
+    // 9) TO DO
+
+//--------------------------- AIRLINE REPRESENTATIVE -------------------------------
+
+    // 1) TO DO
+
+    // 2) TO DO
+
+    // 3) TO DO
+
+    // 4)
+    public List<RouteStatsDTO> getRoutesByFlightCount(TimeInterval range) {
+        return flightRepository.findRoutesByFlightCount(
+                calculateMinDate(range),
+                getSimulatedNowInstant()
+        );
+    }
+
+    // 4.1)
+    public List<RouteStatsDTO> getRoutesByCancelledCount(TimeInterval range) {
+        return flightRepository.findRoutesByCancelledCount(
+                calculateMinDate(range),
+                getSimulatedNowInstant()
+        );
+    }
+
+    // 4.2)
+    public List<RouteStatsDTO> getRoutesByDivertedCount(TimeInterval range) {
+        return flightRepository.findRoutesByDivertedCount(
+                calculateMinDate(range),
+                getSimulatedNowInstant()
+        );
+    }
+
+    // 5)
+    public List<DayStatsDTO> getDaysByAvgDelay(TimeInterval range) {
+        return flightRepository.findDaysByAvgDelay(
+                calculateMinDate(range),
+                getSimulatedNowInstant()
+        );
+    }
+
+    // 6)
+    public List<AirlineReportDTO> getAirlineReport(TimeInterval range, String AirlineName) {
+        return flightRepository.generateAirlineReport(
+                calculateMinDate(range),
+                getSimulatedNowInstant(),
+                AirlineName
+        );
+    }
+
+    // 7)
+    public List<AirportStatDTO> getAirportsByAvgDelay(TimeInterval range) {
+        return flightRepository.findAirportsByAvgDelay(
+                calculateMinDate(range),
+                getSimulatedNowInstant()
+        );
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
     public List<AirlineStatDTO> getAirlinesByAvgRouteDistance(TimeInterval range) {
         return flightRepository.findAirlinesByAvgRouteDistance(
                 calculateMinDate(range),
@@ -105,14 +238,8 @@ public class FlightService {
         );
     }
 */
-    // --- ALTRI METODI (Guest / Updates) ---
+    // --- ALTRI METODI (Updates) ---
 
-    public List<FlightMongo> searchFlights(String origin, String destination, String dateString) {
-        LocalDate date = LocalDate.parse(dateString, DateTimeFormatter.ISO_LOCAL_DATE);
-        Instant startOfDay = date.atStartOfDay(ZoneOffset.UTC).toInstant();
-        Instant endOfDay = date.plusDays(1).atStartOfDay(ZoneOffset.UTC).toInstant();
-        return flightRepository.searchFlights(origin, destination, startOfDay, endOfDay);
-    }
 
     public void updateFlightLog(FlightLogDTO dto) {
         Query query = new Query(Criteria.where("flight_info.flight_key").is(dto.getFlightKey()));
