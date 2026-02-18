@@ -15,14 +15,22 @@ public interface AirportRepository extends Neo4jRepository<Airport, String> {
     // Ricerca base per IATA
     Optional<Airport> findByIataCode(String iataCode);
 
-    // --- QUERY PER IL GUEST ---
+    // ---------- GUEST-----------------
 
-    // 1. Aeroporti ordinati per numero di rotte (Connettività/Hub)
+
+
+
+
+    // ------------------------- Traffic Controller ---------------------
+
+    // 5) Aeroporti ordinati per numero di rotte , senza intervallo di tempo
+    // 5) con intervallo di tempo fatta su mongo in FlighRepository
+
     @Query("MATCH (a:Airport)-[r:ROUTE]->() " +
             "RETURN a.iata_code AS iataCode, a.name AS name, count(r) AS score " +
             "ORDER BY score DESC " +
             "LIMIT 20")
-    List<AirportRankingDTO> findAirportsByRoutesCount();
+    List<AirportRankingDTO> findAirportsConnections();
 
     // 2. Aeroporti ordinati per numero di voli totali
     @Query("MATCH (a:Airport)-[r:ROUTE]->() " +

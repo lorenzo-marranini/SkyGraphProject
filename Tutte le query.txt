@@ -1,0 +1,37 @@
+Guest:
+
+1) Cercare info su voli in base a data (default = today) , origine*, destinazione*
+2) Visualizzare le posizioni in tempo reale dei voli attualmente in volo (mappa real-time)
+
+
+Traffic Controller:
+
+1) Mongo = AVG Delay of Airlines
+2) Mongo = Total number of flights per airline
+3) Mongo = Total KM flown by airlines
+4) Mongo = Number of flights per airport
+5) Mongo or Neo4j = Number of connection per airport
+6) Mongo = Given origin* and destination* view number of flights of airlines 
+7) Mongo = Given origin* destination* view avg delay of airlines
+
+tutte le precedenti (tranne la 5 se fatta su neo4j) hanno come parametro anche il range di tempo 
+(last day, last week, last month)
+
+8) Mongo = Given origin* destination* view airports to land in case of emergency
+9) Mongo = Given origin* destination* view alternative routes if an airport is unavailable
+
+
+Airline Representative:
+
+1) Neo4j + Mongo = Given origin* destination* stops*(scali) and date* (default=today), find the possible flights with less time flown.
+2) Neo4j = View betweenness centrality of airports
+3) Neo4j + Mongo = Given a range of time* and a city* view statistic as Total Number of flights, Total Departures, Total Arrivals of the city
+4) Mongo = Given a time range* view the AVG flight distance of airlines
+5) Mongo = Given a time range * View the most frequent route
+5.1) Mongo = Given a time range * View the most diverted route
+5.2) Mongo = Given a time range * View the most cancelled route
+6) Mongo = Given a time range* view statistic of delay per day of week
+7) Mongo = Given an airline* and time range* view total km flown, avg delay, total # of flights
+
+Administrator:
+1) view all users and update them
