@@ -13,25 +13,26 @@ Traffic Controller:
 5) Mongo or Neo4j = Number of connection per airport
 6) Mongo = Given origin* and destination* view number of flights of airlines 
 7) Mongo = Given origin* destination* view avg delay of airlines
+8) Mongo = Given a time range* view the AVG flight distance of airlines
 
 tutte le precedenti (tranne la 5 se fatta su neo4j) hanno come parametro anche il range di tempo 
-(last day, last week, last month)
+(last day, last week, last monta)
 
-8) Mongo = Given origin* destination* view airports to land in case of emergency
-9) Mongo = Given origin* destination* view alternative routes if an airport is unavailable
+9) Mongo = Given origin* destination* view airports to land in case of emergency
+10) Neo4j = Given origin* destination* view alternative routes if an airport is unavailable
 
 
 Airline Representative:
 
 1) Neo4j + Mongo = Given origin* destination* stops*(scali) and date* (default=today), find the possible flights with less time flown.
-2) Neo4j = View betweenness centrality of airports
+2) Neo4j = View betwenness centrality of airports
 3) Neo4j + Mongo = Given a range of time* and a city* view statistic as Total Number of flights, Total Departures, Total Arrivals of the city
-4) Mongo = Given a time range* view the AVG flight distance of airlines
-5) Mongo = Given a time range * View the most frequent route
-5.1) Mongo = Given a time range * View the most diverted route
-5.2) Mongo = Given a time range * View the most cancelled route
-6) Mongo = Given a time range* view statistic of delay per day of week
-7) Mongo = Given an airline* and time range* view total km flown, avg delay, total # of flights
+4) Mongo = Given a time range * View the most frequent route
+4.1) Mongo = Given a time range * View the most diverted route
+4.2) Mongo = Given a time range * View the most cancelled route
+5) Mongo = Given a time range* view statistic of delay per day of week
+6) Mongo = Given an Airline* and time range* view total km flown, avg delay, total # of flights, AVG KM flown, effincency
+7) Mongo = View airports order by avg delay
 
 Administrator:
 1) view all users and update them

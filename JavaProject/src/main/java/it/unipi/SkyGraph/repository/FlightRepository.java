@@ -16,7 +16,9 @@ import java.util.List;
 @Repository
 public interface FlightRepository extends MongoRepository<FlightMongo, String> {
 
-    //------------ Guest -----------
+
+
+    //----------------------------- GUEST--------------------------------------
 
     //1) Cerca per origine, destinazione e range di data (inizio giornata -> fine giornata)
     @Query("{ 'route.origin.iata': ?0, 'route.destination.iata': ?1, 'flight_info.schedule.departure_datetime': { $gte: ?2, $lt: ?3 } }")
@@ -26,9 +28,12 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String> {
     @Query("{ 'flight_info.schedule.departure_datetime': { $gte: ?0, $lt: ?1 }, 'flight_log': { $ne: null } }")
     List<FlightMongo> searchFlightsLive(Instant start, Instant end);
 
-    // ----------------------------- Traffic Controller ------------------
 
-    // 1)
+
+
+    // -------------------------------- TRAFFIC CONTROLLER ------------------------------
+
+    // 1) Restituisce le airlines ordinate per AVG delay
     @Aggregation(pipeline = {
             "{ '$match': { 'flight_info.schedule.departure_datetime': { '$gte': ?0 } } }",
             "{ '$group': { '_id': '$flight_info.airline.name', 'score': { '$avg': '$stats.tot_delay_minutes' } } }",
@@ -37,7 +42,7 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String> {
     })
     List<AirlineStatDto> findAirlinesByAvgDelay(Instant minDate);
 
-    // 2)
+    // 2) Restituisce le airlines ordinate per numero di voli
     @Aggregation(pipeline = {
             "{ '$match': { 'flight_info.schedule.departure_datetime': { '$gte': ?0 } } }",
             "{ '$group': { '_id': '$flight_info.airline.name', 'score': { '$sum': 1 } } }",
@@ -46,7 +51,7 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String> {
     })
     List<AirlineStatDto> findAirlinesByTotalFlights(Instant minDate);
 
-    // 3)
+    // 3) Restituisce le airlines ordinate per km volati
     @Aggregation(pipeline = {
             "{ '$match': { 'flight_info.schedule.departure_datetime': { '$gte': ?0 } } }",
             "{ '$group': { '_id': '$flight_info.airline.name', 'score': { '$sum': '$route.distance_km' } } }",
@@ -55,7 +60,8 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String> {
     })
     List<AirlineStatDto> findAirlinesByTotalDistance(Instant minDate);
 
-    // 4) TODO: da capire se ha senso sul grafo o su mongo
+    // 4) Restituisce gli aeroporti ordinati per numero di voli totali in uscita dall'aeroporto
+    // TODO: da capire se ha senso sul grafo o su mongo
     @Aggregation(pipeline = {
             "{ '$match': { 'flight_info.schedule.departure_datetime': { '$gte': ?0 } } }",
             "{ '$group': { '_id': '$route.origin.name', 'score': { '$sum': 1 } } }",
@@ -64,9 +70,9 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String> {
     })
     List<AirportStatDto> findBusiestAirports(Instant minDate);
 
-    // 5) Su Neo4j in AirportRepository senza intervallo di tempo
-    // 5) Fatta su Mongo con l'intervallo di tempo
-    // TODO: capire cosa sia
+    // 5) Restituisce gli aeroporti ordinati per numero di aeroporti raggiunti (connessioni) in uscita dall'aeroporto
+    // Su Neo4j in AirportRepository è scritta senza intervallo di tempo
+    // Fatta su Mongo con l'intervallo di tempo
     @Aggregation(pipeline = {
             "{ '$match': { 'flight_info.schedule.departure_datetime': { '$gte': ?0 } } }",
             "{ '$group': { '_id': { 'origin': '$route.origin.iata', 'dest': '$route.destination.iata' } } }",
@@ -76,7 +82,7 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String> {
     })
     List<AirportStatDto> findAirportConnections(Instant minDate);
 
-    //6)
+    // 6) Restituiscce le airlines ordinate per numero di voli su una specifica rotta ( origin -> destination )
     @Aggregation(pipeline = {
             "{ '$match': { 'route.origin.iata': ?0, 'route.destination.iata': ?1, 'flight_info.schedule.departure_datetime': { '$gte': ?2 } } }",
             "{ '$group': { '_id': '$flight_info.airline.name', 'score': { '$sum': 1 } } }",
@@ -86,7 +92,7 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String> {
     List<AirlineStatDto> findAirlinesFlightsByRoute(String origin, String destination, Instant minDate);
 
 
-    // 7)
+    // 7) Restituisce le airlines ordinate per AVG Delay su una specifica rotta ( origin -> destination )
     @Aggregation(pipeline = {
             "{ '$match': { 'route.origin.iata': ?0, 'route.destination.iata': ?1, 'flight_info.schedule.departure_datetime': { '$gte': ?2 } } }",
             "{ '$group': { '_id': '$flight_info.airline.name', 'score': { '$avg': '$stats.tot_delay_minutes' } } }",
@@ -95,19 +101,7 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String> {
     })
     List<AirlineStatDto> findAirlinesByRouteDelay(String originIata, String destIata, Instant minDate);
 
-    //8) da fare emergency landing
-
-
-    // 5. Compagnie ordinate per deviazioni (is_diverted = 1)
-    @Aggregation(pipeline = {
-            "{ '$match': { 'flight_info.schedule.departure_datetime': { '$gte': ?0 }, 'stats.is_diverted': 1 } }",
-            "{ '$group': { '_id': '$flight_info.airline.name', 'score': { '$sum': 1 } } }", // Conta quante deviazioni
-            "{ '$sort': { 'score': -1 } }", // Chi ne ha di più appare prima
-            "{ '$project': { '_id': 0, 'airlineName': '$_id', 'score': 1 } }"
-    })
-    List<AirlineStatDto> findAirlinesByDiverted(Instant minDate);
-
-    // 6. Mean route distance per specific airline (Distanza media per tratta)
+    // 8)  Restituisce le airlines ordiante per AVG KM percorsi in volo
     @Aggregation(pipeline = {
             "{ '$match': { 'flight_info.schedule.departure_datetime': { '$gte': ?0 } } }",
             "{ '$group': { '_id': '$flight_info.airline.name', 'score': { '$avg': '$route.distance_km' } } }",
@@ -116,32 +110,80 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String> {
     })
     List<AirlineStatDto> findAirlinesByAvgRouteDistance(Instant minDate);
 
-    // 7. Top aeroporti per ritardi medi (Partenza)
+
+    // 9) Restituisce dato un flight_key in volo adesso, gli aeroporti ordinati per distanza dalla posizione attuale
+    // TO DO: Query
+
+    // 10) Restituisce dato origin e destination, una rotta alternativa che non passa da un aeroporto chiuso
+    // Fatta su Neo4j  TO DO: Da capire il senso dell implementazione ( troppo simile a 9-TC e a 1-AR )
+
+
+
+
+
+
+    //------------------------AIRLINE REPRESENTATIVE-----------------------------
+
+    // 1) Parte di Mongo:
+    // Dati Origin - destination e minDate, restituisce il primo volo successivo alla minDate
+    // TO DO
+
+    // 2) Restituisce gli aeroporti ordinati per betwenness centrality
+    // Fatta su neo4j
+
+    // 3) Restituisce il numero di partenze e di arrivi totali data una città
+    // Da capire se mongo o neo4j
+
+
+    // 4) Restituisce le rotte ordinate per numero di voli nel time intervall
+
+    // 4.1) Restituisce le rotte ordinate per numero di voli deviato
+
+    // 4.2) Restituisce le rotte ordinate per numero di voli cancellati
+
+    // 5) Restituisce i giorni della settimana ordinati per delay medio nel time intervall
+
+    // 6) Restituisce data un Airline e un time intervall: i total km flown, l'avg delay, l'avg KM percorsi, l'ariline efficiency e il # of flights
+    @Aggregation(pipeline = {
+            "{ '$match': { " +
+                    "'flight_info.schedule.departure_datetime': { '$gte': ?0 }, " +
+                    "'flight_info.airline.name': ?1 " +
+                    "} }",
+            "{ '$group': { " +
+                    "'_id': '$flight_info.airline.name', " +
+                    "'totalKm': { '$sum': '$route.distance_km' }, " +
+                    "'avgKm': { '$avg': '$route.distance_km' }, " +
+                    "'totalFlights': { '$sum': 1 }, " +
+                    "'avgDelay': { '$avg': '$stats.tot_delay_minutes' }, " +
+                    "'totalDuration': { '$sum': '$stats.air_time_minutes' }" +
+                    "} }",
+            "{ '$project': { " +
+                    "'_id': 0, " +
+                    "'airlineName': '$_id', " +
+                    "'totalKm': 1, " +
+                    "'avgKm': 1, " +
+                    "'avgDelay': 1, " +
+                    "'totalFlights': 1, " +
+                    //calcolo efficiency
+                    "'efficiency': { " +
+                    "'$cond': [ " +
+                    "{ '$eq': ['$totalDuration', 0] }, " + // Se la durata è 0, evita divisione per zero
+                    "0, " +
+                    "{ '$divide': ['$totalKm', '$totalDuration'] }" +
+                    "] " +
+                    "}" +
+                    "} }"
+    })
+    Optional<AirlineReportDto> generateAirlineReport(Instant minDate, String airlineName);
+
+    // 7) Restituisce gli aeroporti ordinati per ritardo medio
     @Aggregation(pipeline = {
             "{ '$match': { 'flight_info.schedule.departure_datetime': { '$gte': ?0 } } }",
             // Raggruppa per Nome Aeroporto di origine
             "{ '$group': { '_id': '$route.origin.airport_name', 'score': { '$avg': '$stats.tot_delay_minutes' } } }",
-            "{ '$sort': { 'score': -1 } }", // Decrescente (i più lenti primi)
-            "{ '$limit': 10 }", // Top 10
+            "{ '$sort': { 'score': -1 } }",
             "{ '$project': { '_id': 0, 'airportName': '$_id', 'score': 1 } }"
     })
     List<AirportStatDto> findAirportsByAvgDelay(Instant minDate);
 
-    // 8. Airline Efficiency (Km per minuto di volo)
-    @Aggregation(pipeline = {
-            "{ '$match': { 'flight_info.schedule.departure_datetime': { '$gte': ?0 }, 'stats.air_time_minutes': { '$gt': 0 } } }",
-            "{ '$group': { " +
-                    "'_id': '$flight_info.airline.name', " +
-                    "'totalDist': { '$sum': '$route.distance_km' }, " +
-                    "'totalTime': { '$sum': '$stats.air_time_minutes' }" +
-                    "} }",
-            // Calcola efficienza: Distanza / Tempo
-            "{ '$project': { " +
-                    "'_id': 0, " +
-                    "'airlineName': '$_id', " +
-                    "'score': { '$divide': ['$totalDist', '$totalTime'] }" +
-                    "} }",
-            "{ '$sort': { 'score': -1 } }" // Più km al minuto = Più efficiente
-    })
-    List<AirlineStatDto> findAirlinesByEfficiency(Instant minDate);
 }
