@@ -3,26 +3,30 @@ package it.unipi.SkyGraph.service;
 import it.unipi.SkyGraph.dto.*;
 import it.unipi.SkyGraph.enums.TimeInterval;
 import it.unipi.SkyGraph.model.FlightMongo;
+import it.unipi.SkyGraph.repository.AirportRepository;
 import it.unipi.SkyGraph.repository.FlightRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
 public class FlightService {
 
     private final FlightRepository flightRepository;
+    private final AirportRepository airportRepository;
     private final MongoTemplate mongoTemplate;
 
     // Definiamo la data di riferimento "ADESSO" statica per la simulazione
@@ -211,5 +215,74 @@ public class FlightService {
         );
         Update update = new Update().set("flight_log", log);
         mongoTemplate.updateFirst(query, update, FlightMongo.class);
+    }
+
+
+    public List<TripItineraryDTO> findQuickestRealRoute(String origin, String dest, String dateString, int maxHops) {
+
+        LocalDate date = LocalDate.parse(dateString, DateTimeFormatter.ISO_LOCAL_DATE);
+        Instant tripStartTime = date.atStartOfDay(ZoneOffset.UTC).toInstant();
+
+        System.out.println("DEBUG: Start search " + origin + " -> " + dest + " from " + tripStartTime);
+
+        // 1. Chiamata al Repository (Restituisce List<String> sicura)
+        List<String> rawCsvPaths = airportRepository.findCandidatePaths(origin, dest, maxHops);
+
+        System.out.println("DEBUG: Candidati trovati: " + rawCsvPaths.size());
+
+        List<TripItineraryDTO> validItineraries = new ArrayList<>();
+
+        for (String csvPath : rawCsvPaths) {
+            // 2. Riconvertiamo la stringa "JFK,LHR,CLT" in Lista ["JFK", "LHR", "CLT"]
+            List<String> path = Arrays.asList(csvPath.split(","));
+
+            System.out.println("DEBUG: Processing Path: " + path);
+
+            if (path.size() < 2) continue;
+
+            List<FlightMongo> itineraryFlights = new ArrayList<>();
+            Instant currentClock = tripStartTime;
+            boolean validPath = true;
+
+            // ... DA QUI IN POI IL CODICE È IDENTICO A PRIMA ...
+            for (int i = 0; i < path.size() - 1; i++) {
+                String legOrigin = path.get(i);
+                String legDest = path.get(i+1);
+
+                Instant minDeparture = (i == 0) ? currentClock : currentClock.plus(Duration.ofMinutes(45));
+
+                List<FlightMongo> flights = flightRepository.findNextFlight(
+                        legOrigin,
+                        legDest,
+                        minDeparture,
+                        PageRequest.of(0, 1)
+                );
+                FlightMongo flight = flights.isEmpty() ? null : flights.get(0);
+                if (flight == null) {
+                    System.out.println("   X Volo mancante: " + legOrigin + "->" + legDest);
+                    validPath = false;
+                    break;
+                }
+
+                System.out.println("   V Volo trovato: " + flight.getFlightInfo().getFlightKey());
+                itineraryFlights.add(flight);
+                currentClock = flight.getFlightInfo().getSchedule().getArrivalDatetime();
+            }
+
+            if (validPath && !itineraryFlights.isEmpty()) {
+                Instant firstDep = itineraryFlights.get(0).getFlightInfo().getSchedule().getDepartureDatetime();
+                Instant lastArr = itineraryFlights.get(itineraryFlights.size()-1).getFlightInfo().getSchedule().getArrivalDatetime();
+                double totalMinutes = Duration.between(firstDep, lastArr).toMinutes();
+
+                validItineraries.add(new TripItineraryDTO(
+                        totalMinutes,
+                        itineraryFlights.size() - 1,
+                        itineraryFlights
+                ));
+            }
+        }
+
+        Collections.sort(validItineraries);
+        return validItineraries;
     }
 }

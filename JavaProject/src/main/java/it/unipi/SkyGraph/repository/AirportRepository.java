@@ -1,14 +1,12 @@
 package it.unipi.SkyGraph.repository;
 
-import it.unipi.SkyGraph.dto.AirportDTO;
-import it.unipi.SkyGraph.dto.AirportRankingDTO;
-import it.unipi.SkyGraph.dto.QuickestPathDTO;
-import it.unipi.SkyGraph.dto.RouteStatsDTO;
+import it.unipi.SkyGraph.dto.*;
 import it.unipi.SkyGraph.model.Airport;
 import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.neo4j.repository.query.Query;
 import org.springframework.data.repository.query.Param;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public interface AirportRepository extends Neo4jRepository<Airport, String> {
@@ -72,16 +70,13 @@ public interface AirportRepository extends Neo4jRepository<Airport, String> {
     List<AirportRankingDTO> findTopHubsByPageRank();
 
 
-
-    @Query("MATCH p = (start:Airport {iata_code: $origin})-[:ROUTE*1..3]->(end:Airport {iata_code: $dest}) " +
+    @Query("MATCH p = (start:Airport {iata_code: $origin})-[:ROUTE*1..4]->(end:Airport {iata_code: $dest}) " +
             "WHERE length(p) <= $maxHops " +
-            "RETURN [n in nodes(p) | n.iata_code] AS iatas " +
-            "LIMIT 10") // Limit to 10 candidates to avoid overloading Mongo
-    List<List<String>> findCandidatePaths(@Param("origin") String origin,
-                                          @Param("dest") String dest,
-                                          @Param("maxHops") int maxHops);
-
-    // 3) Restituisce la lista di città collegate ad una specifica con un numero di scali dato
-    // Neo4j TO DO
-
+            "WITH [n in nodes(p) | n.iata_code] AS codes " +
+            // Questa funzione 'reduce' unisce la lista in una stringa separata da virgole
+            "RETURN reduce(s = head(codes), x in tail(codes) | s + ',' + x) " +
+            "LIMIT 10")
+    List<String> findCandidatePaths(@Param("origin") String origin,
+                                    @Param("dest") String dest,
+                                    @Param("maxHops") int maxHops);
 }

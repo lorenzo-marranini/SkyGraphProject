@@ -6,7 +6,7 @@ import org.springframework.data.mongodb.repository.Aggregation;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
-
+import org.springframework.data.domain.Pageable;
 import java.time.temporal.ChronoUnit;
 import java.time.Instant;
 import java.util.List;
@@ -230,11 +230,10 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String> {
     })
     List<AirlineReportDTO> generateAirlineReport(Instant start, Instant end, String AirlineName);
 
-    FlightMongo findFirstByRouteOriginIataAndRouteDestinationIataAndFlightInfoScheduleDepartureDatetimeGreaterThanOrderByFlightInfoScheduleDepartureDatetimeAsc(
-            String origin,
-            String destination,
-            Instant minDepartureTime
-    );
+
+    @Query(value = "{ 'route.origin.iata': ?0, 'route.destination.iata': ?1, 'flight_info.schedule.departure_datetime': { $gt: ?2 } }",
+            sort = "{ 'flight_info.schedule.departure_datetime': 1 }")
+    List<FlightMongo> findNextFlight(String origin, String dest, Instant minTime, Pageable pageable);
 
 
     // 7) Restituisce gli aeroporti ordinati per ritardo medio

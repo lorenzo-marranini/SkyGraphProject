@@ -3,6 +3,7 @@ package it.unipi.SkyGraph.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import it.unipi.SkyGraph.dto.AirlineStatDTO;
 import it.unipi.SkyGraph.dto.AirportStatDTO;
+import it.unipi.SkyGraph.dto.TripItineraryDTO;
 import it.unipi.SkyGraph.enums.TimeInterval;
 import it.unipi.SkyGraph.model.FlightMongo;
 import it.unipi.SkyGraph.service.FlightService;
@@ -97,5 +98,20 @@ public class FlightController {
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body("Invalid time range. Allowed: LAST_DAY, LAST_WEEK, LAST_MONTH, LAST_YEAR");
         }
+    }
+    @Operation(summary = "Find the quickest actual route checking real flight schedules")
+    @GetMapping("/routes/quickest-real")
+    public ResponseEntity<List<TripItineraryDTO>> getQuickestRealRoute(
+            @RequestParam String origin,
+            @RequestParam String dest,
+            @RequestParam String date, // YYYY-MM-DD
+            @RequestParam(defaultValue = "2") int maxHops
+    ) {
+        List<TripItineraryDTO> itineraries = flightService.findQuickestRealRoute(origin, dest, date, maxHops);
+
+        if (itineraries.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(itineraries);
     }
 }
