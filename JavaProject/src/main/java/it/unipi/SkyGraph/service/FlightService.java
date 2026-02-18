@@ -202,42 +202,6 @@ public class FlightService {
     }
 
 
-
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
-    public List<AirlineStatDTO> getAirlinesByAvgRouteDistance(TimeInterval range) {
-        return flightRepository.findAirlinesByAvgRouteDistance(
-                calculateMinDate(range),
-                getSimulatedNowInstant()
-        );
-    }
-
-    public List<AirportStatDTO> getAirportsByAvgDelay(TimeInterval range) {
-        return flightRepository.findAirportsByAvgDelay(
-                calculateMinDate(range),
-                getSimulatedNowInstant()
-        );
-    }
-/*
-    public List<AirlineStatDto> getAirlinesByEfficiency(TimeInterval range) {
-        return flightRepository.findAirlinesByEfficiency(
-                calculateMinDate(range),
-                getSimulatedNowInstant()
-        );
-    }
-*/
     // --- ALTRI METODI (Updates) ---
 
 
