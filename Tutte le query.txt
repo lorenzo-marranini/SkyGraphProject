@@ -14,7 +14,7 @@ Traffic Controller:
 6) Mongo = Given origin* and destination* view number of flights of airlines 
 7) Mongo = Given origin* destination* view avg delay of airlines
 
-tutte le precedenti hanno come parametro anche il range di tempo 
+tutte le precedenti (tranne la 5 se fatta su neo4j) hanno come parametro anche il range di tempo 
 (last day, last week, last month)
 
 8) Mongo = Given origin* destination* view airports to land in case of emergency

@@ -13,6 +13,8 @@ import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.time.temporal.ChronoUnit;
+
 
 @Service
 @RequiredArgsConstructor
@@ -36,7 +38,9 @@ public class FlightService {
         return calculatedDate.atStartOfDay(ZoneOffset.UTC).toInstant();
     }
 
-    // --- 1. RICERCA VOLI (Search) ---
+
+    // ------------ GUEST --------------
+    // 1. Ricerca delle info sui voli
     public List<FlightMongo> searchFlights(String origin, String destination, String dateString) {
         // Parsing data: "2025-08-29" -> StartOfDay e EndOfDay in UTC
         LocalDate date = LocalDate.parse(dateString, DateTimeFormatter.ISO_LOCAL_DATE);
@@ -47,7 +51,21 @@ public class FlightService {
         return flightRepository.searchFlights(origin, destination, startOfDay, endOfDay);
     }
 
+    // 2. Visualizzare i voli in tempo reale
+    public List<FlightMongo> viewFlightsLive() {
+
+
+        Instant now = Instant.now();
+        Instant startWindow = now.minus(24, ChronoUnit.HOURS);
+        Instant endWindow = now.plus(12, ChronoUnit.HOURS);
+        // check dei voli live tra 24 ore prima e 12 ore dopo per essere sicuri in casi di ritardi / anticipi
+
+        return flightRepository.viewFlightsLive(startWindow, endWindow );
+    }
+
     // --- METODI STATISTICI ---
+
+    // Traffic Controller
 
     public List<AirlineStatDto> getAirlinesByAvgDelay(TimeInterval range) {
         return flightRepository.findAirlinesByAvgDelay(calculateMinDate(range));
