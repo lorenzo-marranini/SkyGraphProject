@@ -115,4 +115,17 @@ public class FlightMongo {
         @Field("air_time_minutes")
         private Integer airTimeMinutes;
     }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class FlightLog {
+
+        @Field("live_location")
+        private GeoLocation location;
+        private Integer altitude;
+        private Integer speed;
+        private Instant timestamp;
+        private Instant eta;
+    }
 }

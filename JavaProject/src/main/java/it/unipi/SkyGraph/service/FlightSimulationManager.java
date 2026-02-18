@@ -10,10 +10,12 @@ public class FlightSimulationManager implements CommandLineRunner {
 
     // Teniamo la coda come variabile di stato del servizio
     private final CsvFlightLoader loader;
-    private PriorityQueue<FlightLogDTO> flightQueue;
+    private final FlightSimulationService simulationService;
+    private PriorityQueue<FlightLogDTO> originalQueue;
 
-    public FlightSimulationManager(CsvFlightLoader loader) {
+    public FlightSimulationManager(CsvFlightLoader loader, FlightSimulationService simulationService) {
         this.loader = loader;
+        this.simulationService = simulationService;
     }
 
     @Override
@@ -24,18 +26,15 @@ public class FlightSimulationManager implements CommandLineRunner {
         // Se lo metti nella cartella root del progetto, basta il nome del file.
         String filePath = "logs.csv";
 
-        this.flightQueue = loader.loadFlightLogs(filePath);
+        this.originalQueue = loader.loadFlightLogs(filePath);
+        PriorityQueue<FlightLogDTO> simulationQueue = new PriorityQueue<>(originalQueue);
 
-        if (this.flightQueue != null && !this.flightQueue.isEmpty()) {
+        if (simulationQueue != null && !simulationQueue.isEmpty()) {
             System.out.println("Caricamento completato con successo. Pronti per avviare il timer della simulazione.");
-            // TODO: Qui chiameremo il metodo per far partire lo ScheduledExecutorService
+            simulationService.startSimulation(simulationQueue);
         } else {
             System.err.println("Attenzione: La coda è vuota. Controlla il percorso del file CSV.");
         }
     }
 
-    // Metodo getter opzionale se altri servizi avranno bisogno di leggere la coda
-    public PriorityQueue<FlightLogDTO> getFlightQueue() {
-        return flightQueue;
-    }
 }
