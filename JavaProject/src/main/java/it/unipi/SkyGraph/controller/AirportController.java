@@ -2,6 +2,7 @@ package it.unipi.SkyGraph.controller;
 
 import it.unipi.SkyGraph.dto.AirportDTO;
 import it.unipi.SkyGraph.dto.AirportRankingDTO;
+import it.unipi.SkyGraph.dto.QuickestPathDTO;
 import it.unipi.SkyGraph.dto.RouteStatsDTO;
 import it.unipi.SkyGraph.model.Airport;
 import it.unipi.SkyGraph.repository.AirportRepository;
@@ -69,5 +70,16 @@ public class AirportController {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.ok(path);
+    }
+    @PreAuthorize("hasAnyRole('AIRLINE_REPRESENTATIVE', 'ADMIN')")
+    @GetMapping("/quickest-path")
+    public ResponseEntity<QuickestPathDTO> getQuickestPath(
+            @RequestParam String origin,
+            @RequestParam String dest,
+            @RequestParam(defaultValue = "3") int maxHops) {
+
+        return airportRepository.findQuickestRoute(origin, dest, maxHops)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.noContent().build());
     }
 }

@@ -2,6 +2,7 @@ package it.unipi.SkyGraph.repository;
 
 import it.unipi.SkyGraph.dto.AirportDTO;
 import it.unipi.SkyGraph.dto.AirportRankingDTO;
+import it.unipi.SkyGraph.dto.QuickestPathDTO;
 import it.unipi.SkyGraph.dto.RouteStatsDTO;
 import it.unipi.SkyGraph.model.Airport;
 import org.springframework.data.neo4j.repository.Neo4jRepository;
@@ -85,4 +86,18 @@ public interface AirportRepository extends Neo4jRepository<Airport, String> {
             "RETURN airport.iata_code AS iataCode, airport.name AS name, score AS networkScore " +
             "ORDER BY score DESC LIMIT 30")
     List<AirportRankingDTO> findTopHubsByPageRank();
-}
+
+        // QUERY: Rotta più veloce (Weighted Shortest Path basato su mean_scheduled_time)
+    @Query("MATCH p = (start:Airport {iata_code: $origin})-[:ROUTE*1..6]->(end:Airport {iata_code: $dest}) " +
+            "WHERE length(p) <= $maxHops " +
+            "WITH p, reduce(weight = 0.0, r in relationships(p) | weight + r.mean_scheduled_time) AS totalTime " +
+            "ORDER BY totalTime ASC " +
+            "LIMIT 1 " +
+            "RETURN totalTime AS totalDuration, " +
+            "       [n in nodes(p) | {iataCode: n.iata_code, name: n.name}] AS path")
+        Optional<QuickestPathDTO> findQuickestRoute(
+                @Param("origin") String origin,
+                @Param("dest") String dest,
+                @Param("maxHops") int maxHops
+        );
+    }
