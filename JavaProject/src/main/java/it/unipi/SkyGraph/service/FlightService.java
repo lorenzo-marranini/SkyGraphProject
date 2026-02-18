@@ -18,8 +18,6 @@ import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.time.temporal.ChronoUnit;
-
 
 @Service
 @RequiredArgsConstructor
@@ -28,101 +26,104 @@ public class FlightService {
     private final FlightRepository flightRepository;
     private final MongoTemplate mongoTemplate;
 
-    private Instant calculateMinDate(TimeInterval range) {
-        LocalDate now = LocalDate.of(2026, 2, 25);
+    // Definiamo la data di riferimento "ADESSO" statica per la simulazione
+    private static final LocalDate SIMULATED_NOW = LocalDate.of(2026, 2, 25);
 
+    /**
+     * Calcola la data di inizio (minDate) basata sull'intervallo richiesto
+     * rispetto alla data simulata "SIMULATED_NOW".
+     */
+    private Instant calculateMinDate(TimeInterval range) {
         LocalDate calculatedDate;
         switch (range) {
-            case LAST_DAY: calculatedDate = now.minusDays(1); break;
-            case LAST_WEEK: calculatedDate = now.minusWeeks(1); break;
-            case LAST_MONTH: calculatedDate = now.minusMonths(1); break;
-            case LAST_YEAR: calculatedDate = now.minusYears(1); break;
-            default: calculatedDate = now.minusWeeks(1);
+            case LAST_DAY: calculatedDate = SIMULATED_NOW.minusDays(1); break;
+            case LAST_WEEK: calculatedDate = SIMULATED_NOW.minusWeeks(1); break;
+            case LAST_MONTH: calculatedDate = SIMULATED_NOW.minusMonths(1); break;
+            case LAST_YEAR: calculatedDate = SIMULATED_NOW.minusYears(1); break;
+            default: calculatedDate = SIMULATED_NOW.minusWeeks(1);
         }
-
-        // Converte in Instant (UTC) inizio giornata
         return calculatedDate.atStartOfDay(ZoneOffset.UTC).toInstant();
     }
 
-
-    // ------------ GUEST --------------
-    // 1. Ricerca delle info sui voli
-    public List<FlightMongo> searchFlights(String origin, String destination, String dateString) {
-        // Parsing data: "2025-08-29" -> StartOfDay e EndOfDay in UTC
-        LocalDate date = LocalDate.parse(dateString, DateTimeFormatter.ISO_LOCAL_DATE);
-
-        Instant startOfDay = date.atStartOfDay(ZoneOffset.UTC).toInstant();
-        Instant endOfDay = date.plusDays(1).atStartOfDay(ZoneOffset.UTC).toInstant();
-
-        return flightRepository.searchFlights(origin, destination, startOfDay, endOfDay);
+    /**
+     * Restituisce la fine della giornata "simulata" corrente (25 Feb 2026 23:59:59)
+     * Usato come limite superiore (maxDate) per le query.
+     */
+    private Instant getSimulatedNowInstant() {
+        // Prendiamo la fine della giornata corrente o l'inizio del giorno dopo
+        return SIMULATED_NOW.plusDays(1).atStartOfDay(ZoneOffset.UTC).toInstant();
     }
-
-//    // 2. Visualizzare i voli in tempo reale
-//    public List<FlightMongo> viewFlightsLive() {
-//
-//
-//        Instant now = Instant.now();
-//        Instant startWindow = now.minus(24, ChronoUnit.HOURS);
-//        Instant endWindow = now.plus(12, ChronoUnit.HOURS);
-//        // check dei voli live tra 24 ore prima e 12 ore dopo per essere sicuri in casi di ritardi / anticipi
-//
-//        return flightRepository.viewFlightsLive(startWindow, endWindow );
-//    }
 
     // --- METODI STATISTICI ---
 
-    // Traffic Controller
-
     public List<AirlineStatDto> getAirlinesByAvgDelay(TimeInterval range) {
-        return flightRepository.findAirlinesByAvgDelay(calculateMinDate(range));
+        return flightRepository.findAirlinesByAvgDelay(
+                calculateMinDate(range),
+                getSimulatedNowInstant()
+        );
     }
+
     public List<AirlineStatDto> getAirlinesByTotalFlights(TimeInterval range) {
-        return flightRepository.findAirlinesByTotalFlights(calculateMinDate(range));
+        return flightRepository.findAirlinesByTotalFlights(
+                calculateMinDate(range),
+                getSimulatedNowInstant()
+        );
     }
+
     public List<AirlineStatDto> getAirlinesByTotalDistance(TimeInterval range) {
-        return flightRepository.findAirlinesByTotalDistance(calculateMinDate(range));
+        return flightRepository.findAirlinesByTotalDistance(
+                calculateMinDate(range),
+                getSimulatedNowInstant()
+        );
     }
-//    public List<AirlineStatDto> getAirlinesByRouteDelay(String origin, String dest) {
-//        return flightRepository.findAirlinesByRouteDelay(origin, dest);
-//    }
-
+/*
     public List<AirlineStatDto> getAirlinesByDiverted(TimeInterval range) {
-        return flightRepository.findAirlinesByDiverted(calculateMinDate(range));
+        return flightRepository.findAirlinesByDiverted(
+                calculateMinDate(range),
+                getSimulatedNowInstant()
+        );
     }
-
+*/
     public List<AirlineStatDto> getAirlinesByAvgRouteDistance(TimeInterval range) {
-        return flightRepository.findAirlinesByAvgRouteDistance(calculateMinDate(range));
+        return flightRepository.findAirlinesByAvgRouteDistance(
+                calculateMinDate(range),
+                getSimulatedNowInstant()
+        );
     }
 
     public List<AirportStatDto> getAirportsByAvgDelay(TimeInterval range) {
-        return flightRepository.findAirportsByAvgDelay(calculateMinDate(range));
+        return flightRepository.findAirportsByAvgDelay(
+                calculateMinDate(range),
+                getSimulatedNowInstant()
+        );
     }
-
+/*
     public List<AirlineStatDto> getAirlinesByEfficiency(TimeInterval range) {
-        return flightRepository.findAirlinesByEfficiency(calculateMinDate(range));
+        return flightRepository.findAirlinesByEfficiency(
+                calculateMinDate(range),
+                getSimulatedNowInstant()
+        );
+    }
+*/
+    // --- ALTRI METODI (Guest / Updates) ---
+
+    public List<FlightMongo> searchFlights(String origin, String destination, String dateString) {
+        LocalDate date = LocalDate.parse(dateString, DateTimeFormatter.ISO_LOCAL_DATE);
+        Instant startOfDay = date.atStartOfDay(ZoneOffset.UTC).toInstant();
+        Instant endOfDay = date.plusDays(1).atStartOfDay(ZoneOffset.UTC).toInstant();
+        return flightRepository.searchFlights(origin, destination, startOfDay, endOfDay);
     }
 
     public void updateFlightLog(FlightLogDTO dto) {
-
-        Query query = new Query(
-                Criteria.where("flight_info.flight_key")
-                        .is(dto.getFlightKey())
-        );
-
+        Query query = new Query(Criteria.where("flight_info.flight_key").is(dto.getFlightKey()));
         FlightMongo.FlightLog log = new FlightMongo.FlightLog(
-                new FlightMongo.GeoLocation(
-                        "Point",
-                        List.of(dto.getLon(), dto.getLat())
-                ),
+                new FlightMongo.GeoLocation("Point", List.of(dto.getLon(), dto.getLat())),
                 dto.getAlt(),
                 dto.getGspeed(),
                 dto.getTimestamp(),
                 dto.getEta()
         );
-
-        Update update = new Update()
-                .set("flight_log", log);
-
+        Update update = new Update().set("flight_log", log);
         mongoTemplate.updateFirst(query, update, FlightMongo.class);
     }
 }

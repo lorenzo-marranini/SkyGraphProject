@@ -58,13 +58,13 @@ public class FlightController {
 //            @RequestParam String origin, @RequestParam String dest) {
 //        return ResponseEntity.ok(flightService.getAirlinesByRouteDelay(origin, dest));
 //    }
-
+    /*
     // 5. Deviazioni
     @GetMapping("/airlines/by-diverted")
     public ResponseEntity<?> getAirlinesByDiverted(@RequestParam(defaultValue = "LAST_WEEK") String range) {
         return handleAirlineRequest(range, flightService::getAirlinesByDiverted);
     }
-
+*/
     // 6. Mean Route Distance per Airline
     @GetMapping("/airlines/by-avg-route-distance")
     public ResponseEntity<?> getAirlinesByAvgRouteDistance(@RequestParam(defaultValue = "LAST_WEEK") String range) {
@@ -82,13 +82,13 @@ public class FlightController {
             return ResponseEntity.badRequest().body("Invalid time range");
         }
     }
-
+    /*
     // 8. Efficienza
     @GetMapping("/airlines/efficiency")
     public ResponseEntity<?> getAirlinesByEfficiency(@RequestParam(defaultValue = "LAST_WEEK") String range) {
         return handleAirlineRequest(range, flightService::getAirlinesByEfficiency);
     }
-
+*/
     private ResponseEntity<?> handleAirlineRequest(String range, java.util.function.Function<TimeInterval, List<AirlineStatDto>> serviceMethod) {
         try {
             TimeInterval interval = TimeInterval.valueOf(range.toUpperCase());

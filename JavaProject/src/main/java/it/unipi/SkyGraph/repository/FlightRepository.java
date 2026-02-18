@@ -1,10 +1,6 @@
 package it.unipi.SkyGraph.repository;
 
-import it.unipi.SkyGraph.dto.AirportDTO;
-import it.unipi.SkyGraph.dto.AirlineStatDto;
-import it.unipi.SkyGraph.dto.AirportStatDto;
-import it.unipi.SkyGraph.dto.DayStatsDto;
-import it.unipi.SkyGraph.dto.CityStatsDto;
+import it.unipi.SkyGraph.dto.*;
 import it.unipi.SkyGraph.model.FlightMongo;
 import org.springframework.data.mongodb.repository.Aggregation;
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -14,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.time.temporal.ChronoUnit;
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface FlightRepository extends MongoRepository<FlightMongo, String> {
@@ -256,7 +253,7 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String> {
                     "}" +
                     "} }"
     })
-    Optional<AirlineReportDto> generateAirlineReport(Instant start, Instant end, string AirlineName);
+    Optional<AirlineReportDto> generateAirlineReport(Instant start, Instant end, String AirlineName);
 
     // 7) Restituisce gli aeroporti ordinati per ritardo medio
     @Aggregation(pipeline = {
