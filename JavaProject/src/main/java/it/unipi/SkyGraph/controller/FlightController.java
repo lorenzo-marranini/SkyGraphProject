@@ -224,9 +224,9 @@ public class FlightController {
 
             return ResponseEntity.ok(result);
 
-    } catch (IllegalArgumentException e) {
-        return buildBadRequest(e.getMessage());
-    }
+        } catch (IllegalArgumentException e) {
+            return buildBadRequest(e.getMessage());
+        }
     }
 
 
