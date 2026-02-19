@@ -20,6 +20,7 @@ import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -57,30 +58,88 @@ public class FlightService {
         return SIMULATED_NOW.plusDays(1).atStartOfDay(ZoneOffset.UTC).toInstant();
     }
 
+    /**
+     * Transforms a FlightMongo Obj in a FlightDTO
+     */
+    private FlightDTO convertToDTO(FlightMongo flight) {
+
+        var coordinates = flight.getFlightLog().getLocation().getCoordinates();
+
+        return FlightDTO.builder()
+                .flightId(flight.getFlightInfo().getFlightKey())
+
+                .airline(FlightDTO.Airline.builder()
+                        .iata(flight.getFlightInfo().getAirline().getIata())
+                        .name(flight.getFlightInfo().getAirline().getName())
+                        .build())
+
+                .route(FlightDTO.Route.builder()
+                        .origin(FlightDTO.Airport.builder()
+                                .iata(flight.getRoute().getOrigin().getIata())
+                                .city(flight.getRoute().getOrigin().getCity())
+                                .build())
+                        .destination(FlightDTO.Airport.builder()
+                                .iata(flight.getRoute().getDestination().getIata())
+                                .city(flight.getRoute().getDestination().getCity())
+                                .build())
+                        .build())
+
+                .schedule(FlightDTO.Schedule.builder()
+                        .departureUtc(flight.getFlightInfo().getSchedule().getDepartureDatetime())
+                        .arrivalUtc(flight.getFlightInfo().getSchedule().getArrivalDatetime())
+                        .durationMinutes(flight.getFlightInfo().getSchedule().getDurationMinutes())
+                        .build())
+
+                .status(FlightDTO.Status.builder()
+                        .cancelled(flight.getStats().getIsCancelled() == 1)
+                        .diverted(flight.getStats().getIsDiverted() == 1)
+                        .delayMinutes(flight.getStats().getTotalDelayMinutes())
+                        .build())
+
+                .metrics(FlightDTO.Metrics.builder()
+                        .distanceKm(flight.getRoute().getDistanceKm())
+                        .speedKmh(flight.getFlightLog().getSpeed())
+                        .build())
+
+                .currentPosition(FlightDTO.Position.builder()
+                        .longitude(coordinates.get(0))
+                        .latitude(coordinates.get(1))
+                        .build())
+
+                .build();
+    }
+
     // ------------------ METODI --------------------------------
 
     // ------------------------ GUEST ------------------------
 
     // 1)
-    public List<FlightMongo> searchFlights(String origin, String destination, String dateString) {
+    public List<FlightDTO> searchFlights(String origin, String destination, String dateString) {
 
         LocalDate date = LocalDate.parse(dateString, DateTimeFormatter.ISO_LOCAL_DATE);
         Instant startOfDay = date.atStartOfDay(ZoneOffset.UTC).toInstant();
         Instant endOfDay = date.plusDays(1).atStartOfDay(ZoneOffset.UTC).toInstant();
 
-        return flightRepository.searchFlights(origin, destination, startOfDay, endOfDay);
+        List<FlightMongo> flights = flightRepository.searchFlights(origin, destination, startOfDay, endOfDay);
+
+        return flights.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
     }
 
     // 2)
-    public List<FlightMongo> viewFlightsLive() {
-
+    public List<FlightDTO> findLiveFlights() {
 
         Instant now = getSimulatedNowInstant();
         Instant startWindow = now.minus(24, ChronoUnit.HOURS);
         Instant endWindow = now.plus(12, ChronoUnit.HOURS);
         // check dei voli live tra 24 ore prima e 12 ore dopo per essere sicuri in casi di ritardi / anticipi
 
-        return flightRepository.searchFlightsLive(startWindow, endWindow );
+        List<FlightMongo> flights = flightRepository.searchFlightsLive(startWindow, endWindow);
+
+        return flights.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
     }
 
     //----------------------------------- TRAFFIC CONTROLLER -----------------------

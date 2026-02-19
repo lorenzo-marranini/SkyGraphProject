@@ -40,16 +40,16 @@ public class FlightSimulationService {
                     FlightLogDTO processed = queue.poll();
 
                     // update the mongo db
-                    flightMongoService.updateFlightLog(processed);
+                    // flightMongoService.updateFlightLog(processed);
 
                     nextFlight = queue.peek();
                 }
 
                 currentTimeStamp = currentTimeStamp.plus(10, ChronoUnit.MINUTES);
-                try { Thread.sleep(2000); } catch (InterruptedException e) { return; }
+                // try { Thread.sleep(2000); } catch (InterruptedException e) { return; }
             }
 
-            System.out.println("Ciclo terminato. La coda originale ha ancora " + originalQueue.size() + " elementi.");
+            System.out.println("Ciclo terminato.");
             try { Thread.sleep(2000); } catch (InterruptedException e) { return; }
             loop = false;
         }

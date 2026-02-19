@@ -3,9 +3,9 @@ package it.unipi.SkyGraph.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import it.unipi.SkyGraph.dto.AirlineStatDTO;
 import it.unipi.SkyGraph.dto.AirportStatDTO;
+import it.unipi.SkyGraph.dto.FlightDTO;
 import it.unipi.SkyGraph.dto.TripItineraryDTO;
 import it.unipi.SkyGraph.enums.TimeInterval;
-import it.unipi.SkyGraph.model.FlightMongo;
 import it.unipi.SkyGraph.service.FlightService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/stats")
+@RequestMapping("/api")
 @RequiredArgsConstructor
 public class FlightController {
 
@@ -22,13 +22,21 @@ public class FlightController {
 
     // --- 0. RICERCA VOLI ---
     @Operation(summary = "Search flights by origin IATA, destination IATA and date (YYYY-MM-DD)")
-    @GetMapping("/search")
-    public ResponseEntity<List<FlightMongo>> searchFlights(
+    @GetMapping("/flights/search")
+    public ResponseEntity<List<FlightDTO>> searchFlights(
             @RequestParam String origin,
             @RequestParam String destination,
             @RequestParam String date
     ) {
-        List<FlightMongo> flights = flightService.searchFlights(origin, destination, date);
+        List<FlightDTO> flights = flightService.searchFlights(origin, destination, date);
+        if (flights.isEmpty()) return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(flights);
+    }
+
+    @Operation(summary = "Search flights by origin IATA, destination IATA and date (YYYY-MM-DD)")
+    @GetMapping("/flights/live")
+    public ResponseEntity<List<FlightDTO>> liveFlights() {
+        List<FlightDTO> flights = flightService.findLiveFlights();
         if (flights.isEmpty()) return ResponseEntity.noContent().build();
         return ResponseEntity.ok(flights);
     }
@@ -36,19 +44,19 @@ public class FlightController {
     // --- AIRLINE REPRESENTATIVE ENDPOINTS ---
 
     // 1. Ritardo Medio
-    @GetMapping("/airlines/by-delay")
+    @GetMapping("/stats/airlines/by-delay")
     public ResponseEntity<?> getAirlinesByAvgDelay(@RequestParam(defaultValue = "LAST_WEEK") String range) {
         return handleAirlineRequest(range, flightService::getAirlinesByAvgDelay);
     }
 
     // 2. Voli Totali
-    @GetMapping("/airlines/by-flights")
+    @GetMapping("/stats/airlines/by-flights")
     public ResponseEntity<?> getAirlinesByTotalFlights(@RequestParam(defaultValue = "LAST_WEEK") String range) {
         return handleAirlineRequest(range, flightService::getAirlinesByTotalFlights);
     }
 
     // 3. Distanza Totale
-    @GetMapping("/airlines/by-distance")
+    @GetMapping("/stats/airlines/by-distance")
     public ResponseEntity<?> getAirlinesByTotalDistance(@RequestParam(defaultValue = "LAST_WEEK") String range) {
         return handleAirlineRequest(range, flightService::getAirlinesByTotalDistance);
     }
@@ -74,7 +82,7 @@ public class FlightController {
     }*/
 
     // 7. Top Aeroporti per ritardi
-    @GetMapping("/airports/by-delay")
+    @GetMapping("/stats/airports/by-delay")
     public ResponseEntity<?> getAirportsByAvgDelay(@RequestParam(defaultValue = "LAST_WEEK") String range) {
         try {
             TimeInterval interval = TimeInterval.valueOf(range.toUpperCase());
@@ -99,6 +107,7 @@ public class FlightController {
             return ResponseEntity.badRequest().body("Invalid time range. Allowed: LAST_DAY, LAST_WEEK, LAST_MONTH, LAST_YEAR");
         }
     }
+
     @Operation(summary = "Find the quickest actual route checking real flight schedules")
     @GetMapping("/routes/quickest-real")
     public ResponseEntity<List<TripItineraryDTO>> getQuickestRealRoute(

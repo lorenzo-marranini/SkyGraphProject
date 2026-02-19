@@ -26,6 +26,9 @@ public class FlightMongo {
 
     private Stats stats;
 
+    @Field("flight_log")
+    private FlightLog flightLog;
+
     @Data
     @NoArgsConstructor
     @AllArgsConstructor

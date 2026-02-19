@@ -69,3 +69,34 @@ db.flights.updateMany(
 )
 ```
 
+# update airports coordinates
+```javascript
+db.airports.bulkWrite([
+  {
+    updateOne: {
+      filter: { _id: 'ECP' },
+      update: { $set: { "location.coordinates": [-85.795602, 30.358241] } }
+    }
+  },
+  {
+    updateOne: {
+      filter: { _id: 'PBG' },
+      update: { $set: { "location.coordinates": [-73.468139, 44.650944] } }
+    }
+  },
+  {
+    updateOne: {
+      filter: { _id: 'UST' },
+      update: { $set: { "location.coordinates": [-81.339729, 29.959250] } }
+    }
+  }
+]);
+```
+
+# indici
+
+## airport
+
+```javascript
+db.airports.createIndex({ location: "2dsphere" });
+```

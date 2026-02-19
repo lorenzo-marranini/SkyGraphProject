@@ -23,7 +23,7 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String> {
     @Query("{ 'route.origin.iata': ?0, 'route.destination.iata': ?1, 'flight_info.schedule.departure_datetime': { $gte: ?2, $lt: ?3 } }")
     List<FlightMongo> searchFlights(String origin, String destination, Instant startOfDay, Instant endOfDay);
 
-    //2)  Cerca per range di data (start -> end) tutti i voli che hanno qualcosa dentro il campo flightlog
+    //2) Cerca per range di data (start -> end) tutti i voli che hanno qualcosa dentro il campo fligh_tlog
     @Query("{ 'flight_info.schedule.departure_datetime': { $gte: ?0, $lt: ?1 }, 'flight_log': { $ne: null } }")
     List<FlightMongo> searchFlightsLive(Instant start, Instant end);
 
