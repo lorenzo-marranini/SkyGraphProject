@@ -13,7 +13,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
@@ -21,6 +23,13 @@ import java.util.List;
 public class FlightController {
 
     private final FlightService flightService;
+
+    private ResponseEntity<Map<String, String>> buildBadRequest(String message) {
+        Map<String, String> errorResponse = new HashMap<>();
+        errorResponse.put("error", "Invalid request");
+        errorResponse.put("message", message);
+        return ResponseEntity.badRequest().body(errorResponse);
+    }
 
     // --- 0. RICERCA VOLI ---
     @Operation(summary = "Search flights by origin IATA, destination IATA and date (YYYY-MM-DD)")
@@ -43,31 +52,65 @@ public class FlightController {
         return ResponseEntity.ok(flights);
     }
 
-    // --- AIRLINE REPRESENTATIVE ENDPOINTS ---
+    // --- TRAFFIC CONTROLLER ENDPOINTS ---
 
-    // 1, 2, 3
+    // 1, 2, 3, 7
     @Operation(summary = "Get airlines ranked by a given metric and time range")
     @GetMapping("/stats/airlines")
-    public ResponseEntity<List<AirlineStatDTO>> getAirlineStats(
-            @RequestParam AirlineSort sort,
-            @RequestParam(defaultValue = "LAST_WEEK") TimeInterval range
+    public ResponseEntity<?> getAirlineStats(
+            @RequestParam String sort,
+            @RequestParam(defaultValue = "LAST_WEEK") String range
     ) {
-        List<AirlineStatDTO> result = switch (sort) {
-            case DELAY    -> flightService.getAirlinesByAvgDelay(range);
-            case FLIGHTS  -> flightService.getAirlinesByTotalFlights(range);
-            case TOT_DISTANCE -> flightService.getAirlinesByTotalDistance(range);
-            case AVG_DISTANCE -> flightService.getAirlinesByAvgRouteDistance(range);
-        };
+        // Normalizziamo l'input (opzionale, ma consigliato per essere case-insensitive)
+        String sortUpper = sort.toUpperCase();
 
-        return ResponseEntity.ok(result);
+        try {
+            List<AirlineStatDTO> result = switch (sortUpper) {
+                case "DELAY"        -> flightService.getAirlinesByAvgDelay(range);
+                case "FLIGHTS"      -> flightService.getAirlinesByTotalFlights(range);
+                case "TOT_DISTANCE" -> flightService.getAirlinesByTotalDistance(range);
+                case "AVG_DISTANCE" -> flightService.getAirlinesByAvgRouteDistance(range);
+                default -> throw new IllegalArgumentException("Invalid sort parameter. Value '" + sort + "' is not supported. Use: DELAY, FLIGHTS, TOT_DISTANCE, AVG_DISTANCE.");
+            };
+
+            return ResponseEntity.ok(result);
+
+        } catch (IllegalArgumentException e) {
+            return buildBadRequest(e.getMessage());
+        }
     }
 
-    // 4. Ritardo medio su rotta
-//    @GetMapping("/routes/by-delay")
-//    public ResponseEntity<List<AirlineStatDto>> getAirlinesByRouteDelay(
-//            @RequestParam String origin, @RequestParam String dest) {
-//        return ResponseEntity.ok(flightService.getAirlinesByRouteDelay(origin, dest));
-//    }
+    // 4 da fare su Neo4j
+
+    // 5, 6
+    @Operation(summary = "Get airlines ranked by a given metric and time range on a specific route")
+    @GetMapping("/stats/airlines/route")
+    public ResponseEntity<?> getAirlineStatsByRoute(
+            @RequestParam String origin_iata,
+            @RequestParam String dest_iata,
+            @RequestParam String sort, // Riceviamo una String generica
+            @RequestParam(defaultValue = "LAST_WEEK") String range
+    ) {
+        String sortUpper = sort.toUpperCase();
+
+        try {
+            List<AirlineStatDTO> result = switch (sortUpper) {
+                case "DELAY"        -> flightService.getAirlinesByRouteDelay(origin_iata, dest_iata, range);
+                case "FLIGHTS"      -> flightService.getAirlinesByRoute(origin_iata, dest_iata, range);
+                // La sintassi corretta per il default nello switch expression
+                default -> throw new IllegalArgumentException("Invalid sort parameter. Value '" + sort + "' is not supported. Use: DELAY, FLIGHTS.");
+            };
+
+            return ResponseEntity.ok(result);
+
+        } catch (IllegalArgumentException e) {
+            return buildBadRequest(e.getMessage());
+        }
+    }
+
+
+    // -- AIRLINE REPRESENTATIVE
+
     /*
     // 5. Deviazioni
     @GetMapping("/airlines/by-diverted")
@@ -88,7 +131,7 @@ public class FlightController {
     @GetMapping("/stats/airports")
     public ResponseEntity<List<AirportStatDTO>> getAirportStats(
             @RequestParam AirportSort sort,
-            @RequestParam(defaultValue = "LAST_WEEK") TimeInterval range
+            @RequestParam(defaultValue = "LAST_WEEK") String range
     ) {
         List<AirportStatDTO> result = switch (sort) {
             case DELAY -> flightService.getAirportsByAvgDelay(range);

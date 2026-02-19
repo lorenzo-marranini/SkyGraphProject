@@ -1,40 +1,32 @@
 //package it.unipi.SkyGraph.exception;
 //
-//import org.springframework.core.annotation.Order;
 //import org.springframework.http.HttpStatus;
 //import org.springframework.http.ResponseEntity;
-//import org.springframework.security.access.AccessDeniedException;
-//import org.springframework.security.core.AuthenticationException;
+//import org.springframework.web.bind.annotation.ControllerAdvice;
 //import org.springframework.web.bind.annotation.ExceptionHandler;
-//import org.springframework.web.bind.annotation.RestControllerAdvice;
 //import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+//import io.swagger.v3.oas.annotations.Hidden;
 //
-//@RestControllerAdvice
-//@Order(org.springframework.core.Ordered.LOWEST_PRECEDENCE)
+//import java.util.HashMap;
+//import java.util.Map;
+//
+//@ControllerAdvice
+//@Hidden
 //public class GlobalExceptionHandler {
 //
 //    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-//    public ResponseEntity<String> handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
-//        return ResponseEntity.badRequest().body(ex.getCause().getMessage());
-//    }
+//    public ResponseEntity<Object> handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
+//        Map<String, Object> body = new HashMap<>();
 //
-//    @ExceptionHandler(IllegalArgumentException.class)
-//    public ResponseEntity<String> handleIllegalArgument(IllegalArgumentException ex) {
-//        return ResponseEntity.badRequest().body(ex.getMessage());
-//    }
+//        // Se l'errore viene dal tuo Converter, prendiamo il messaggio personalizzato
+//        String message = (ex.getCause() != null && ex.getCause().getCause() != null)
+//                ? ex.getCause().getCause().getMessage()
+//                : ex.getMessage();
 //
-//    @ExceptionHandler(AccessDeniedException.class)
-//    public void handleAccessDenied(AccessDeniedException ex) throws AccessDeniedException {
-//        throw ex;
-//    }
+//        body.put("error", "Bad Request");
+//        body.put("message", message);
+//        body.put("parameter", ex.getName());
 //
-//    @ExceptionHandler(AuthenticationException.class)
-//    public void handleAuthentication(AuthenticationException ex) throws AuthenticationException {
-//        throw ex;
-//    }
-//
-//    @ExceptionHandler(RuntimeException.class)
-//    public ResponseEntity<String> handleRuntimeException(RuntimeException ex) {
-//        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
+//        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
 //    }
 //}

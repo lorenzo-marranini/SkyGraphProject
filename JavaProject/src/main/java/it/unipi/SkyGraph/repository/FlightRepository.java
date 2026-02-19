@@ -57,6 +57,15 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String> {
     List<AirlineStatDTO> findAirlinesByTotalDistance(Instant start, Instant end);
 
 
+    // 7)  Restituisce le airlines ordiante per AVG KM percorsi in volo
+    @Aggregation(pipeline = {
+            "{ '$match': { 'flight_info.schedule.departure_datetime': { '$gte': ?0, '$lte': ?1 } } }",
+            "{ '$group': { '_id': '$flight_info.airline.name', 'score': { '$avg': '$route.distance_km' } } }",
+            "{ '$sort': { 'score': -1 } }",
+            "{ '$project': { '_id': 0, 'airlineName': '$_id', 'score': 1 } }"
+    })
+    List<AirlineStatDTO> findAirlinesByAvgRouteDistance(Instant start, Instant end);
+
     // 4) Restituisce gli aeroporti ordinati per numero di aeroporti raggiunti (connessioni) in uscita dall'aeroporto
     // Su Neo4j in AirportRepository
 
@@ -78,22 +87,11 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String> {
     })
     List<AirlineStatDTO> findAirlinesByRouteDelay(String originIata, String destIata, Instant start, Instant end);
 
-    // 7)  Restituisce le airlines ordiante per AVG KM percorsi in volo
-    @Aggregation(pipeline = {
-            "{ '$match': { 'flight_info.schedule.departure_datetime': { '$gte': ?0, '$lte': ?1 } } }",
-            "{ '$group': { '_id': '$flight_info.airline.name', 'score': { '$avg': '$route.distance_km' } } }",
-            "{ '$sort': { 'score': -1 } }",
-            "{ '$project': { '_id': 0, 'airlineName': '$_id', 'score': 1 } }"
-    })
-    List<AirlineStatDTO> findAirlinesByAvgRouteDistance(Instant start, Instant end);
-
-
     // 8) Restituisce dato un flight_key in volo adesso, gli aeroporti ordinati per distanza dalla posizione attuale - Emergency landing
     // TO DO: Query
 
     // 9) Dato un aeroporto chiuso, trovare un altro aeroporto che abbia il piu alto rapporto tra connessioni in comune fratto distanza
     // Fatta su Neo4j  TO DO:
-
 
     //------------------------AIRLINE REPRESENTATIVE-----------------------------
 
