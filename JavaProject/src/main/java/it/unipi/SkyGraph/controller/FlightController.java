@@ -1,10 +1,7 @@
 package it.unipi.SkyGraph.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
-import it.unipi.SkyGraph.dto.AirlineStatDTO;
-import it.unipi.SkyGraph.dto.AirportStatDTO;
-import it.unipi.SkyGraph.dto.FlightDTO;
-import it.unipi.SkyGraph.dto.TripItineraryDTO;
+import it.unipi.SkyGraph.dto.*;
 import it.unipi.SkyGraph.enums.AirlineSort;
 import it.unipi.SkyGraph.enums.AirportSort;
 import it.unipi.SkyGraph.enums.TimeInterval;
@@ -82,7 +79,7 @@ public class FlightController {
 
     // 4 da fare su Neo4j
 
-    // 5, 6
+    // 6, 7
     @Operation(summary = "Get airlines ranked by a given metric and time range on a specific route")
     @GetMapping("/stats/airlines/route")
     public ResponseEntity<?> getAirlineStatsByRoute(
@@ -111,13 +108,94 @@ public class FlightController {
 
     // -- AIRLINE REPRESENTATIVE
 
-    /*
-    // 5. Deviazioni
-    @GetMapping("/airlines/by-diverted")
-    public ResponseEntity<?> getAirlinesByDiverted(@RequestParam(defaultValue = "LAST_WEEK") String range) {
-        return handleAirlineRequest(range, flightService::getAirlinesByDiverted);
+    @Operation(summary = "Get the most frequent routes in a given time range")
+    @GetMapping("/stats/routes/frequent")
+    public ResponseEntity<?> getFrequentRoutes(
+            @RequestParam(defaultValue = "LAST_WEEK") String range
+    ) {
+        try {
+            List<RouteStatsDTO> result = flightService.getRoutesByFlightCount(range);
+            return ResponseEntity.ok(result);
+        } catch (IllegalArgumentException e) {
+            return buildBadRequest(e.getMessage());
+        }
     }
-*/
+
+    @Operation(summary = "Get the routes with the most cancelled flights in a given time range")
+    @GetMapping("/stats/routes/cancelled")
+    public ResponseEntity<?> getCancelledRoutes(
+            @RequestParam(defaultValue = "LAST_WEEK") String range
+    ) {
+        try {
+            List<RouteStatsDTO> result = flightService.getRoutesByCancelledCount(range);
+            return ResponseEntity.ok(result);
+        } catch (IllegalArgumentException e) {
+            return buildBadRequest(e.getMessage());
+        }
+    }
+
+    @Operation(summary = "Get the routes with the most diverted flights in a given time range")
+    @GetMapping("/stats/routes/diverted")
+    public ResponseEntity<?> getDivertedRoutes(
+            @RequestParam(defaultValue = "LAST_WEEK") String range
+    ) {
+        try {
+            List<RouteStatsDTO> result = flightService.getRoutesByDivertedCount(range);
+            return ResponseEntity.ok(result);
+        } catch (IllegalArgumentException e) {
+            return buildBadRequest(e.getMessage());
+        }
+    }
+    //3
+    @Operation(summary = "Get total flights, departures, and arrivals for a city in a given time range")
+    @GetMapping("/stats/cities/{city}")
+    public ResponseEntity<?> getCityStats(
+            @PathVariable String city,
+            @RequestParam(defaultValue = "LAST_WEEK") String range
+    ) {
+        try {
+            CityStatsDTO stats = flightService.getCityHybridStats(city, range);
+            return ResponseEntity.ok(stats);
+        } catch (IllegalArgumentException e) {
+            return buildBadRequest(e.getMessage());
+        }
+    }
+
+
+    @Operation(summary = "Get average delay by day of the week in a given time range")
+    @GetMapping("/stats/days/delay")
+    public ResponseEntity<?> getDelayByDayOfWeek(
+            @RequestParam(defaultValue = "LAST_WEEK") String range
+    ) {
+        try {
+            List<DayStatsDTO> result = flightService.getDaysByAvgDelay(range);
+            if (result.isEmpty()) return ResponseEntity.noContent().build();
+            return ResponseEntity.ok(result);
+        } catch (IllegalArgumentException e) {
+            return buildBadRequest(e.getMessage());
+        }
+    }
+
+    //6.
+    @Operation(summary = "Get a comprehensive report for a specific airline in a given time range")
+    @GetMapping("/stats/airlines/report")
+    public ResponseEntity<?> getAirlineReport(
+            @RequestParam String airlineName,
+            @RequestParam(defaultValue = "LAST_WEEK") String range
+    ) {
+        try {
+            // Richiama il metodo che hai già preparato nel Service
+            List<AirlineReportDTO> report = flightService.getAirlineReport(range, airlineName);
+
+            if (report.isEmpty()) {
+                return ResponseEntity.noContent().build();
+            }
+            return ResponseEntity.ok(report);
+
+        } catch (IllegalArgumentException e) {
+            return buildBadRequest(e.getMessage());
+        }
+    }
     /*
     // 6. Mean Route Distance per Airline
     @GetMapping("/airlines/by-avg-route-distance")

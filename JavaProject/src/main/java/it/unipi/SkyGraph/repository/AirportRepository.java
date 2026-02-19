@@ -11,15 +11,23 @@ import java.util.Optional;
 
 public interface AirportRepository extends Neo4jRepository<Airport, String> {
 
-    // Ricerca base per IATA
-    Optional<Airport> findByIataCode(String iataCode);
 
+    //CRUD flights
+    @Query("MATCH (a:Airport {iata_code: $originIata}), (b:Airport {iata_code: $destIata}) " +
+            "MERGE (a)-[r:ROUTE]->(b) " +
+            "ON CREATE SET r.num_voli = 1, r.mean_scheduled_time = toFloat($duration) " +
+            "ON MATCH SET r.mean_scheduled_time = ((r.mean_scheduled_time * r.num_voli) + toFloat($duration)) / (r.num_voli + 1), " +
+            "             r.num_voli = r.num_voli + 1")
+    void upsertRouteRelationship(@Param("originIata") String originIata,
+                                 @Param("destIata") String destIata,
+                                 @Param("duration") double duration);
     // --------------------------- GUEST-------------------------
+    Optional<Airport> findByIataCode(String iataCode);
 
 
     // ------------------------------- TRAFFIC CONTROLLER ------------------------
 
-    // 4) Aeroporti ordinati per numero di rotte
+    // 5) Aeroporti ordinati per numero di rotte
 
     @Query("MATCH (a:Airport)-[r:ROUTE]->() " +
             "RETURN a.iata_code AS iataCode, a.name AS name, count(r) AS score " +
@@ -28,14 +36,25 @@ public interface AirportRepository extends Neo4jRepository<Airport, String> {
     List<AirportRankingDTO> findAirportsConnections();
 
     // 9) Dato un aeroporto chiuso, trovare un altro aeroporto che abbia il piu alto rapporto tra connessioni in comune fratto distanza
-    // TO DO: Qeery in Neo4j
-
+    @Query("MATCH (closed:Airport {iata_code: $closedIata})-[:ROUTE]->(dest:Airport) " +
+            "MATCH (alt:Airport)-[:ROUTE]->(dest) " +
+            "WHERE alt.iata_code <> $closedIata " +
+            "WITH closed, alt, count(DISTINCT dest) AS sharedConnections " +
+            // Calcola la distanza geospaziale tra i due aeroporti (convertita in km)
+            "WITH alt, sharedConnections, " +
+            "     point.distance( " +
+            "       point({latitude: closed.latitude, longitude: closed.longitude}), " +
+            "       point({latitude: alt.latitude, longitude: alt.longitude}) " +
+            "     ) / 1000.0 AS distKm " +
+            "WHERE distKm > 0 " +
+            // Calcola il rapporto e mappa i campi all'interfaccia AirportRankingDTO
+            "RETURN alt.iata_code AS iataCode, alt.name AS name, (sharedConnections / distKm) AS score " +
+            "ORDER BY score DESC " +
+            "LIMIT 5")
+    List<AirportRankingDTO> findBestAlternativeAirports(@Param("closedIata") String closedIata);
 
     // ----------------------- AIRLINE REPRESENTATIVE ------------------------------------
 
-
-    // 1) Given origin* destination* stops*(scali) and date* (default=today), find the possible flights with less time flown.
-    // parte in neo4j TO DO
 
     // QUERY: Rotta più veloce (Weighted Shortest Path basato su mean_scheduled_time)
     @Query("MATCH p = (start:Airport {iata_code: $origin})-[:ROUTE*1..3]->(end:Airport {iata_code: $dest}) " +
@@ -69,11 +88,10 @@ public interface AirportRepository extends Neo4jRepository<Airport, String> {
             "ORDER BY score DESC LIMIT 30")
     List<AirportRankingDTO> findTopHubsByPageRank();
 
-
+    //Parte neo4j della query sul quickest path
     @Query("MATCH p = (start:Airport {iata_code: $origin})-[:ROUTE*1..4]->(end:Airport {iata_code: $dest}) " +
             "WHERE length(p) <= $maxHops " +
             "WITH [n in nodes(p) | n.iata_code] AS codes " +
-            // Questa funzione 'reduce' unisce la lista in una stringa separata da virgole
             "RETURN reduce(s = head(codes), x in tail(codes) | s + ',' + x) " +
             "LIMIT 10")
     List<String> findCandidatePaths(@Param("origin") String origin,

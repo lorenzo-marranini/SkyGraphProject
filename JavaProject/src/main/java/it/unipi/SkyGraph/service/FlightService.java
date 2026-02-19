@@ -4,6 +4,7 @@ import it.unipi.SkyGraph.dto.*;
 import it.unipi.SkyGraph.enums.TimeInterval;
 import it.unipi.SkyGraph.model.FlightMongo;
 import it.unipi.SkyGraph.repository.AirportRepository;
+import it.unipi.SkyGraph.repository.CityRepository;
 import it.unipi.SkyGraph.repository.FlightRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -28,6 +29,7 @@ public class FlightService {
 
     private final FlightRepository flightRepository;
     private final AirportRepository airportRepository;
+    private final CityRepository cityRepository;
     private final MongoTemplate mongoTemplate;
 
     // Definiamo la data di riferimento "ADESSO" statica per la simulazione
@@ -225,80 +227,6 @@ public class FlightService {
 
 //--------------------------- AIRLINE REPRESENTATIVE -------------------------------
 
-    // 1) TO DO
-
-    // 2) TO DO
-
-    // 3) TO DO
-
-    // 4)
-    public List<RouteStatsDTO> getRoutesByFlightCount(String range) {
-        return flightRepository.findRoutesByFlightCount(
-                calculateMinDate(range),
-                getSimulatedNowInstant()
-        );
-    }
-
-    // 4.1)
-    public List<RouteStatsDTO> getRoutesByCancelledCount(String range) {
-        return flightRepository.findRoutesByCancelledCount(
-                calculateMinDate(range),
-                getSimulatedNowInstant()
-        );
-    }
-
-    // 4.2)
-    public List<RouteStatsDTO> getRoutesByDivertedCount(String range) {
-        return flightRepository.findRoutesByDivertedCount(
-                calculateMinDate(range),
-                getSimulatedNowInstant()
-        );
-    }
-
-    // 5)
-    public List<DayStatsDTO> getDaysByAvgDelay(String range) {
-        return flightRepository.findDaysByAvgDelay(
-                calculateMinDate(range),
-                getSimulatedNowInstant()
-        );
-    }
-
-    // 6)
-    public List<AirlineReportDTO> getAirlineReport(String range, String AirlineName) {
-        return flightRepository.generateAirlineReport(
-                calculateMinDate(range),
-                getSimulatedNowInstant(),
-                AirlineName
-        );
-    }
-
-    // 7)
-    public List<AirportStatDTO> getAirportsByAvgDelay(String range) {
-        List<AirportStatDTO> result =  flightRepository.findAirportsByAvgDelay(
-                calculateMinDate(range),
-                getSimulatedNowInstant()
-        );
-
-        result.forEach(dto  -> dto.setScoreType("AVG_DELAY_MIN"));
-        return result;
-    }
-
-
-    // --- ALTRI METODI (Updates) ---
-
-    public void updateFlightLog(FlightLogDTO dto) {
-        Query query = new Query(Criteria.where("flight_info.flight_key").is(dto.getFlightKey()));
-        FlightMongo.FlightLog log = new FlightMongo.FlightLog(
-                new FlightMongo.GeoLocation("Point", List.of(dto.getLon(), dto.getLat())),
-                dto.getAlt(),
-                dto.getGspeed(),
-                dto.getTimestamp(),
-                dto.getEta()
-        );
-        Update update = new Update().set("flight_log", log);
-        mongoTemplate.updateFirst(query, update, FlightMongo.class);
-    }
-
 
     public List<TripItineraryDTO> findQuickestRealRoute(String origin, String dest, String dateString, int maxHops) {
 
@@ -326,7 +254,6 @@ public class FlightService {
             Instant currentClock = tripStartTime;
             boolean validPath = true;
 
-            // ... DA QUI IN POI IL CODICE È IDENTICO A PRIMA ...
             for (int i = 0; i < path.size() - 1; i++) {
                 String legOrigin = path.get(i);
                 String legDest = path.get(i+1);
@@ -367,4 +294,106 @@ public class FlightService {
         Collections.sort(validItineraries);
         return validItineraries;
     }
+
+    public CityStatsDTO getCityHybridStats(String cityName, String range) {
+        Instant start = calculateMinDate(range);
+        Instant end = getSimulatedNowInstant();
+
+        // Step 1: Neo4j (Trova codici IATA e Nazione)
+        List<String> iataCodes = cityRepository.findIataCodesByCity(cityName);
+        String country = cityRepository.findCountryByCity(cityName);
+
+        if (iataCodes == null || iataCodes.isEmpty()) {
+            // Città non trovata o senza aeroporti
+            return new CityStatsDTO(cityName, country != null ? country : "Unknown", 0L, 0L, 0L, 0);
+        }
+
+        // Step 2: Mongo (Conta i voli)
+        long departures = flightRepository.countDeparturesByAirports(iataCodes, start, end);
+        long arrivals = flightRepository.countArrivalsByAirports(iataCodes, start, end);
+        long totalFlights = departures + arrivals;
+
+        // Step 3: Assembla il DTO aggiornato
+        return new CityStatsDTO(
+                cityName,
+                country,
+                departures,
+                arrivals,
+                totalFlights,
+                iataCodes.size()
+        );
+    }
+
+    // 4)
+    public List<RouteStatsDTO> getRoutesByFlightCount(String range) {
+        return flightRepository.findRoutesByFlightCount(
+                calculateMinDate(range),
+                getSimulatedNowInstant()
+        );
+    }
+
+    // 4.1)
+    public List<RouteStatsDTO> getRoutesByCancelledCount(String range) {
+        return flightRepository.findRoutesByCancelledCount(
+                calculateMinDate(range),
+                getSimulatedNowInstant()
+        );
+    }
+
+    // 4.2)
+    public List<RouteStatsDTO> getRoutesByDivertedCount(String range) {
+        return flightRepository.findRoutesByDivertedCount(
+                calculateMinDate(range),
+                getSimulatedNowInstant()
+        );
+    }
+
+    // 5)
+    public List<DayStatsDTO> getDaysByAvgDelay(String range) {
+        return flightRepository.findDaysByAvgDelay(
+                calculateMinDate(range),
+                getSimulatedNowInstant()
+        );
+    }
+
+
+
+
+
+    // 6)
+    public List<AirlineReportDTO> getAirlineReport(String range, String AirlineName) {
+        return flightRepository.generateAirlineReport(
+                calculateMinDate(range),
+                getSimulatedNowInstant(),
+                AirlineName
+        );
+    }
+
+    // 7)
+    public List<AirportStatDTO> getAirportsByAvgDelay(String range) {
+        List<AirportStatDTO> result =  flightRepository.findAirportsByAvgDelay(
+                calculateMinDate(range),
+                getSimulatedNowInstant()
+        );
+
+        result.forEach(dto  -> dto.setScoreType("AVG_DELAY_MIN"));
+        return result;
+    }
+
+
+    // --- ALTRI METODI (Updates) ---
+
+    public void updateFlightLog(FlightLogDTO dto) {
+        Query query = new Query(Criteria.where("flight_info.flight_key").is(dto.getFlightKey()));
+        FlightMongo.FlightLog log = new FlightMongo.FlightLog(
+                new FlightMongo.GeoLocation("Point", List.of(dto.getLon(), dto.getLat())),
+                dto.getAlt(),
+                dto.getGspeed(),
+                dto.getTimestamp(),
+                dto.getEta()
+        );
+        Update update = new Update().set("flight_log", log);
+        mongoTemplate.updateFirst(query, update, FlightMongo.class);
+    }
+
 }

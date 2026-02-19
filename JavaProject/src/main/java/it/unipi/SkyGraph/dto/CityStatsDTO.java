@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 public class CityStatsDTO {
     private String CityName;
     private String Country;
-    private Long TotalFlights;   // Somma dei voli di tutti gli aeroporti della città
-    private Integer AirportCount; // Quanti aeroporti ci sono in quella città
+    private Long TotalDepartures; // Aggiunto per soddisfare il requisito #3
+    private Long TotalArrivals;   // Aggiunto per soddisfare il requisito #3
+    private Long TotalFlights;
+    private Integer AirportCount;
 }

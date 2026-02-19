@@ -7,6 +7,7 @@ import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.neo4j.repository.query.Query;
 import org.springframework.data.repository.query.Param;
 import java.util.List;
+import java.util.Optional;
 
 public interface CityRepository extends Neo4jRepository<City, String> {
 
@@ -18,9 +19,17 @@ public interface CityRepository extends Neo4jRepository<City, String> {
             "LIMIT 20")
     List<CityStatsDTO> findMostTraffickedCities();
 
-    // 2. Cerca tutti gli aeroporti di una specifica città
-    @Query("MATCH (c:City {name: $cityName})<-[:LOCATED_IN]-(a:Airport) " +
-            "RETURN a.iata_code AS iataCode, a.name AS name, a.latitude AS latitude, a.longitude AS longitude")
-    List<AirportDTO> findAirportsInCity(@Param("cityName") String cityName);
+    Optional<City> findByNameIgnoreCase(String name);
 
+
+    @Query("MATCH (c:City)<-[:LOCATED_IN]-(a:Airport) " +
+            "WHERE toLower(c.name) = toLower($cityName) " +
+            "RETURN a.iata_code")
+    List<String> findIataCodesByCity(@Param("cityName") String cityName);
+
+    // 4. Trova la nazione di una città (Case Insensitive)
+    @Query("MATCH (c:City) " +
+            "WHERE toLower(c.name) = toLower($cityName) " +
+            "RETURN c.country LIMIT 1")
+    String findCountryByCity(@Param("cityName") String cityName);
 }
