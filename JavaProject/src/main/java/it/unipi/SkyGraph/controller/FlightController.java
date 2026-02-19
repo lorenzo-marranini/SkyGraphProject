@@ -5,6 +5,8 @@ import it.unipi.SkyGraph.dto.AirlineStatDTO;
 import it.unipi.SkyGraph.dto.AirportStatDTO;
 import it.unipi.SkyGraph.dto.FlightDTO;
 import it.unipi.SkyGraph.dto.TripItineraryDTO;
+import it.unipi.SkyGraph.enums.AirlineSort;
+import it.unipi.SkyGraph.enums.AirportSort;
 import it.unipi.SkyGraph.enums.TimeInterval;
 import it.unipi.SkyGraph.service.FlightService;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +24,7 @@ public class FlightController {
 
     // --- 0. RICERCA VOLI ---
     @Operation(summary = "Search flights by origin IATA, destination IATA and date (YYYY-MM-DD)")
-    @GetMapping("/flights/search")
+    @GetMapping("/flights")
     public ResponseEntity<List<FlightDTO>> searchFlights(
             @RequestParam String origin,
             @RequestParam String destination,
@@ -33,7 +35,7 @@ public class FlightController {
         return ResponseEntity.ok(flights);
     }
 
-    @Operation(summary = "Search flights by origin IATA, destination IATA and date (YYYY-MM-DD)")
+    @Operation(summary = "Get live flights")
     @GetMapping("/flights/live")
     public ResponseEntity<List<FlightDTO>> liveFlights() {
         List<FlightDTO> flights = flightService.findLiveFlights();
@@ -43,22 +45,21 @@ public class FlightController {
 
     // --- AIRLINE REPRESENTATIVE ENDPOINTS ---
 
-    // 1. Ritardo Medio
-    @GetMapping("/stats/airlines/by-delay")
-    public ResponseEntity<?> getAirlinesByAvgDelay(@RequestParam(defaultValue = "LAST_WEEK") String range) {
-        return handleAirlineRequest(range, flightService::getAirlinesByAvgDelay);
-    }
+    // 1, 2, 3
+    @Operation(summary = "Get airlines ranked by a given metric and time range")
+    @GetMapping("/stats/airlines")
+    public ResponseEntity<List<AirlineStatDTO>> getAirlineStats(
+            @RequestParam AirlineSort sort,
+            @RequestParam(defaultValue = "LAST_WEEK") TimeInterval range
+    ) {
+        List<AirlineStatDTO> result = switch (sort) {
+            case DELAY    -> flightService.getAirlinesByAvgDelay(range);
+            case FLIGHTS  -> flightService.getAirlinesByTotalFlights(range);
+            case TOT_DISTANCE -> flightService.getAirlinesByTotalDistance(range);
+            case AVG_DISTANCE -> flightService.getAirlinesByAvgRouteDistance(range);
+        };
 
-    // 2. Voli Totali
-    @GetMapping("/stats/airlines/by-flights")
-    public ResponseEntity<?> getAirlinesByTotalFlights(@RequestParam(defaultValue = "LAST_WEEK") String range) {
-        return handleAirlineRequest(range, flightService::getAirlinesByTotalFlights);
-    }
-
-    // 3. Distanza Totale
-    @GetMapping("/stats/airlines/by-distance")
-    public ResponseEntity<?> getAirlinesByTotalDistance(@RequestParam(defaultValue = "LAST_WEEK") String range) {
-        return handleAirlineRequest(range, flightService::getAirlinesByTotalDistance);
+        return ResponseEntity.ok(result);
     }
 
     // 4. Ritardo medio su rotta
@@ -82,15 +83,17 @@ public class FlightController {
     }*/
 
     // 7. Top Aeroporti per ritardi
-    @GetMapping("/stats/airports/by-delay")
-    public ResponseEntity<?> getAirportsByAvgDelay(@RequestParam(defaultValue = "LAST_WEEK") String range) {
-        try {
-            TimeInterval interval = TimeInterval.valueOf(range.toUpperCase());
-            List<AirportStatDTO> stats = flightService.getAirportsByAvgDelay(interval);
-            return ResponseEntity.ok(stats);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body("Invalid time range");
-        }
+    // --- AIRPORT STATS ---
+    @Operation(summary = "Get airports ranked by a given metric and time range")
+    @GetMapping("/stats/airports")
+    public ResponseEntity<List<AirportStatDTO>> getAirportStats(
+            @RequestParam AirportSort sort,
+            @RequestParam(defaultValue = "LAST_WEEK") TimeInterval range
+    ) {
+        List<AirportStatDTO> result = switch (sort) {
+            case DELAY -> flightService.getAirportsByAvgDelay(range);
+        };
+        return ResponseEntity.ok(result);
     }
     /*
     // 8. Efficienza
@@ -99,14 +102,6 @@ public class FlightController {
         return handleAirlineRequest(range, flightService::getAirlinesByEfficiency);
     }
 */
-    private ResponseEntity<?> handleAirlineRequest(String range, java.util.function.Function<TimeInterval, List<AirlineStatDTO>> serviceMethod) {
-        try {
-            TimeInterval interval = TimeInterval.valueOf(range.toUpperCase());
-            return ResponseEntity.ok(serviceMethod.apply(interval));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body("Invalid time range. Allowed: LAST_DAY, LAST_WEEK, LAST_MONTH, LAST_YEAR");
-        }
-    }
 
     @Operation(summary = "Find the quickest actual route checking real flight schedules")
     @GetMapping("/routes/quickest-real")

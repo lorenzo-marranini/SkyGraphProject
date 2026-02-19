@@ -109,6 +109,8 @@ public class FlightService {
                 .build();
     }
 
+    // private AirlineStatDTO convertToDTO()
+
     // ------------------ METODI --------------------------------
 
     // ------------------------ GUEST ------------------------
@@ -146,26 +148,42 @@ public class FlightService {
 
     // 1)
     public List<AirlineStatDTO> getAirlinesByAvgDelay(TimeInterval range) {
-        return flightRepository.findAirlinesByAvgDelay(
+        List<AirlineStatDTO> result = flightRepository.findAirlinesByAvgDelay(
                 calculateMinDate(range),
                 getSimulatedNowInstant()
         );
+        result.forEach(dto -> dto.setScoreType("AVERAGE_DELAY_MINUTES"));
+        return result;
     }
 
     // 2)
     public List<AirlineStatDTO> getAirlinesByTotalFlights(TimeInterval range) {
-        return flightRepository.findAirlinesByTotalFlights(
+        List<AirlineStatDTO> result = flightRepository.findAirlinesByTotalFlights(
                 calculateMinDate(range),
                 getSimulatedNowInstant()
         );
+        result.forEach(dto -> dto.setScoreType("TOTAL_FLIGHTS"));
+        return result;
     }
 
     // 3)
     public List<AirlineStatDTO> getAirlinesByTotalDistance(TimeInterval range) {
-        return flightRepository.findAirlinesByTotalDistance(
+        List<AirlineStatDTO> result = flightRepository.findAirlinesByTotalDistance(
                 calculateMinDate(range),
                 getSimulatedNowInstant()
         );
+        result.forEach(dto  -> dto.setScoreType("TOTAL_DISTANCE_KM"));
+        return result;
+    }
+
+    // 7)
+    public List<AirlineStatDTO> getAirlinesByAvgRouteDistance(TimeInterval range) {
+        List<AirlineStatDTO> result = flightRepository.findAirlinesByAvgRouteDistance(
+                calculateMinDate(range),
+                getSimulatedNowInstant()
+        );
+        result.forEach(dto  -> dto.setScoreType("AVG_DISTANCE_KM"));
+        return result;
     }
 
     // 4) TO DO
@@ -190,13 +208,6 @@ public class FlightService {
         );
     }
 
-    // 7)
-    public List<AirlineStatDTO> getAirlinesByRouteDistance(String origin, String destination,TimeInterval range) {
-        return flightRepository.findAirlinesByAvgRouteDistance(
-                calculateMinDate(range),
-                getSimulatedNowInstant()
-        );
-    }
 
     // 8) TO DO
 
