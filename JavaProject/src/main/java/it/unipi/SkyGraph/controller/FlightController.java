@@ -3,6 +3,10 @@ package it.unipi.SkyGraph.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import it.unipi.SkyGraph.dto.*;
 import it.unipi.SkyGraph.enums.AirlineSort;
+import it.unipi.SkyGraph.dto.AirlineStatDTO;
+import it.unipi.SkyGraph.dto.AirportStatDTO;
+import it.unipi.SkyGraph.dto.FlightDTO;
+import it.unipi.SkyGraph.dto.TripItineraryDTO;
 import it.unipi.SkyGraph.enums.AirportSort;
 import it.unipi.SkyGraph.enums.TimeInterval;
 import it.unipi.SkyGraph.service.FlightService;
@@ -79,7 +83,7 @@ public class FlightController {
 
     // 4 da fare su Neo4j
 
-    // 6, 7
+    // 5, 6
     @Operation(summary = "Get airlines ranked by a given metric and time range on a specific route")
     @GetMapping("/stats/airlines/route")
     public ResponseEntity<?> getAirlineStatsByRoute(
@@ -207,22 +211,25 @@ public class FlightController {
     // --- AIRPORT STATS ---
     @Operation(summary = "Get airports ranked by a given metric and time range")
     @GetMapping("/stats/airports")
-    public ResponseEntity<List<AirportStatDTO>> getAirportStats(
-            @RequestParam AirportSort sort,
+    public ResponseEntity<?> getAirportStats(
+            @RequestParam String sort,
             @RequestParam(defaultValue = "LAST_WEEK") String range
     ) {
-        List<AirportStatDTO> result = switch (sort) {
-            case DELAY -> flightService.getAirportsByAvgDelay(range);
-        };
-        return ResponseEntity.ok(result);
+        String sortUpper = sort.toUpperCase();
+        try {
+            List<AirportStatDTO> result = switch (sortUpper) {
+                case "DELAY" -> flightService.getAirportsByAvgDelay(range);
+                default -> throw new IllegalArgumentException("Invalid sort parameter. Value '" + sort + "' is not supported. Use: DELAY.");
+            };
+
+            return ResponseEntity.ok(result);
+
+    } catch (IllegalArgumentException e) {
+        return buildBadRequest(e.getMessage());
     }
-    /*
-    // 8. Efficienza
-    @GetMapping("/airlines/efficiency")
-    public ResponseEntity<?> getAirlinesByEfficiency(@RequestParam(defaultValue = "LAST_WEEK") String range) {
-        return handleAirlineRequest(range, flightService::getAirlinesByEfficiency);
     }
-*/
+
+
 
     @Operation(summary = "Find the quickest actual route checking real flight schedules")
     @GetMapping("/routes/quickest-real")
@@ -239,4 +246,4 @@ public class FlightController {
         }
         return ResponseEntity.ok(itineraries);
     }
-}
+z}
