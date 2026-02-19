@@ -176,7 +176,7 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String> {
     })
     List<RouteStatsDTO> findRoutesByDivertedCount(Instant start, Instant end);
 
-    // 5) Restituisce i giorni della settimana ordinati per delay medio nel time intervall
+    // 5) Restituisce i giorni della settimana ordinati per delay medio nel time interval
     @Aggregation(pipeline = {
             "{ '$match': { 'flight_info.schedule.departure_datetime': { '$gte': ?0, '$lte': ?1 } } }",
             "{ '$project': { " +
@@ -239,11 +239,21 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String> {
     // 7) Restituisce gli aeroporti ordinati per ritardo medio
     @Aggregation(pipeline = {
             "{ '$match': { 'flight_info.schedule.departure_datetime': { '$gte': ?0, '$lte': ?1 } } }",
-            // Raggruppa per Nome Aeroporto di origine
-            "{ '$group': { '_id': '$route.origin.airport_name', 'score': { '$avg': '$stats.tot_delay_minutes' } } }",
+            "{ '$group': { " +
+                    "'_id': '$route.origin.airport_name', " +
+                    "'iataCode': { '$first': '$route.origin.iata' }, " +
+                    "'city': { '$first': '$route.origin.city' }, " +
+                    "'score': { '$avg': '$stats.tot_delay_minutes' } " +
+                    "} }",
             "{ '$sort': { 'score': -1 } }",
-            "{ '$project': { '_id': 0, 'airportName': '$_id', 'score': 1 } }"
+            "{ '$project': { " +
+                    "'_id': 0, " +
+                    "'name': '$_id', " +      // Spostiamo l'id del gruppo nel campo 'name'
+                    "'iataCode': 1, " +
+                    "'city': 1, " +
+                    "'score': 1 " +
+                    "} }"
     })
     List<AirportStatDTO> findAirportsByAvgDelay(Instant start, Instant end);
-    }
+}
 

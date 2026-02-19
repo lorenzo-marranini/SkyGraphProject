@@ -264,10 +264,13 @@ public class FlightService {
 
     // 7)
     public List<AirportStatDTO> getAirportsByAvgDelay(TimeInterval range) {
-        return flightRepository.findAirportsByAvgDelay(
+        List<AirportStatDTO> result =  flightRepository.findAirportsByAvgDelay(
                 calculateMinDate(range),
                 getSimulatedNowInstant()
         );
+
+        result.forEach(dto  -> dto.setScoreType("AVG_DELAY_MIN"));
+        return result;
     }
 
 
