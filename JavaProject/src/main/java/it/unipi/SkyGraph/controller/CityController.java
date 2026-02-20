@@ -12,18 +12,17 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/neo4j/cities")
+@RequestMapping("/api")
 @RequiredArgsConstructor
 public class CityController {
 
     private final CityService cityService;
 
-    // --- GUEST ---
 
     // --------------- AIRLINE REPRESENTATIVE -------------
 
     @Operation(summary = "Get most trafficked cities")
-    @GetMapping("/connections")
+    @GetMapping("/stats/cities/connections")
     public ResponseEntity<List<CityStatsDTO>> getMostTraffickedCities() {
         List<CityStatsDTO> connections = cityService.getMostTraffickedCities();
         if (connections.isEmpty()) {
