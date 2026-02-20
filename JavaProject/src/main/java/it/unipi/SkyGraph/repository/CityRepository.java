@@ -13,8 +13,8 @@ public interface CityRepository extends Neo4jRepository<City, String> {
     // AIRLINE REPRESENTATIVE 3
     // Classifica delle Città per traffico aereo totale
     @Query("MATCH (c:City)<-[:LOCATED_IN]-(a:Airport)-[r:ROUTE]->() " +
-            "RETURN c.name AS cityName, c.country AS country, " +
-            "sum(r.num_flights) AS totalFlights, count(DISTINCT a) AS airportCount " +
+            "RETURN c.name AS CityName, c.country AS Country, " +
+            "sum(r.num_flights) AS TotalFlights, count(DISTINCT a) AS AirportCount " +
             "ORDER BY totalFlights DESC " +
             "LIMIT 20")
     List<CityRankDTO> findMostTraffickedCities();
