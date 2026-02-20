@@ -17,7 +17,7 @@ public interface CityRepository extends Neo4jRepository<City, String> {
             "sum(r.num_flights) AS totalFlights, count(DISTINCT a) AS airportCount " +
             "ORDER BY totalFlights DESC " +
             "LIMIT 20")
-    List<CityStatsDTO> findMostTraffickedCities();
+    List<CityRankDTO> findMostTraffickedCities();
 
     Optional<City> findByNameIgnoreCase(String name);
 

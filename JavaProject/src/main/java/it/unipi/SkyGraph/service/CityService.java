@@ -19,8 +19,8 @@ public class CityService {
 
     // ----------------------- AIRLINE REPRESENTATIVE -----------------
     // 3)
-    public List<CityStatsDTO> getMostTraffickedCities() {
-        List<CityStatsDTO> result = cityRepository.findMostTraffickedCities();
+    public List<CityRankDTO> getMostTraffickedCities() {
+        List<CityRankDTO> result = cityRepository.findMostTraffickedCities();
         return result;
     }
 
