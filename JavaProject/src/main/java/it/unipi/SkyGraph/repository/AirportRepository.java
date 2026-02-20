@@ -22,19 +22,14 @@ public interface AirportRepository extends Neo4jRepository<Airport, String> {
                                  @Param("destIata") String destIata,
                                  @Param("duration") double duration);
     // --------------------------- GUEST-------------------------
+
     Optional<Airport> findByIataCode(String iataCode);
 
 
     // ------------------------------- TRAFFIC CONTROLLER ------------------------
 
-    // 4) Aeroporti ordinati per numero di aeroporti connessi in uscita
-    @Query("MATCH (a:Airport)-[r:ROUTE]->() " +
-            "RETURN a.iata_code AS iataCode, a.name AS name, count(r) AS score " +
-            "ORDER BY score DESC " +
-            "LIMIT 20")
-    List<AirportRankingDTO> findAirportsConnections();
 
-    // 9) Dato un aeroporto chiuso, trovare un altro aeroporto che abbia il piu alto rapporto tra connessioni in comune fratto distanza
+    // TC8 Dato un aeroporto chiuso, trovare un altro aeroporto che abbia il piu alto rapporto tra connessioni in comune fratto distanza
     @Query("MATCH (closed:Airport {iata_code: $closedIata})-[:ROUTE]->(dest:Airport) " +
             "MATCH (alt:Airport)-[:ROUTE]->(dest) " +
             "WHERE alt.iata_code <> $closedIata " +
@@ -54,8 +49,7 @@ public interface AirportRepository extends Neo4jRepository<Airport, String> {
 
     // ----------------------- AIRLINE REPRESENTATIVE ------------------------------------
 
-
-    // 1) Cercare un volo possibile dato origin e destinatio e numero di scali
+    // AR1 Cercare un volo possibile dato origin e destinatio e numero di scali
     // QUERY: Rotta più veloce (Weighted Shortest Path basato su mean_scheduled_time)
     @Query("MATCH p = (start:Airport {iata_code: $origin})-[:ROUTE*1..3]->(end:Airport {iata_code: $dest}) " +
             "WHERE length(p) <= $maxHops " +
@@ -70,7 +64,7 @@ public interface AirportRepository extends Neo4jRepository<Airport, String> {
             @Param("maxHops") int maxHops
     );
 
-    //Parte neo4j della query sul quickest path
+    // AR1
     @Query("MATCH p = (start:Airport {iata_code: $origin})-[:ROUTE*1..4]->(end:Airport {iata_code: $dest}) " +
             "WHERE length(p) <= $maxHops " +
             "WITH [n in nodes(p) | n.iata_code] AS codes " +
@@ -81,7 +75,7 @@ public interface AirportRepository extends Neo4jRepository<Airport, String> {
                                     @Param("maxHops") int maxHops);
 
 
-    // 2) Visualizzare gli aeroporti ordinati per il betweenness centrality score
+    // AR3 Visualizzare gli aeroporti ordinati per il betweenness centrality score
     @Query("CALL gds.pageRank.stream({ " +
             "  nodeProjection: 'Airport', " +
             "  relationshipProjection: { " +
@@ -99,6 +93,12 @@ public interface AirportRepository extends Neo4jRepository<Airport, String> {
     List<AirportRankingDTO> findTopHubsByRank();
 
 
+    // AR5 Aeroporti ordinati per numero di aeroporti connessi in uscita
+    @Query("MATCH (a:Airport)-[r:ROUTE]->() " +
+            "RETURN a.iata_code AS iataCode, a.name AS name, count(r) AS score " +
+            "ORDER BY score DESC " +
+            "LIMIT 20")
+    List<AirportRankingDTO> findAirportsConnections();
 
 
 

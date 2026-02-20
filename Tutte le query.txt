@@ -6,33 +6,45 @@ Guest:
 
 Traffic Controller:
 
+Airlines statistics
 1) Mongo = AVG Delay of Airlines x
-2) Mongo = Total number of flights per airline x
+2) Mongo = Total number of flights per Airlines x
 3) Mongo = Total KM flown by airlines x
-4) Mongo = Number of flights per airport 
-5) Mongo or Neo4j = Number of connection per airport x
-6) Mongo = Given origin* and destination* view number of flights of airlines x
-7) Mongo = Given origin* destination* view avg delay of airlines x
-8) Mongo = Given a time range* view the AVG flight distance of airlines x
+4) Mongo = Given a time range* view the AVG flight distance of airlines x
 
-tutte le precedenti (tranne la 5 se fatta su neo4j) hanno come parametro anche il range di tempo 
-(last day, last week, last monta)
+On a specific Route
+5) Mongo = Given origin* and destination* view number of flights of airlines x
+6) Mongo = Given origin* destination* view avg delay of airlines x
 
-9) Mongo = Given origin* destination* view airports to land in case of emergency
-10) Neo4j = Given origin* destination* view alternative routes if an airport is unavailable
+tutte le precedenti hanno come parametro anche il range di tempo 
+(last day, last week, last montH)
+
+Other Functionalities
+7) Mongo = Given origin* destination* view airports to land in case of emergency
+8) Neo4j = Given origin* destination* view alternative routes if an airport is unavailable
 
 
 Airline Representative:
 
+Strategy Business on routes:
 1) Neo4j + Mongo = Given origin* destination* stops*(scali) and date* (default=today), find the possible flights with less time flown. x 
-2) Neo4j = View betwenness centrality of airports x
-3) Neo4j  = view ranking of cities per most traffik 
-4) Mongo = Given a time range * View the most frequent route  x 
-4.1) Mongo = Given a time range * View the most diverted route x
-4.2) Mongo = Given a time range * View the most cancelled route x (Non ne abbiamo no?)
-5) Mongo = Given a time range* view statistic of delay per day of week   x
-6) Mongo = Given an Airline* and time range* view total km flown, avg delay, total # of flights, AVG KM flown, effincency x
-7) Mongo = View airports order by avg delay x
+2) Mongo = Given a time range * View the most frequent route  x 
+2.1) Mongo = Given a time range * View the most diverted route x
+2.2) Mongo = Given a time range * View the most cancelled route x (Non ne abbiamo no?)
+
+on Airports
+3) Neo4j = View betwenness centrality of airports x
+4) Mongo = View airports order by avg delay x
+5) Neo4j = View airports order by most connections x
+
+on Cities:
+6) Neo4j = view ranking of cities per most traffik x
+7) Neo4j = view statistic of a single city
+
+Others:
+8) Mongo = Given a time range* view statistic of delay per day of week   x
+9) Mongo = Given an Airline* and time range* view total km flown, avg delay, total # of flights, AVG KM flown, effincency x
+
 
 Administrator:
 1) view all users and update them x
