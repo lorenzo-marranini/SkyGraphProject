@@ -1,10 +1,7 @@
 package it.unipi.SkyGraph.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
-import it.unipi.SkyGraph.dto.AirportRankingDTO;
-import it.unipi.SkyGraph.dto.AirportStatDTO;
-import it.unipi.SkyGraph.dto.DayStatsDTO;
-import it.unipi.SkyGraph.dto.QuickestPathDTO;
+import it.unipi.SkyGraph.dto.*;
 import it.unipi.SkyGraph.enums.AirportSort;
 import it.unipi.SkyGraph.enums.TimeInterval;
 import it.unipi.SkyGraph.model.Airport;
@@ -35,6 +32,18 @@ public class AirportController {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.ok(connections);
+    }
+
+
+    @Operation(summary = "Get best emergency lading airports for a specific flight in air")
+    @GetMapping("/emergency")
+    public ResponseEntity<List<AirportEmergencyDTO>> getEmergencyAirports(
+            @RequestParam String flightKey) {
+        List<AirportEmergencyDTO> nearestAirports = airportService.getNearestAirportsForEmergency(flightKey);
+        if (nearestAirports.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(nearestAirports);
     }
 
     @Operation(summary = "Get best alternative airports for a closed airport")

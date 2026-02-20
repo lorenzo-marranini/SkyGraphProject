@@ -29,22 +29,6 @@ public interface AirportRepository extends Neo4jRepository<Airport, String> {
 
     // ------------------------------- TRAFFIC CONTROLLER ------------------------
 
-    // TC7
-    @Aggregation(pipeline = {
-            """
-            {
-                $geoNear: {
-                    near: { type: 'Point', coordinates: [ ?0, ?1 ] },
-                    distanceField: 'distanceKm',
-                    spherical: true,
-                    distanceMultiplier: 0.001
-                }
-            }
-            """,
-            "{ $limit: 10 }"
-    })
-    List<AirportEmergencyDTO> findNearestAirports(double longitude, double latitude);
-
 
     // TC8 Dato un aeroporto chiuso, trovare un altro aeroporto che abbia il piu alto rapporto tra connessioni in comune fratto distanza
     @Query("MATCH (closed:Airport {iata_code: $closedIata})-[:ROUTE]->(dest:Airport) " +

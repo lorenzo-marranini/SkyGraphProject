@@ -120,7 +120,7 @@ public class FlightService {
                 .collect(Collectors.toList());
     }
 
-    // --------------------- TRAFFIC CONTROLLER -------------------
+    // --------------------- AIRLINE REPRESENTATIVE -------------------
 
     // AR1
 

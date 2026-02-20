@@ -8,7 +8,7 @@ import java.util.List;
 
 @Data
 @NoArgsConstructor
-@Document(collection = "airport")
+@Document(collection = "airports")
 public class AirportMongo {
 
     @Id

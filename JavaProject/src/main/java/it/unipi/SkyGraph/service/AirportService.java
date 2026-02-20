@@ -7,6 +7,7 @@ import it.unipi.SkyGraph.model.Airport;
 import it.unipi.SkyGraph.model.FlightMongo;
 import it.unipi.SkyGraph.repository.AirportRepository;
 import it.unipi.SkyGraph.repository.FlightRepository;
+import it.unipi.SkyGraph.repository.AirportMongoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +19,7 @@ import java.util.Optional;
 public class AirportService {
 
     private final AirportRepository airportRepository;
+    private final AirportMongoRepository airportMongoRepository;
     private final FlightRepository flightRepository;
     private final SimulationClock clock;
 
@@ -35,7 +37,7 @@ public class AirportService {
                 .map(flight -> {
                     List<Double> coords = flight.getFlightLog().getLocation().getCoordinates();
 
-                    return airportRepository.findNearestAirports(coords.get(0), coords.get(1));
+                    return airportMongoRepository.findNearestAirports(coords.get(0), coords.get(1));
                 })
                 // Se il volo non esiste, restituiamo una lista vuota invece di un Optional
                 .orElse(java.util.Collections.emptyList());
