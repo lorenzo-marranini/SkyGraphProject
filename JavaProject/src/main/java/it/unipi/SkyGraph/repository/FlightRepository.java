@@ -78,7 +78,7 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String> {
     })
     List<AirlineStatDTO> findAirlinesByRouteDelay(String originIata, String destIata, Instant start, Instant end);
 
-    // 8)  Restituisce le airlines ordiante per AVG KM percorsi in volo
+    // 8)  Restituisce le airlines ORDINATE per AVG KM percorsi in volo
     @Aggregation(pipeline = {
             "{ '$match': { 'flight_info.schedule.departure_datetime': { '$gte': ?0, '$lte': ?1 } } }",
             "{ '$group': { '_id': '$flight_info.airline.name', 'score': { '$avg': '$route.distance_km' } } }",
@@ -90,6 +90,8 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String> {
 
     // 9) Dato un aeroporto chiuso, trovare un altro aeroporto che abbia il piu alto rapporto tra connessioni in comune fratto distanza
     // Fatta su Neo4j
+
+
 
     //------------------------AIRLINE REPRESENTATIVE-----------------------------
 
