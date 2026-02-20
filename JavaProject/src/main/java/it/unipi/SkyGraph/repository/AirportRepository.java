@@ -41,9 +41,9 @@ public interface AirportRepository extends Neo4jRepository<Airport, String> {
             "       point({latitude: closed.latitude, longitude: closed.longitude}), " +
             "       point({latitude: alt.latitude, longitude: alt.longitude}) " +
             "     ) / 1000.0 AS distKm " +
-            "WHERE distKm > 0 " +
+            "WHERE distKm > 0 AND distKm < 200 " +
             // Calcola il rapporto e mappa i campi all'interfaccia AirportRankingDTO
-            "RETURN alt.iata_code AS iata, alt.name AS name, (sharedConnections / distKm) AS score " +
+            "RETURN alt.iata_code AS iata, alt.name AS name, (sharedConnections / log(distKm + 1)) AS score " +
             "ORDER BY score DESC " +
             "LIMIT 5")
     List<AirportRankingDTO> findBestAlternativeAirports(@Param("closedIata") String closedIata);
