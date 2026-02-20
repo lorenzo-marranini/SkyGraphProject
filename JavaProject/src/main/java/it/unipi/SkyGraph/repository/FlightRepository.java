@@ -173,7 +173,10 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String> {
     // AR3 Visualizzare gli aeroporti ordinati per il betweenness centrality score
     // NEO4J FATTA SU AirportRepository
 
-    // AR4 Restituisce gli aeroporti ordinati per ritardo medio
+    // AR4 Visualizzare gli aeroporti ordinati per il betweenness centrality score
+    // NEO4J FATTA SU AirportRepository
+
+    // AR5 Restituisce gli aeroporti ordinati per ritardo medio
     @Aggregation(pipeline = {
             "{ '$match': { 'flight_info.schedule.departure_datetime': { '$gte': ?0, '$lte': ?1 } } }",
             "{ '$group': { " +
@@ -193,24 +196,24 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String> {
     })
     List<AirportStatDTO> findAirportsByAvgDelay(Instant start, Instant end);
 
-    // AR5 Aeroporti ordinati per numero di aeroporti connessi in uscita
+    // AR6 Aeroporti ordinati per numero di aeroporti connessi in uscita
     // NEO4J FATTA SU AirportRepository
 
-    // AR6 Classifica delle Città per traffico aereo totale
+    // AR7 Classifica delle Città per traffico aereo totale
     // NEO4J FATTA SU CityRepository
 
 
-    // AR7 Restituisce tutte le statistiche di una città specifica
-    // AR7 parte 1
+    // AR8 Restituisce tutte le statistiche di una città specifica
+    // AR8 parte 1
     @Query(value = "{ 'route.origin.iata': { '$in': ?0 }, 'flight_info.schedule.departure_datetime': { '$gte': ?1, '$lte': ?2 } }", count = true)
     long countDeparturesByAirports(List<String> iataCodes, Instant start, Instant end);
 
-    // AR7 parte 2 = Conta gli arrivi in una lista di IATA nel time range
+    // AR8 parte 2 = Conta gli arrivi in una lista di IATA nel time range
     @Query(value = "{ 'route.destination.iata': { '$in': ?0 }, 'flight_info.schedule.departure_datetime': { '$gte': ?1, '$lte': ?2 } }", count = true)
     long countArrivalsByAirports(List<String> iataCodes, Instant start, Instant end);
 
 
-    // AR8 Restituisce i giorni della settimana ordinati per delay medio nel time interval
+    // AR9 Restituisce i giorni della settimana ordinati per delay medio nel time interval
     @Aggregation(pipeline = {
             "{ '$match': { 'flight_info.schedule.departure_datetime': { '$gte': ?0, '$lte': ?1 } } }",
             "{ '$project': { " +
@@ -231,7 +234,7 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String> {
     List<DayStatsDTO> findDaysByAvgDelay(Instant start, Instant end);
 
 
-    // AR9 Restituisce data un Airline e un time intervall: i total km flown, l'avg delay, l'avg KM percorsi, l'ariline efficiency e il # of flights
+    // AR10 Restituisce data un Airline e un time intervall: i total km flown, l'avg delay, l'avg KM percorsi, l'ariline efficiency e il # of flights
     @Aggregation(pipeline = {
             "{ '$match': { " +
                     "'flight_info.schedule.departure_datetime': { '$gte': ?0, '$lte': ?1 }, " +

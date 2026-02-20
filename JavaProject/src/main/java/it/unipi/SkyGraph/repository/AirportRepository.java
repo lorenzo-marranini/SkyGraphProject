@@ -49,8 +49,8 @@ public interface AirportRepository extends Neo4jRepository<Airport, String> {
 
     // ----------------------- AIRLINE REPRESENTATIVE ------------------------------------
 
-    // AR1 Cercare un volo possibile dato origin e destinatio e numero di scali
-    // QUERY: Rotta più veloce (Weighted Shortest Path basato su mean_scheduled_time)
+    // AR1  Cercare un volo possibile dato origin e destinatio e numero di scali
+    // AR3 Rotta più veloce (Weighted Shortest Path basato su mean_scheduled_time)
     @Query("MATCH p = (start:Airport {iata_code: $origin})-[:ROUTE*1..3]->(end:Airport {iata_code: $dest}) " +
             "WHERE length(p) <= $maxHops " +
             "WITH p, reduce(weight = 0.0, r in relationships(p) | weight + r.mean_scheduled_time) AS totalTime " +
@@ -64,7 +64,7 @@ public interface AirportRepository extends Neo4jRepository<Airport, String> {
             @Param("maxHops") int maxHops
     );
 
-    // AR1
+    // AR1 PARTE 2
     @Query("MATCH p = (start:Airport {iata_code: $origin})-[:ROUTE*1..4]->(end:Airport {iata_code: $dest}) " +
             "WHERE length(p) <= $maxHops " +
             "WITH [n in nodes(p) | n.iata_code] AS codes " +
@@ -75,7 +75,7 @@ public interface AirportRepository extends Neo4jRepository<Airport, String> {
                                     @Param("maxHops") int maxHops);
 
 
-    // AR3 Visualizzare gli aeroporti ordinati per il betweenness centrality score
+    // AR4 Visualizzare gli aeroporti ordinati per il betweenness centrality score
     @Query("CALL gds.pageRank.stream({ " +
             "  nodeProjection: 'Airport', " +
             "  relationshipProjection: { " +
@@ -93,7 +93,7 @@ public interface AirportRepository extends Neo4jRepository<Airport, String> {
     List<AirportRankingDTO> findTopHubsByRank();
 
 
-    // AR5 Aeroporti ordinati per numero di aeroporti connessi in uscita
+    // AR6 Aeroporti ordinati per numero di aeroporti connessi in uscita
     @Query("MATCH (a:Airport)-[r:ROUTE]->() " +
             "RETURN a.iata_code AS iataCode, a.name AS name, count(r) AS score " +
             "ORDER BY score DESC " +
