@@ -80,10 +80,7 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String> {
 
     // TC6 Restituisce le airlines ordinate per AVG Delay su una specifica rotta ( origin -> destination )
     @Aggregation(pipeline = {
-            "{ '$match': { " +
-                    "'flight_info.schedule.departure_datetime': { '$gte': ?0, '$lte': ?1 }, " +
-                    "'stats': { '$ne': null } " +
-                    "} }",
+            "{ '$match': { 'route.origin.iata': ?0, 'route.destination.iata': ?1, 'flight_info.schedule.departure_datetime': { '$gte': ?2, '$lte': ?3 }, 'stats.tot_delay_minutes': { '$ne': null } } }",
             "{ '$group': { '_id': '$flight_info.airline.name', 'score': { '$avg': '$stats.tot_delay_minutes' } } }",
             "{ '$sort': { 'score': 1 } }",
             "{ '$project': { '_id': 0, 'airlineName': '$_id', 'score': 1 } }"
