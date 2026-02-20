@@ -84,11 +84,11 @@ public class AirlineService {
     }
 
     // AR10
-    public List<AirlineReportDTO> getAirlineReport(TimeInterval range, String AirlineName) {
+    public List<AirlineReportDTO> getAirlineReport(TimeInterval range, String AirlineIata) {
         return flightRepository.generateAirlineReport(
                 clock.calculateMinDate(range),
                 clock.getSimulatedNowInstant(),
-                AirlineName
+                AirlineIata
         );
     }
 }

@@ -43,7 +43,7 @@ public interface AirportRepository extends Neo4jRepository<Airport, String> {
             "     ) / 1000.0 AS distKm " +
             "WHERE distKm > 0 " +
             // Calcola il rapporto e mappa i campi all'interfaccia AirportRankingDTO
-            "RETURN alt.iata_code AS iataCode, alt.name AS name, (sharedConnections / distKm) AS score " +
+            "RETURN alt.iata_code AS iata, alt.name AS name, (sharedConnections / distKm) AS score " +
             "ORDER BY score DESC " +
             "LIMIT 5")
     List<AirportRankingDTO> findBestAlternativeAirports(@Param("closedIata") String closedIata);
@@ -77,26 +77,26 @@ public interface AirportRepository extends Neo4jRepository<Airport, String> {
 
 
     // AR4 Visualizzare gli aeroporti ordinati per il betweenness centrality score
-    @Query("CALL gds.pageRank.stream({ " +
-            "  nodeProjection: 'Airport', " +
-            "  relationshipProjection: { " +
-            "    ROUTE: { " +
-            "      type: 'ROUTE', " +
-            "      properties: 'num_flights' " +
-            "    } " +
-            "  }, " +
-            "  relationshipWeightProperty: 'num_flights' " +
-            "}) " +
-            "YIELD nodeId, score " +
-            "WITH gds.util.asNode(nodeId) AS airport, score " +
-            "RETURN airport.iata_code AS iataCode, airport.name AS name, score AS score " +
-            "ORDER BY score DESC LIMIT 30")
+    @Query("MATCH (airport:Airport)-[r1:ROUTE]->(dest:Airport) " +
+            // 1. Calcoliamo il traffico diretto in uscita
+            "WITH airport, sum(r1.num_voli) AS directTraffic " +
+
+            // 2. Facciamo un "salto" in avanti: guardiamo quanto sono connessi gli aeroporti di destinazione
+            "MATCH (airport)-[:ROUTE]->(dest:Airport)-[r2:ROUTE]->() " +
+            "WITH airport, directTraffic, sum(r2.num_voli) AS indirectTraffic " +
+
+            // 3. Calcoliamo lo score pesato e mappiamo i campi per il DTO
+            "RETURN airport.iata_code AS iata, " + // Ricorda di verificare se qui ci va iata o iata_code!
+            "       airport.name AS name, " +
+            "       (directTraffic * 0.6 + indirectTraffic * 0.4) AS score " +
+            "ORDER BY score DESC " +
+            "LIMIT 10")
     List<AirportRankingDTO> findTopHubsByRank();
 
 
     // AR6 Aeroporti ordinati per numero di aeroporti connessi in uscita
     @Query("MATCH (a:Airport)-[r:ROUTE]->() " +
-            "RETURN a.iata_code AS iataCode, a.name AS name, count(r) AS score " +
+            "RETURN a.iata_code AS iata, a.name AS name, count(r) AS score " +
             "ORDER BY score DESC " +
             "LIMIT 20")
     List<AirportRankingDTO> findAirportsConnections();

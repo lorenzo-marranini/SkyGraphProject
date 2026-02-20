@@ -38,7 +38,7 @@ public class FlightController {
             @RequestParam String destination,
             @RequestParam String date
     ) {
-        List<FlightDTO> flights = flightService.searchFlights(origin, destination, date);
+        List<FlightDTO> flights = flightService.getFlights(origin, destination, date);
         return flights.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(flights);
     }
 

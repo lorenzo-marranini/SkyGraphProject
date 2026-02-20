@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AirlineReportDTO {
-    private String airlineName;
+    private String airlineIata;
     private double totalKm;       // Totale KM percorsi
     private double avgKm;         // Media KM per volo
     private double avgDelay;      // Media ritardo (minuti)

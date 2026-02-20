@@ -39,8 +39,32 @@ public class FlightService {
      */
     private FlightDTO convertToDTO(FlightMongo flight) {
 
-        var coordinates = flight.getFlightLog().getLocation().getCoordinates();
+        // 1. Inizializziamo a null le variabili opzionali
+        Double longitude = null;
+        Double latitude = null;
+        Integer speedKmh = null;
 
+        // 2. Controlliamo se il flightLog esiste prima di estrarre i dati
+        if (flight.getFlightLog() != null) {
+            speedKmh = flight.getFlightLog().getSpeed();
+
+            // Controlliamo che esista la location e l'array di coordinate
+            if (flight.getFlightLog().getLocation() != null &&
+                    flight.getFlightLog().getLocation().getCoordinates() != null &&
+                    flight.getFlightLog().getLocation().getCoordinates().size() >= 2) {
+
+                var coordinates = flight.getFlightLog().getLocation().getCoordinates();
+                longitude = coordinates.get(0);
+                latitude = coordinates.get(1);
+            }
+        }
+
+        // 3. Estraiamo in sicurezza anche le statistiche per evitare crash sui Wrapper Integer
+        boolean isCancelled = flight.getStats() != null && flight.getStats().getIsCancelled() != null && flight.getStats().getIsCancelled() == 1;
+        boolean isDiverted = flight.getStats() != null && flight.getStats().getIsDiverted() != null && flight.getStats().getIsDiverted() == 1;
+        Integer delay = flight.getStats() != null ? flight.getStats().getTotalDelayMinutes() : null;
+
+        // 4. Costruiamo il DTO
         return FlightDTO.builder()
                 .flightId(flight.getFlightInfo().getFlightKey())
 
@@ -67,24 +91,24 @@ public class FlightService {
                         .build())
 
                 .status(FlightDTO.Status.builder()
-                        .cancelled(flight.getStats().getIsCancelled() == 1)
-                        .diverted(flight.getStats().getIsDiverted() == 1)
-                        .delayMinutes(flight.getStats().getTotalDelayMinutes())
+                        .cancelled(isCancelled)
+                        .diverted(isDiverted)
+                        .delayMinutes(delay)
                         .build())
 
                 .metrics(FlightDTO.Metrics.builder()
                         .distanceKm(flight.getRoute().getDistanceKm())
-                        .speedKmh(flight.getFlightLog().getSpeed())
+                        .speedKmh(speedKmh) // Ora è sicuro (o numero o null)
                         .build())
 
+                // Se non ci sono coordinate, costruiamo l'oggetto con campi null, oppure potresti non settarlo affatto
                 .currentPosition(FlightDTO.Position.builder()
-                        .longitude(coordinates.get(0))
-                        .latitude(coordinates.get(1))
+                        .longitude(longitude)
+                        .latitude(latitude)
                         .build())
 
                 .build();
     }
-
     // private AirlineStatDTO convertToDTO()
 
     // ------------------ METODI --------------------------------
@@ -92,13 +116,15 @@ public class FlightService {
     // ------------------------ GUEST ------------------------
 
     // G1
-    public List<FlightDTO> searchFlights(String origin, String destination, String dateString) {
+    public List<FlightDTO> getFlights(String origin, String destination, String dateString) {
 
         LocalDate date = LocalDate.parse(dateString, DateTimeFormatter.ISO_LOCAL_DATE);
         Instant startOfDay = date.atStartOfDay(ZoneOffset.UTC).toInstant();
         Instant endOfDay = date.plusDays(1).atStartOfDay(ZoneOffset.UTC).toInstant();
 
         List<FlightMongo> flights = flightRepository.searchFlights(origin, destination, startOfDay, endOfDay);
+
+        if( flights.isEmpty()){ System.out.println("No flights found"); }
 
         return flights.stream()
                 .map(this::convertToDTO)

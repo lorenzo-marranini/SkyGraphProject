@@ -58,12 +58,12 @@ public class AirlineController {
 
     //6.
     @Operation(summary = "Get a comprehensive report for a specific airline in a given time range")
-    @GetMapping("/{airlineName}/report")
+    @GetMapping("/{airlineIata}/report")
     public ResponseEntity<List<AirlineReportDTO>> getAirlineReport(
-            @PathVariable String airlineName,
+            @PathVariable String airlineIata,
             @RequestParam(defaultValue = "LAST_WEEK") TimeInterval range
     ) {
-        List<AirlineReportDTO> report = airlineService.getAirlineReport(range, airlineName);
+        List<AirlineReportDTO> report = airlineService.getAirlineReport(range, airlineIata);
         return report.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(report);
     }
 }

@@ -54,7 +54,7 @@ public class SecurityConfig {
                                 "/api/neo4j/routes/**",
                                 "/api/neo4j/airport/**"
                         ).permitAll()
-                        .anyRequest().authenticated())
+                        .anyRequest().permitAll()) // authenticated()
 
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);

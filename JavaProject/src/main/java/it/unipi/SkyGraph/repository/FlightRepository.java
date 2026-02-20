@@ -33,7 +33,7 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String> {
     @Aggregation(pipeline = {
             "{ '$match': { " +
                     "'flight_info.schedule.departure_datetime': { '$gte': ?0, '$lte': ?1 }, " +
-                    "'stats': { '$ne': null } " +
+                    "'stats.tot_delay_minutes': { '$ne': null } " +
                     "} }",
             "{ '$group': { '_id': '$flight_info.airline.name', 'score': { '$avg': '$stats.tot_delay_minutes' } } }",
             "{ '$sort': { 'score': 1 } }",
@@ -229,7 +229,7 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String> {
     @Aggregation(pipeline = {
             "{ '$match': { " +
                     "'flight_info.schedule.departure_datetime': { '$gte': ?0, '$lte': ?1 }, " +
-                    "'stats': { '$ne': null } " +
+                    "'stats.tot_delay_minutes': { '$ne': null } " +
                     "} }",
             "{ '$project': { " +
                     "'dayOfWeek': { '$dayOfWeek': '$flight_info.schedule.departure_datetime' }, " +
@@ -253,10 +253,10 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String> {
     @Aggregation(pipeline = {
             "{ '$match': { " +
                     "'flight_info.schedule.departure_datetime': { '$gte': ?0, '$lte': ?1 }, " +
-                    "'flight_info.airline.name': ?2 " +
+                    "'flight_info.airline.iata': ?2 " +
                     "} }",
             "{ '$group': { " +
-                    "'_id': '$flight_info.airline.name', " +
+                    "'_id': '$flight_info.airline.iata', " +
                     "'totalKm': { '$sum': '$route.distance_km' }, " +
                     "'avgKm': { '$avg': '$route.distance_km' }, " +
                     "'totalFlights': { '$sum': 1 }, " +
@@ -265,7 +265,7 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String> {
                     "} }",
             "{ '$project': { " +
                     "'_id': 0, " +
-                    "'airlineName': '$_id', " +
+                    "'airlineIata': '$_id', " +
                     "'totalKm': 1, " +
                     "'avgKm': 1, " +
                     "'avgDelay': 1, " +
@@ -280,7 +280,7 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String> {
                     "}" +
                     "} }"
     })
-    List<AirlineReportDTO> generateAirlineReport(Instant start, Instant end, String AirlineName);
+    List<AirlineReportDTO> generateAirlineReport(Instant start, Instant end, String AirlineIata);
 
 
 

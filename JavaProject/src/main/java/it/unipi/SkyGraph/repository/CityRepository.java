@@ -12,8 +12,8 @@ public interface CityRepository extends Neo4jRepository<City, String> {
 
     // AR7 Classifica delle Città per traffico aereo totale
     @Query("MATCH (c:City)<-[:LOCATED_IN]-(a:Airport)-[r:ROUTE]->() " +
-            "RETURN c.name AS CityName, c.country AS Country, " +
-            "sum(r.num_flights) AS TotalFlights, count(DISTINCT a) AS AirportCount " +
+            "RETURN c.name AS CityName, c.state_id AS StateId, " +
+            "sum(r.num_voli) AS TotalFlights, count(DISTINCT a) AS AirportCount " +
             "ORDER BY TotalFlights DESC " +
             "LIMIT 20")
     List<CityRankDTO> findMostTraffickedCities();
@@ -29,7 +29,7 @@ public interface CityRepository extends Neo4jRepository<City, String> {
     // AR8 parte 2
     @Query("MATCH (c:City) " +
             "WHERE toLower(c.name) = toLower($cityName) " +
-            "RETURN c.country LIMIT 1")
+            "RETURN c.state_id as StateId LIMIT 1")
     String findCountryByCity(@Param("cityName") String cityName);
 
 

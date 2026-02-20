@@ -33,7 +33,7 @@ public interface AirportMongoRepository extends MongoRepository<AirportMongo, St
                 }
             }
             """,
-            "{ $limit: 10 }",
+            "{ $limit: 5 }",
             """
             {
                 $project: {

@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CityRankDTO {
     private String CityName;
-    private String Country;
+    private String StateId;
     private Long TotalFlights;
     private Integer AirportCount;
 }

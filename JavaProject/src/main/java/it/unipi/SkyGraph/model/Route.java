@@ -20,7 +20,7 @@ public class Route {
     @GeneratedValue
     private Long id;
 
-    @Property("num_flights")
+    @Property("num_voli")
     private Integer numFlights;
 
     @Property("mean_scheduled_time")
