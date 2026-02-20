@@ -1,4 +1,4 @@
-package it.unipi.SkyGraph.DTO;
+package it.unipi.SkyGraph.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

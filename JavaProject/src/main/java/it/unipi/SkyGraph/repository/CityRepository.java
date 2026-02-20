@@ -1,6 +1,6 @@
 package it.unipi.SkyGraph.repository;
 
-import it.unipi.SkyGraph.dto.CityStatsDTO;
+import it.unipi.SkyGraph.dto.CityRankDTO;
 import it.unipi.SkyGraph.model.City;
 import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.neo4j.repository.query.Query;
