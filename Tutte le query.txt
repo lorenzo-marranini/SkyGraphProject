@@ -31,19 +31,21 @@ Strategy Business on routes:
 2) Mongo = Given a time range * View the most frequent route  x 
 2.1) Mongo = Given a time range * View the most diverted route x
 2.2) Mongo = Given a time range * View the most cancelled route x (Non ne abbiamo no?)
+3) Neo4j = Given origin* destination* and stops*(scali) view the quickest route
 
 on Airports
-3) Neo4j = View betwenness centrality of airports x
-4) Mongo = View airports order by avg delay x
-5) Neo4j = View airports order by most connections x
+4) Neo4j = View betwenness centrality of airports x
+5) Mongo = View airports order by avg delay x
+6) Neo4j = View airports order by most connections x
 
 on Cities:
-6) Neo4j = view ranking of cities per most traffik x
-7) Neo4j = view statistic of a single city
+7) Neo4j = view ranking of cities per most traffik x
+8) Neo4j = view statistic of a single city
 
 Others:
-8) Mongo = Given a time range* view statistic of delay per day of week   x
-9) Mongo = Given an Airline* and time range* view total km flown, avg delay, total # of flights, AVG KM flown, effincency x
+9) Mongo = Given a time range* view statistic of delay per day of week   x
+10) Mongo = Given an Airline* and time range* view total km flown, avg delay, total # of flights, AVG KM flown, effincency x
+
 
 
 Administrator:
