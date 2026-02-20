@@ -39,21 +39,13 @@ public class FlightService {
      * Calcola la data di inizio (minDate) basata sull'intervallo richiesto
      * rispetto alla data simulata "SIMULATED_NOW".
      */
-    private Instant calculateMinDate(String stringRange) throws IllegalArgumentException {
-        LocalDate calculatedDate;
-        TimeInterval range;
-        try {
-            range = TimeInterval.valueOf(stringRange.toUpperCase());
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Invalid range parameter. Value '" + stringRange + "' is not supported. Use: LAST_DAY, LAST_WEEK, LAST_MONTH, LAST_YEAR.");
-        }
-        switch (range) {
-            case LAST_DAY: calculatedDate = SIMULATED_NOW.minusDays(1); break;
-            case LAST_WEEK: calculatedDate = SIMULATED_NOW.minusWeeks(1); break;
-            case LAST_MONTH: calculatedDate = SIMULATED_NOW.minusMonths(1); break;
-            case LAST_YEAR: calculatedDate = SIMULATED_NOW.minusYears(1); break;
-            default: calculatedDate = SIMULATED_NOW.minusWeeks(1);
-        }
+    private Instant calculateMinDate(TimeInterval range) {
+        LocalDate calculatedDate = switch (range) {
+            case LAST_DAY   -> SIMULATED_NOW.minusDays(1);
+            case LAST_WEEK  -> SIMULATED_NOW.minusWeeks(1);
+            case LAST_MONTH -> SIMULATED_NOW.minusMonths(1);
+            case LAST_YEAR  -> SIMULATED_NOW.minusYears(1);
+        };
         return calculatedDate.atStartOfDay(ZoneOffset.UTC).toInstant();
     }
 
@@ -155,7 +147,7 @@ public class FlightService {
     //----------------------------------- TRAFFIC CONTROLLER -----------------------
 
     // 1)
-    public List<AirlineStatDTO> getAirlinesByAvgDelay(String range) {
+    public List<AirlineStatDTO> getAirlinesByAvgDelay(TimeInterval range) {
         List<AirlineStatDTO> result = flightRepository.findAirlinesByAvgDelay(
                 calculateMinDate(range),
                 getSimulatedNowInstant()
@@ -165,7 +157,7 @@ public class FlightService {
     }
 
     // 2)
-    public List<AirlineStatDTO> getAirlinesByTotalFlights(String range) {
+    public List<AirlineStatDTO> getAirlinesByTotalFlights(TimeInterval range) {
         List<AirlineStatDTO> result = flightRepository.findAirlinesByTotalFlights(
                 calculateMinDate(range),
                 getSimulatedNowInstant()
@@ -175,7 +167,7 @@ public class FlightService {
     }
 
     // 3)
-    public List<AirlineStatDTO> getAirlinesByTotalDistance(String range) {
+    public List<AirlineStatDTO> getAirlinesByTotalDistance(TimeInterval range) {
         List<AirlineStatDTO> result = flightRepository.findAirlinesByTotalDistance(
                 calculateMinDate(range),
                 getSimulatedNowInstant()
@@ -185,7 +177,7 @@ public class FlightService {
     }
 
     // 7)
-    public List<AirlineStatDTO> getAirlinesByAvgRouteDistance(String range) {
+    public List<AirlineStatDTO> getAirlinesByAvgRouteDistance(TimeInterval range) {
         List<AirlineStatDTO> result = flightRepository.findAirlinesByAvgRouteDistance(
                 calculateMinDate(range),
                 getSimulatedNowInstant()
@@ -197,7 +189,7 @@ public class FlightService {
     // 4) TO DO
 
     // 5)
-    public List<AirlineStatDTO> getAirlinesByRoute(String origin, String destination, String range) {
+    public List<AirlineStatDTO> getAirlinesByRoute(String origin, String destination, TimeInterval range) {
         List<AirlineStatDTO> result =  flightRepository.findAirlinesByRoute(
                 origin,
                 destination,
@@ -209,7 +201,7 @@ public class FlightService {
     }
 
     // 6)
-    public List<AirlineStatDTO> getAirlinesByRouteDelay(String origin, String destination, String range) {
+    public List<AirlineStatDTO> getAirlinesByRouteDelay(String origin, String destination, TimeInterval range) {
         List<AirlineStatDTO> result = flightRepository.findAirlinesByRouteDelay(
                 origin,
                 destination,
@@ -295,7 +287,7 @@ public class FlightService {
         return validItineraries;
     }
 
-    public CityStatsDTO getCityHybridStats(String cityName, String range) {
+    public CityStatsDTO getCityHybridStats(String cityName, TimeInterval range) {
         Instant start = calculateMinDate(range);
         Instant end = getSimulatedNowInstant();
 
@@ -325,7 +317,7 @@ public class FlightService {
     }
 
     // 4)
-    public List<RouteStatsDTO> getRoutesByFlightCount(String range) {
+    public List<RouteStatsDTO> getRoutesByFlightCount(TimeInterval range) {
         return flightRepository.findRoutesByFlightCount(
                 calculateMinDate(range),
                 getSimulatedNowInstant()
@@ -333,7 +325,7 @@ public class FlightService {
     }
 
     // 4.1)
-    public List<RouteStatsDTO> getRoutesByCancelledCount(String range) {
+    public List<RouteStatsDTO> getRoutesByCancelledCount(TimeInterval range) {
         return flightRepository.findRoutesByCancelledCount(
                 calculateMinDate(range),
                 getSimulatedNowInstant()
@@ -341,7 +333,7 @@ public class FlightService {
     }
 
     // 4.2)
-    public List<RouteStatsDTO> getRoutesByDivertedCount(String range) {
+    public List<RouteStatsDTO> getRoutesByDivertedCount(TimeInterval range) {
         return flightRepository.findRoutesByDivertedCount(
                 calculateMinDate(range),
                 getSimulatedNowInstant()
@@ -349,7 +341,7 @@ public class FlightService {
     }
 
     // 5)
-    public List<DayStatsDTO> getDaysByAvgDelay(String range) {
+    public List<DayStatsDTO> getDaysByAvgDelay(TimeInterval range) {
         return flightRepository.findDaysByAvgDelay(
                 calculateMinDate(range),
                 getSimulatedNowInstant()
@@ -361,7 +353,7 @@ public class FlightService {
 
 
     // 6)
-    public List<AirlineReportDTO> getAirlineReport(String range, String AirlineName) {
+    public List<AirlineReportDTO> getAirlineReport(TimeInterval range, String AirlineName) {
         return flightRepository.generateAirlineReport(
                 calculateMinDate(range),
                 getSimulatedNowInstant(),
@@ -370,7 +362,7 @@ public class FlightService {
     }
 
     // 7)
-    public List<AirportStatDTO> getAirportsByAvgDelay(String range) {
+    public List<AirportStatDTO> getAirportsByAvgDelay(TimeInterval range) {
         List<AirportStatDTO> result =  flightRepository.findAirportsByAvgDelay(
                 calculateMinDate(range),
                 getSimulatedNowInstant()

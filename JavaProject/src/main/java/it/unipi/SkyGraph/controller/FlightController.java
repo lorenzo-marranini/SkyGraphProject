@@ -2,13 +2,11 @@ package it.unipi.SkyGraph.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import it.unipi.SkyGraph.dto.*;
-import it.unipi.SkyGraph.enums.AirlineSort;
+import it.unipi.SkyGraph.enums.*;
 import it.unipi.SkyGraph.dto.AirlineStatDTO;
 import it.unipi.SkyGraph.dto.AirportStatDTO;
 import it.unipi.SkyGraph.dto.FlightDTO;
 import it.unipi.SkyGraph.dto.TripItineraryDTO;
-import it.unipi.SkyGraph.enums.AirportSort;
-import it.unipi.SkyGraph.enums.TimeInterval;
 import it.unipi.SkyGraph.service.FlightService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -41,16 +39,14 @@ public class FlightController {
             @RequestParam String date
     ) {
         List<FlightDTO> flights = flightService.searchFlights(origin, destination, date);
-        if (flights.isEmpty()) return ResponseEntity.noContent().build();
-        return ResponseEntity.ok(flights);
+        return flights.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(flights);
     }
 
     @Operation(summary = "Get live flights")
     @GetMapping("/flights/live")
     public ResponseEntity<List<FlightDTO>> liveFlights() {
         List<FlightDTO> flights = flightService.findLiveFlights();
-        if (flights.isEmpty()) return ResponseEntity.noContent().build();
-        return ResponseEntity.ok(flights);
+        return flights.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(flights);
     }
 
     // --- TRAFFIC CONTROLLER ENDPOINTS ---
@@ -58,192 +54,108 @@ public class FlightController {
     // 1, 2, 3, 7
     @Operation(summary = "Get airlines ranked by a given metric and time range")
     @GetMapping("/stats/airlines")
-    public ResponseEntity<?> getAirlineStats(
-            @RequestParam String sort,
-            @RequestParam(defaultValue = "LAST_WEEK") String range
+    public ResponseEntity<List<AirlineStatDTO>> getAirlineStats(
+            @RequestParam AirlineSort sort,
+            @RequestParam(defaultValue = "LAST_WEEK") TimeInterval range
     ) {
-        // Normalizziamo l'input (opzionale, ma consigliato per essere case-insensitive)
-        String sortUpper = sort.toUpperCase();
-
-        try {
-            List<AirlineStatDTO> result = switch (sortUpper) {
-                case "DELAY"        -> flightService.getAirlinesByAvgDelay(range);
-                case "FLIGHTS"      -> flightService.getAirlinesByTotalFlights(range);
-                case "TOT_DISTANCE" -> flightService.getAirlinesByTotalDistance(range);
-                case "AVG_DISTANCE" -> flightService.getAirlinesByAvgRouteDistance(range);
-                default -> throw new IllegalArgumentException("Invalid sort parameter. Value '" + sort + "' is not supported. Use: DELAY, FLIGHTS, TOT_DISTANCE, AVG_DISTANCE.");
-            };
-
-            return ResponseEntity.ok(result);
-
-        } catch (IllegalArgumentException e) {
-            return buildBadRequest(e.getMessage());
-        }
+        List<AirlineStatDTO> result = switch (sort) {
+            case DELAY        -> flightService.getAirlinesByAvgDelay(range);
+            case FLIGHTS      -> flightService.getAirlinesByTotalFlights(range);
+            case TOT_DISTANCE -> flightService.getAirlinesByTotalDistance(range);
+            case AVG_DISTANCE -> flightService.getAirlinesByAvgRouteDistance(range);
+        };
+        return ResponseEntity.ok(result);
     }
 
     // 4 da fare su Neo4j
 
     // 5, 6
-    @Operation(summary = "Get airlines ranked by a given metric and time range on a specific route")
+    @Operation(summary = "Get airlines ranked by metric on a specific route")
     @GetMapping("/stats/airlines/route")
-    public ResponseEntity<?> getAirlineStatsByRoute(
-            @RequestParam String origin_iata,
-            @RequestParam String dest_iata,
-            @RequestParam String sort, // Riceviamo una String generica
-            @RequestParam(defaultValue = "LAST_WEEK") String range
+    public ResponseEntity<List<AirlineStatDTO>> getAirlineStatsByRoute(
+            @RequestParam String originIata,
+            @RequestParam String destIata,
+            @RequestParam AirlineRouteSort sort,
+            @RequestParam(defaultValue = "LAST_WEEK") TimeInterval range
     ) {
-        String sortUpper = sort.toUpperCase();
-
-        try {
-            List<AirlineStatDTO> result = switch (sortUpper) {
-                case "DELAY"        -> flightService.getAirlinesByRouteDelay(origin_iata, dest_iata, range);
-                case "FLIGHTS"      -> flightService.getAirlinesByRoute(origin_iata, dest_iata, range);
-                // La sintassi corretta per il default nello switch expression
-                default -> throw new IllegalArgumentException("Invalid sort parameter. Value '" + sort + "' is not supported. Use: DELAY, FLIGHTS.");
-            };
-
-            return ResponseEntity.ok(result);
-
-        } catch (IllegalArgumentException e) {
-            return buildBadRequest(e.getMessage());
-        }
+        List<AirlineStatDTO> result = switch (sort) {
+            case DELAY   -> flightService.getAirlinesByRouteDelay(originIata, destIata, range);
+            case FLIGHTS -> flightService.getAirlinesByRoute(originIata, destIata, range);
+        };
+        return ResponseEntity.ok(result);
     }
 
 
     // -- AIRLINE REPRESENTATIVE
 
-    @Operation(summary = "Get the most frequent routes in a given time range")
-    @GetMapping("/stats/routes/frequent")
-    public ResponseEntity<?> getFrequentRoutes(
-            @RequestParam(defaultValue = "LAST_WEEK") String range
+    @Operation(summary = "Get routes ranked by flight count, cancellations or diversions")
+    @GetMapping("/stats/routes")
+    public ResponseEntity<List<RouteStatsDTO>> getRouteStats(
+            @RequestParam RouteSort sort,
+            @RequestParam(defaultValue = "LAST_WEEK") TimeInterval range
     ) {
-        try {
-            List<RouteStatsDTO> result = flightService.getRoutesByFlightCount(range);
-            return ResponseEntity.ok(result);
-        } catch (IllegalArgumentException e) {
-            return buildBadRequest(e.getMessage());
-        }
-    }
-
-    @Operation(summary = "Get the routes with the most cancelled flights in a given time range")
-    @GetMapping("/stats/routes/cancelled")
-    public ResponseEntity<?> getCancelledRoutes(
-            @RequestParam(defaultValue = "LAST_WEEK") String range
-    ) {
-        try {
-            List<RouteStatsDTO> result = flightService.getRoutesByCancelledCount(range);
-            return ResponseEntity.ok(result);
-        } catch (IllegalArgumentException e) {
-            return buildBadRequest(e.getMessage());
-        }
-    }
-
-    @Operation(summary = "Get the routes with the most diverted flights in a given time range")
-    @GetMapping("/stats/routes/diverted")
-    public ResponseEntity<?> getDivertedRoutes(
-            @RequestParam(defaultValue = "LAST_WEEK") String range
-    ) {
-        try {
-            List<RouteStatsDTO> result = flightService.getRoutesByDivertedCount(range);
-            return ResponseEntity.ok(result);
-        } catch (IllegalArgumentException e) {
-            return buildBadRequest(e.getMessage());
-        }
+        List<RouteStatsDTO> result = switch (sort) {
+            case FREQUENT  -> flightService.getRoutesByFlightCount(range);
+            case CANCELLED -> flightService.getRoutesByCancelledCount(range);
+            case DIVERTED  -> flightService.getRoutesByDivertedCount(range);
+        };
+        return ResponseEntity.ok(result);
     }
     //3
     @Operation(summary = "Get total flights, departures, and arrivals for a city in a given time range")
     @GetMapping("/stats/cities/{city}")
-    public ResponseEntity<?> getCityStats(
+    public ResponseEntity<CityStatsDTO> getCityStats(
             @PathVariable String city,
-            @RequestParam(defaultValue = "LAST_WEEK") String range
+            @RequestParam(defaultValue = "LAST_WEEK") TimeInterval range
     ) {
-        try {
-            CityStatsDTO stats = flightService.getCityHybridStats(city, range);
-            return ResponseEntity.ok(stats);
-        } catch (IllegalArgumentException e) {
-            return buildBadRequest(e.getMessage());
-        }
+        return ResponseEntity.ok(flightService.getCityHybridStats(city, range));
     }
 
 
     @Operation(summary = "Get average delay by day of the week in a given time range")
     @GetMapping("/stats/days/delay")
-    public ResponseEntity<?> getDelayByDayOfWeek(
-            @RequestParam(defaultValue = "LAST_WEEK") String range
+    public ResponseEntity<List<DayStatsDTO>> getDelayByDayOfWeek(
+            @RequestParam(defaultValue = "LAST_WEEK") TimeInterval range
     ) {
-        try {
-            List<DayStatsDTO> result = flightService.getDaysByAvgDelay(range);
-            if (result.isEmpty()) return ResponseEntity.noContent().build();
-            return ResponseEntity.ok(result);
-        } catch (IllegalArgumentException e) {
-            return buildBadRequest(e.getMessage());
-        }
+        List<DayStatsDTO> result = flightService.getDaysByAvgDelay(range);
+        return result.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(result);
     }
 
     //6.
     @Operation(summary = "Get a comprehensive report for a specific airline in a given time range")
     @GetMapping("/stats/airlines/report")
-    public ResponseEntity<?> getAirlineReport(
+    public ResponseEntity<List<AirlineReportDTO>> getAirlineReport(
             @RequestParam String airlineName,
-            @RequestParam(defaultValue = "LAST_WEEK") String range
+            @RequestParam(defaultValue = "LAST_WEEK") TimeInterval range
     ) {
-        try {
-            // Richiama il metodo che hai già preparato nel Service
-            List<AirlineReportDTO> report = flightService.getAirlineReport(range, airlineName);
-
-            if (report.isEmpty()) {
-                return ResponseEntity.noContent().build();
-            }
-            return ResponseEntity.ok(report);
-
-        } catch (IllegalArgumentException e) {
-            return buildBadRequest(e.getMessage());
-        }
+        List<AirlineReportDTO> report = flightService.getAirlineReport(range, airlineName);
+        return report.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(report);
     }
-    /*
-    // 6. Mean Route Distance per Airline
-    @GetMapping("/airlines/by-avg-route-distance")
-    public ResponseEntity<?> getAirlinesByAvgRouteDistance(@RequestParam(defaultValue = "LAST_WEEK") String range) {
-        return handleAirlineRequest(range, flightService::getAirlinesByAvgRouteDistance);
-    }*/
 
     // 7. Top Aeroporti per ritardi
     // --- AIRPORT STATS ---
+
     @Operation(summary = "Get airports ranked by a given metric and time range")
     @GetMapping("/stats/airports")
-    public ResponseEntity<?> getAirportStats(
-            @RequestParam String sort,
-            @RequestParam(defaultValue = "LAST_WEEK") String range
+    public ResponseEntity<List<AirportStatDTO>> getAirportStats(
+            @RequestParam AirportSort sort,
+            @RequestParam(defaultValue = "LAST_WEEK") TimeInterval range
     ) {
-        String sortUpper = sort.toUpperCase();
-        try {
-            List<AirportStatDTO> result = switch (sortUpper) {
-                case "DELAY" -> flightService.getAirportsByAvgDelay(range);
-                default -> throw new IllegalArgumentException("Invalid sort parameter. Value '" + sort + "' is not supported. Use: DELAY.");
-            };
-
-            return ResponseEntity.ok(result);
-
-        } catch (IllegalArgumentException e) {
-            return buildBadRequest(e.getMessage());
-        }
+        List<AirportStatDTO> result = switch (sort) {
+            case DELAY -> flightService.getAirportsByAvgDelay(range);
+        };
+        return ResponseEntity.ok(result);
     }
-
-
 
     @Operation(summary = "Find the quickest actual route checking real flight schedules")
     @GetMapping("/routes/quickest-real")
     public ResponseEntity<List<TripItineraryDTO>> getQuickestRealRoute(
             @RequestParam String origin,
             @RequestParam String dest,
-            @RequestParam String date, // YYYY-MM-DD
+            @RequestParam String date,
             @RequestParam(defaultValue = "2") int maxHops
     ) {
         List<TripItineraryDTO> itineraries = flightService.findQuickestRealRoute(origin, dest, date, maxHops);
-
-        if (itineraries.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.ok(itineraries);
+        return itineraries.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(itineraries);
     }
 }
