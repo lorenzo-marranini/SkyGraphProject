@@ -91,7 +91,7 @@ public class FlightService {
 
     // ------------------------ GUEST ------------------------
 
-    // 1)
+    // G1
     public List<FlightDTO> searchFlights(String origin, String destination, String dateString) {
 
         LocalDate date = LocalDate.parse(dateString, DateTimeFormatter.ISO_LOCAL_DATE);
@@ -105,7 +105,7 @@ public class FlightService {
                 .collect(Collectors.toList());
     }
 
-    // 2)
+    // G2
     public List<FlightDTO> findLiveFlights() {
 
         Instant now = clock.getSimulatedNowInstant();
@@ -120,6 +120,9 @@ public class FlightService {
                 .collect(Collectors.toList());
     }
 
+    // --------------------- TRAFFIC CONTROLLER -------------------
+
+    // AR1
 
     public List<TripItineraryDTO> findQuickestRealRoute(String origin, String dest, String dateString, int maxHops) {
 
@@ -188,14 +191,8 @@ public class FlightService {
         return validItineraries;
     }
 
-    public List<DayStatsDTO> getDaysByAvgDelay(TimeInterval range) {
-        return flightRepository.findDaysByAvgDelay(
-                clock.calculateMinDate(range),
-                clock.getSimulatedNowInstant()
-        );
-    }
 
-    // 4)
+    // AR2
     public List<RouteStatsDTO> getRoutesByFlightCount(TimeInterval range) {
         return flightRepository.findRoutesByFlightCount(
                 clock.calculateMinDate(range),
@@ -203,7 +200,7 @@ public class FlightService {
         );
     }
 
-    // 4.1)
+    // AR2.1
     public List<RouteStatsDTO> getRoutesByCancelledCount(TimeInterval range) {
         return flightRepository.findRoutesByCancelledCount(
                 clock.calculateMinDate(range),
@@ -211,9 +208,17 @@ public class FlightService {
         );
     }
 
-    // 4.2)
+    // AR2.2
     public List<RouteStatsDTO> getRoutesByDivertedCount(TimeInterval range) {
         return flightRepository.findRoutesByDivertedCount(
+                clock.calculateMinDate(range),
+                clock.getSimulatedNowInstant()
+        );
+    }
+
+    // AR9
+    public List<DayStatsDTO> getDaysByAvgDelay(TimeInterval range) {
+        return flightRepository.findDaysByAvgDelay(
                 clock.calculateMinDate(range),
                 clock.getSimulatedNowInstant()
         );

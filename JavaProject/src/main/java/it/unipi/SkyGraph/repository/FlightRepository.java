@@ -109,7 +109,7 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String> {
             """,
             "{ $limit: 10 }"
     })
-    List<AirportEmergencyDTO> findTop5NearestAirports(double longitude, double latitude);
+    List<AirportEmergencyDTO> findNearestAirports(double longitude, double latitude);
 
     /* questo da mettere nel service
     public List<AirportEmergencyDTO> getNearestAirportsForEmergency(String flightKey) {
@@ -118,7 +118,7 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String> {
             List<Double> coords = flight.getFlightLog().getLocation().getCoordinates();
             return AirtportRepository.findTop5NearestAirports(coords.get(0), coords.get(1));
         })
-        .orElse(Collections.emptyList());
+        ;
     }
 
      */

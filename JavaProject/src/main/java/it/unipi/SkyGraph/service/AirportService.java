@@ -20,22 +20,25 @@ public class AirportService {
     private final FlightRepository flightRepository;
     private final SimulationClock clock;
 
-    // --- GUEST ---
+    // ----------- GUEST ---------
     public Optional<Airport> getAirportByIata(String iataCode) {
         return airportRepository.findByIataCode(iataCode);
     }
 
-    // --- TRAFFIC CONTROLLER ---
+    // --------- TRAFFIC CONTROLLER ---------
 
-    // 4)
-    public List<AirportRankingDTO> getAirportsConnections() {
-        List<AirportRankingDTO> result = airportRepository.findAirportsConnections();
-        result.forEach(dto  -> dto.setScoreType("NUMBER_OF_CONNECTIONS"));
 
-        return result;
+    // TC7
+    public List<AirportEmergencyDTO> getNearestAirportsForEmergency(String flightKey) {
+    return FlightRepository.findLiveFlightByKey(flightKey)
+        .map(flight -> {
+            List<Double> coords = flight.getFlightLog().getLocation().getCoordinates();
+            return AirportRepository.findNearestAirports(coords.get(0), coords.get(1));
+        });
     }
 
-    // 9)
+
+    // TC8
     public List<AirportRankingDTO> getBestAlternativeAirports(String closedIata) {
         List<AirportRankingDTO> result = airportRepository.findBestAlternativeAirports(closedIata);
         result.forEach(dto  -> dto.setScoreType("SHARED_CONNECTIONS/KM_DISTANCE"));
@@ -43,23 +46,21 @@ public class AirportService {
     }
 
 
+    // ------------ AIRLINE REPRESENTATIVE ----------
 
-    // --- AIRLINE REPRESENTATIVE ---
-
-    // 1)
+    // AR3
     public Optional<QuickestPathDTO> getQuickestRoute(String origin, String dest, int maxHops) {
         return airportRepository.findQuickestRoute(origin, dest, maxHops);
     }
 
-    // 2)
+    // AR4
     public List<AirportRankingDTO> getTopHubsByRank() {
         List<AirportRankingDTO> result = airportRepository.findTopHubsByRank();
         result.forEach(dto  -> dto.setScoreType("BETWEENNESS_SCORE"));
         return result;
     }
 
-
-    // 7)
+    // AR5
     public List<AirportStatDTO> getAirportsByAvgDelay(TimeInterval range) {
         List<AirportStatDTO> result =  flightRepository.findAirportsByAvgDelay(
                 clock.calculateMinDate(range),
@@ -70,6 +71,13 @@ public class AirportService {
         return result;
     }
 
-    // 5)
+    // AR6
+    public List<AirportRankingDTO> getAirportsConnections() {
+        List<AirportRankingDTO> result = airportRepository.findAirportsConnections();
+        result.forEach(dto  -> dto.setScoreType("NUMBER_OF_CONNECTIONS"));
+
+        return result;
+    }
+
 
 }

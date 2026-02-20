@@ -18,7 +18,7 @@ public class AirlineService {
     private final SimulationClock clock;
 
 
-    // 1)
+    // TC1
     public List<AirlineStatDTO> getAirlinesByAvgDelay(TimeInterval range) {
         List<AirlineStatDTO> result = flightRepository.findAirlinesByAvgDelay(
                 clock.calculateMinDate(range),
@@ -29,7 +29,7 @@ public class AirlineService {
     }
 
 
-    // 2)
+    // TC2
     public List<AirlineStatDTO> getAirlinesByTotalFlights(TimeInterval range) {
         List<AirlineStatDTO> result = flightRepository.findAirlinesByTotalFlights(
                 clock.calculateMinDate(range),
@@ -39,7 +39,7 @@ public class AirlineService {
         return result;
     }
 
-    // 3)
+    // TC3
     public List<AirlineStatDTO> getAirlinesByTotalDistance(TimeInterval range) {
         List<AirlineStatDTO> result = flightRepository.findAirlinesByTotalDistance(
                 clock.calculateMinDate(range),
@@ -49,7 +49,7 @@ public class AirlineService {
         return result;
     }
 
-    // 7)
+    // TC4
     public List<AirlineStatDTO> getAirlinesByAvgRouteDistance(TimeInterval range) {
         List<AirlineStatDTO> result = flightRepository.findAirlinesByAvgRouteDistance(
                 clock.calculateMinDate(range),
@@ -59,9 +59,7 @@ public class AirlineService {
         return result;
     }
 
-    // 4) TO DO
-
-    // 5)
+    // TC5
     public List<AirlineStatDTO> getAirlinesByRoute(String origin, String destination, TimeInterval range) {
         List<AirlineStatDTO> result =  flightRepository.findAirlinesByRoute(
                 origin,
@@ -73,7 +71,7 @@ public class AirlineService {
         return result;
     }
 
-    // 6)
+    // TC6
     public List<AirlineStatDTO> getAirlinesByRouteDelay(String origin, String destination, TimeInterval range) {
         List<AirlineStatDTO> result = flightRepository.findAirlinesByRouteDelay(
                 origin,
@@ -85,7 +83,7 @@ public class AirlineService {
         return result;
     }
 
-    // 6)
+    // AR10
     public List<AirlineReportDTO> getAirlineReport(TimeInterval range, String AirlineName) {
         return flightRepository.generateAirlineReport(
                 clock.calculateMinDate(range),

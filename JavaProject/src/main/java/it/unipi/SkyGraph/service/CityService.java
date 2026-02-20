@@ -22,14 +22,18 @@ public class CityService {
     private final FlightRepository flightRepository;
     private final SimulationClock clock;
 
+
     // ----------------------- AIRLINE REPRESENTATIVE -----------------
-    // 3)
+
+
+    // AR7
     public List<CityRankDTO> getMostTraffickedCities() {
         List<CityRankDTO> result = cityRepository.findMostTraffickedCities();
         return result;
     }
 
-        public CityStatsDTO getCityHybridStats(String cityName, TimeInterval range) {
+    // AR8
+    public CityStatsDTO getCityHybridStats(String cityName, TimeInterval range) {
         Instant start = clock.calculateMinDate(range);
         Instant end = clock.getSimulatedNowInstant();
 
