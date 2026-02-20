@@ -5,7 +5,7 @@ import it.unipi.SkyGraph.repository.AirportRepository;
 import it.unipi.SkyGraph.repository.FlightRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
+import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
@@ -42,19 +42,46 @@ public class MongoCrudService {
         return flightRepository.findAll();
     }
 
+    @Transactional
     public FlightMongo updateFlight(String id, FlightMongo updatedFlight) {
+        // 1. Recupera il volo esistente da MongoDB prima della modifica
         FlightMongo existing = getFlightById(id);
 
-        // Ensure we don't overwrite the Mongo _id
-        updatedFlight.setId(existing.getId());
+        // Estrai le vecchie informazioni di rotta e durata
+        String oldOrigin = existing.getRoute().getOrigin().getIata();
+        String oldDest = existing.getRoute().getDestination().getIata();
+        double oldDuration = existing.getFlightInfo().getSchedule().getDurationMinutes();
 
-        // Note: If the origin/destination or duration changes during an update,
-        // you would ideally need complex graph logic here to decrement the old route's
-        // num_voli and increment the new one. For simplicity, we just save the document.
+        // Estrai le nuove informazioni (che potrebbero essere state modificate dall'utente)
+        String newOrigin = updatedFlight.getRoute().getOrigin().getIata();
+        String newDest = updatedFlight.getRoute().getDestination().getIata();
+        double newDuration = updatedFlight.getFlightInfo().getSchedule().getDurationMinutes();
+
+        // Controlla se qualcosa che impatta Neo4j è effettivamente cambiato
+        boolean routeChanged = !oldOrigin.equals(newOrigin) || !oldDest.equals(newDest);
+        boolean durationChanged = oldDuration != newDuration;
+
+        if (routeChanged || durationChanged) {
+            airportRepository.decrementRouteRelationship(oldOrigin, oldDest, oldDuration);
+
+            airportRepository.upsertRouteRelationship(newOrigin, newDest, newDuration);
+        }
+
+        // 3. Salva l'aggiornamento su MongoDB
+        updatedFlight.setId(existing.getId());
         return flightRepository.save(updatedFlight);
     }
 
+
     public void deleteFlight(String id) {
+        FlightMongo existing = getFlightById(id);
+
+        String origin = existing.getRoute().getOrigin().getIata();
+        String dest = existing.getRoute().getDestination().getIata();
+        double duration = existing.getFlightInfo().getSchedule().getDurationMinutes();
+
+        airportRepository.decrementRouteRelationship(origin, dest, duration);
+
         flightRepository.deleteById(id);
     }
 }

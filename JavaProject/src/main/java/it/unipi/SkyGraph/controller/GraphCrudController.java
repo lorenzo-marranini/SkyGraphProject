@@ -2,6 +2,7 @@ package it.unipi.SkyGraph.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import it.unipi.SkyGraph.model.Airport;
+import it.unipi.SkyGraph.model.AirportMongo;
 import it.unipi.SkyGraph.model.City;
 import it.unipi.SkyGraph.service.GraphCrudService;
 import lombok.RequiredArgsConstructor;
@@ -77,13 +78,13 @@ public class GraphCrudController {
 
     @Operation(summary = "Get all Airports")
     @GetMapping("/airports")
-    public ResponseEntity<List<Airport>> getAllAirports() {
+    public ResponseEntity<List<AirportMongo>> getAllAirports() {
         return ResponseEntity.ok(crudService.getAllAirports());
     }
 
     @Operation(summary = "Get an Airport by IATA code")
     @GetMapping("/airports/{iata}")
-    public ResponseEntity<Airport> getAirport(@PathVariable String iata) {
+    public ResponseEntity<AirportMongo> getAirport(@PathVariable String iata) {
         try {
             return ResponseEntity.ok(crudService.getAirportByIata(iata));
         } catch (IllegalArgumentException e) {

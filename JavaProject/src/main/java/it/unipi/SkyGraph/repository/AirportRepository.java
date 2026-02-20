@@ -101,6 +101,15 @@ public interface AirportRepository extends Neo4jRepository<Airport, String> {
             "LIMIT 20")
     List<AirportRankingDTO> findAirportsConnections();
 
-
+    @Query("MATCH (a:Airport {iata_code: $originIata})-[r:ROUTE]->(b:Airport {iata_code: $destIata}) " +
+            "SET r.mean_scheduled_time = CASE " +
+            "    WHEN r.num_voli > 1 THEN ((r.mean_scheduled_time * r.num_voli) - toFloat($duration)) / (r.num_voli - 1) " +
+            "    ELSE 0 END, " +
+            "r.num_voli = r.num_voli - 1 " +
+            "WITH r WHERE r.num_voli = 0 " +
+            "DELETE r")
+    void decrementRouteRelationship(@Param("originIata") String originIata,
+                                    @Param("destIata") String destIata,
+                                    @Param("duration") double duration);
 
 }

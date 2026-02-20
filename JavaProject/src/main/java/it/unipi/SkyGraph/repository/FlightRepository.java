@@ -285,6 +285,9 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String> {
     @Update("{ '$set': { 'flight_log': ?1 } }")
     void updateFlightLogByKey(String flightKey, FlightMongo.FlightLog log);
 
+
+
+
 }
 
 
