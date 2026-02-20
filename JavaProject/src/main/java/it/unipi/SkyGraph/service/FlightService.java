@@ -253,7 +253,6 @@ public class FlightService {
     // --- ALTRI METODI (Updates) ---
 
     public void updateFlightLog(FlightLogDTO dto) {
-        Query query = new Query(Criteria.where("flight_info.flight_key").is(dto.getFlightKey()));
         FlightMongo.FlightLog log = new FlightMongo.FlightLog(
                 new FlightMongo.GeoLocation("Point", List.of(dto.getLon(), dto.getLat())),
                 dto.getAlt(),
@@ -261,8 +260,7 @@ public class FlightService {
                 dto.getTimestamp(),
                 dto.getEta()
         );
-        Update update = new Update().set("flight_log", log);
-        mongoTemplate.updateFirst(query, update, FlightMongo.class);
+        flightRepository.updateFlightLogByKey(dto.getFlightKey(), log);
     }
 
 }
