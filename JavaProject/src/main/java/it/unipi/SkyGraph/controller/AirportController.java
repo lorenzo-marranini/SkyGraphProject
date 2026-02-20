@@ -58,7 +58,7 @@ public class AirportController {
     @Operation(summary = "Get top hubs by PageRank centrality score")
     @GetMapping("/rankings/hubs")
     public ResponseEntity<List<AirportRankingDTO>> getTopHubs() {
-        List<AirportRankingDTO> hubs = airportService.getTopHubsByPageRank();
+        List<AirportRankingDTO> hubs = airportService.getTopHubsByRank();
         if (hubs.isEmpty()) {
             return ResponseEntity.noContent().build();
         }

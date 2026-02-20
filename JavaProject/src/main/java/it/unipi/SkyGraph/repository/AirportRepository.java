@@ -27,8 +27,7 @@ public interface AirportRepository extends Neo4jRepository<Airport, String> {
 
     // ------------------------------- TRAFFIC CONTROLLER ------------------------
 
-    // 5) Aeroporti ordinati per numero di rotte
-
+    // 4) Aeroporti ordinati per numero di aeroporti connessi in uscita
     @Query("MATCH (a:Airport)-[r:ROUTE]->() " +
             "RETURN a.iata_code AS iataCode, a.name AS name, count(r) AS score " +
             "ORDER BY score DESC " +
@@ -56,6 +55,7 @@ public interface AirportRepository extends Neo4jRepository<Airport, String> {
     // ----------------------- AIRLINE REPRESENTATIVE ------------------------------------
 
 
+    // 1) Cercare un volo possibile dato origin e destinatio e numero di scali
     // QUERY: Rotta più veloce (Weighted Shortest Path basato su mean_scheduled_time)
     @Query("MATCH p = (start:Airport {iata_code: $origin})-[:ROUTE*1..3]->(end:Airport {iata_code: $dest}) " +
             "WHERE length(p) <= $maxHops " +
@@ -69,6 +69,16 @@ public interface AirportRepository extends Neo4jRepository<Airport, String> {
             @Param("dest") String dest,
             @Param("maxHops") int maxHops
     );
+
+    //Parte neo4j della query sul quickest path
+    @Query("MATCH p = (start:Airport {iata_code: $origin})-[:ROUTE*1..4]->(end:Airport {iata_code: $dest}) " +
+            "WHERE length(p) <= $maxHops " +
+            "WITH [n in nodes(p) | n.iata_code] AS codes " +
+            "RETURN reduce(s = head(codes), x in tail(codes) | s + ',' + x) " +
+            "LIMIT 10")
+    List<String> findCandidatePaths(@Param("origin") String origin,
+                                    @Param("dest") String dest,
+                                    @Param("maxHops") int maxHops);
 
 
     // 2) Visualizzare gli aeroporti ordinati per il betweenness centrality score
@@ -84,17 +94,12 @@ public interface AirportRepository extends Neo4jRepository<Airport, String> {
             "}) " +
             "YIELD nodeId, score " +
             "WITH gds.util.asNode(nodeId) AS airport, score " +
-            "RETURN airport.iata_code AS iataCode, airport.name AS name, score AS networkScore " +
+            "RETURN airport.iata_code AS iataCode, airport.name AS name, score AS score " +
             "ORDER BY score DESC LIMIT 30")
-    List<AirportRankingDTO> findTopHubsByPageRank();
+    List<AirportRankingDTO> findTopHubsByRank();
 
-    //Parte neo4j della query sul quickest path
-    @Query("MATCH p = (start:Airport {iata_code: $origin})-[:ROUTE*1..4]->(end:Airport {iata_code: $dest}) " +
-            "WHERE length(p) <= $maxHops " +
-            "WITH [n in nodes(p) | n.iata_code] AS codes " +
-            "RETURN reduce(s = head(codes), x in tail(codes) | s + ',' + x) " +
-            "LIMIT 10")
-    List<String> findCandidatePaths(@Param("origin") String origin,
-                                    @Param("dest") String dest,
-                                    @Param("maxHops") int maxHops);
+
+
+
+
 }

@@ -93,13 +93,16 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String> {
 
     //------------------------AIRLINE REPRESENTATIVE-----------------------------
 
+    // 1)
 
     // 2) Restituisce gli aeroporti ordinati per betwenness centrality
-    // Fatta su neo4j
+    // Fatta su neo4j su AirportRepository
 
     // 3) Restituisce la lista di città collegate ad una specifica con un numero di scali dato
-    // Neo4j
+    // Fatta su Neo4j su CityRepository
 
+
+    // 4) Restituisce le rotte con piu voli nell'intervallo di tempo
     @Aggregation(pipeline = {
             "{ '$match': { 'flight_info.schedule.departure_datetime': { '$gte': ?0, '$lte': ?1 } } }",
             "{ '$group': { " +

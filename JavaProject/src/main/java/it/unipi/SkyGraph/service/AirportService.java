@@ -1,7 +1,6 @@
 package it.unipi.SkyGraph.service;
 
-import it.unipi.SkyGraph.dto.AirportRankingDTO;
-import it.unipi.SkyGraph.dto.QuickestPathDTO;
+import it.unipi.SkyGraph.dto.*;
 import it.unipi.SkyGraph.model.Airport;
 import it.unipi.SkyGraph.repository.AirportRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,21 +21,37 @@ public class AirportService {
     }
 
     // --- TRAFFIC CONTROLLER ---
+
+    // 4)
     public List<AirportRankingDTO> getAirportsConnections() {
-        return airportRepository.findAirportsConnections();
+        List<AirportRankingDTO> result = airportRepository.findAirportsConnections();
+        result.forEach(dto  -> dto.setScoreType("NUMBER_OF_CONNECTIONS"));
+
+        return result;
     }
 
+    // 9)
     public List<AirportRankingDTO> getBestAlternativeAirports(String closedIata) {
-        return airportRepository.findBestAlternativeAirports(closedIata);
+        List<AirportRankingDTO> result = airportRepository.findBestAlternativeAirports(closedIata);
+        result.forEach(dto  -> dto.setScoreType("SHARED_CONNECTIONS/KM_DISTANCE"));
+        return result;
     }
+
+
 
     // --- AIRLINE REPRESENTATIVE ---
+
+    // 1)
     public Optional<QuickestPathDTO> getQuickestRoute(String origin, String dest, int maxHops) {
         return airportRepository.findQuickestRoute(origin, dest, maxHops);
     }
 
-    public List<AirportRankingDTO> getTopHubsByPageRank() {
-        return airportRepository.findTopHubsByPageRank();
+    // 2)
+    public List<AirportRankingDTO> getTopHubsByRank() {
+        List<AirportRankingDTO> result = airportRepository.findTopHubsByRank();
+        result.forEach(dto  -> dto.setScoreType("BETWEENNESS_SCORE"));
+        return result;
     }
+
 
 }
