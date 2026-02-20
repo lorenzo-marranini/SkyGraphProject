@@ -1,5 +1,6 @@
 package it.unipi.SkyGraph.service;
 
+import it.unipi.SkyGraph.config.SimulationClock;
 import it.unipi.SkyGraph.dto.*;
 import it.unipi.SkyGraph.enums.TimeInterval;
 import it.unipi.SkyGraph.model.FlightMongo;
@@ -31,32 +32,7 @@ public class FlightService {
     private final AirportRepository airportRepository;
     private final CityRepository cityRepository;
     private final MongoTemplate mongoTemplate;
-
-    // Definiamo la data di riferimento "ADESSO" statica per la simulazione
-    private static final LocalDate SIMULATED_NOW = LocalDate.of(2026, 2, 25);
-
-    /**
-     * Calcola la data di inizio (minDate) basata sull'intervallo richiesto
-     * rispetto alla data simulata "SIMULATED_NOW".
-     */
-    private Instant calculateMinDate(TimeInterval range) {
-        LocalDate calculatedDate = switch (range) {
-            case LAST_DAY   -> SIMULATED_NOW.minusDays(1);
-            case LAST_WEEK  -> SIMULATED_NOW.minusWeeks(1);
-            case LAST_MONTH -> SIMULATED_NOW.minusMonths(1);
-            case LAST_YEAR  -> SIMULATED_NOW.minusYears(1);
-        };
-        return calculatedDate.atStartOfDay(ZoneOffset.UTC).toInstant();
-    }
-
-    /**
-     * Restituisce la fine della giornata "simulata" corrente (25 Feb 2026 23:59:59)
-     * Usato come limite superiore (maxDate) per le query.
-     */
-    private Instant getSimulatedNowInstant() {
-        // Prendiamo la fine della giornata corrente o l'inizio del giorno dopo
-        return SIMULATED_NOW.plusDays(1).atStartOfDay(ZoneOffset.UTC).toInstant();
-    }
+    private final SimulationClock clock;
 
     /**
      * Transforms a FlightMongo Obj in a FlightDTO
@@ -132,7 +108,7 @@ public class FlightService {
     // 2)
     public List<FlightDTO> findLiveFlights() {
 
-        Instant now = getSimulatedNowInstant();
+        Instant now = clock.getSimulatedNowInstant();
         Instant startWindow = now.minus(24, ChronoUnit.HOURS);
         Instant endWindow = now.plus(12, ChronoUnit.HOURS);
         // check dei voli live tra 24 ore prima e 12 ore dopo per essere sicuri in casi di ritardi / anticipi
@@ -143,81 +119,6 @@ public class FlightService {
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
-
-    //----------------------------------- TRAFFIC CONTROLLER -----------------------
-
-    // 1)
-    public List<AirlineStatDTO> getAirlinesByAvgDelay(TimeInterval range) {
-        List<AirlineStatDTO> result = flightRepository.findAirlinesByAvgDelay(
-                calculateMinDate(range),
-                getSimulatedNowInstant()
-        );
-        result.forEach(dto -> dto.setScoreType("AVERAGE_DELAY_MINUTES"));
-        return result;
-    }
-
-    // 2)
-    public List<AirlineStatDTO> getAirlinesByTotalFlights(TimeInterval range) {
-        List<AirlineStatDTO> result = flightRepository.findAirlinesByTotalFlights(
-                calculateMinDate(range),
-                getSimulatedNowInstant()
-        );
-        result.forEach(dto -> dto.setScoreType("TOTAL_FLIGHTS"));
-        return result;
-    }
-
-    // 3)
-    public List<AirlineStatDTO> getAirlinesByTotalDistance(TimeInterval range) {
-        List<AirlineStatDTO> result = flightRepository.findAirlinesByTotalDistance(
-                calculateMinDate(range),
-                getSimulatedNowInstant()
-        );
-        result.forEach(dto  -> dto.setScoreType("TOTAL_DISTANCE_KM"));
-        return result;
-    }
-
-    // 7)
-    public List<AirlineStatDTO> getAirlinesByAvgRouteDistance(TimeInterval range) {
-        List<AirlineStatDTO> result = flightRepository.findAirlinesByAvgRouteDistance(
-                calculateMinDate(range),
-                getSimulatedNowInstant()
-        );
-        result.forEach(dto  -> dto.setScoreType("AVG_DISTANCE_KM"));
-        return result;
-    }
-
-    // 4) TO DO
-
-    // 5)
-    public List<AirlineStatDTO> getAirlinesByRoute(String origin, String destination, TimeInterval range) {
-        List<AirlineStatDTO> result =  flightRepository.findAirlinesByRoute(
-                origin,
-                destination,
-                calculateMinDate(range),
-                getSimulatedNowInstant()
-        );
-        result.forEach(dto -> dto.setScoreType("FLIGHT_COUNT"));
-        return result;
-    }
-
-    // 6)
-    public List<AirlineStatDTO> getAirlinesByRouteDelay(String origin, String destination, TimeInterval range) {
-        List<AirlineStatDTO> result = flightRepository.findAirlinesByRouteDelay(
-                origin,
-                destination,
-                calculateMinDate(range),
-                getSimulatedNowInstant()
-        );
-        result.forEach(dto -> dto.setScoreType("AVG_DELAY_MIN"));
-        return result;
-    }
-
-
-    // 8) TO DO
-
-    // 9) TO DO
-
-//--------------------------- AIRLINE REPRESENTATIVE -------------------------------
 
 
     public List<TripItineraryDTO> findQuickestRealRoute(String origin, String dest, String dateString, int maxHops) {
@@ -287,91 +188,36 @@ public class FlightService {
         return validItineraries;
     }
 
-    public CityStatsDTO getCityHybridStats(String cityName, TimeInterval range) {
-        Instant start = calculateMinDate(range);
-        Instant end = getSimulatedNowInstant();
-
-        // Step 1: Neo4j (Trova codici IATA e Nazione)
-        List<String> iataCodes = cityRepository.findIataCodesByCity(cityName);
-        String country = cityRepository.findCountryByCity(cityName);
-
-        if (iataCodes == null || iataCodes.isEmpty()) {
-            // Città non trovata o senza aeroporti
-            return new CityStatsDTO(cityName, country != null ? country : "Unknown", 0L, 0L, 0L, 0);
-        }
-
-        // Step 2: Mongo (Conta i voli)
-        long departures = flightRepository.countDeparturesByAirports(iataCodes, start, end);
-        long arrivals = flightRepository.countArrivalsByAirports(iataCodes, start, end);
-        long totalFlights = departures + arrivals;
-
-        // Step 3: Assembla il DTO aggiornato
-        return new CityStatsDTO(
-                cityName,
-                country,
-                departures,
-                arrivals,
-                totalFlights,
-                iataCodes.size()
+    public List<DayStatsDTO> getDaysByAvgDelay(TimeInterval range) {
+        return flightRepository.findDaysByAvgDelay(
+                clock.calculateMinDate(range),
+                clock.getSimulatedNowInstant()
         );
     }
 
     // 4)
     public List<RouteStatsDTO> getRoutesByFlightCount(TimeInterval range) {
         return flightRepository.findRoutesByFlightCount(
-                calculateMinDate(range),
-                getSimulatedNowInstant()
+                clock.calculateMinDate(range),
+                clock.getSimulatedNowInstant()
         );
     }
 
     // 4.1)
     public List<RouteStatsDTO> getRoutesByCancelledCount(TimeInterval range) {
         return flightRepository.findRoutesByCancelledCount(
-                calculateMinDate(range),
-                getSimulatedNowInstant()
+                clock.calculateMinDate(range),
+                clock.getSimulatedNowInstant()
         );
     }
 
     // 4.2)
     public List<RouteStatsDTO> getRoutesByDivertedCount(TimeInterval range) {
         return flightRepository.findRoutesByDivertedCount(
-                calculateMinDate(range),
-                getSimulatedNowInstant()
+                clock.calculateMinDate(range),
+                clock.getSimulatedNowInstant()
         );
     }
-
-    // 5)
-    public List<DayStatsDTO> getDaysByAvgDelay(TimeInterval range) {
-        return flightRepository.findDaysByAvgDelay(
-                calculateMinDate(range),
-                getSimulatedNowInstant()
-        );
-    }
-
-
-
-
-
-    // 6)
-    public List<AirlineReportDTO> getAirlineReport(TimeInterval range, String AirlineName) {
-        return flightRepository.generateAirlineReport(
-                calculateMinDate(range),
-                getSimulatedNowInstant(),
-                AirlineName
-        );
-    }
-
-    // 7)
-    public List<AirportStatDTO> getAirportsByAvgDelay(TimeInterval range) {
-        List<AirportStatDTO> result =  flightRepository.findAirportsByAvgDelay(
-                calculateMinDate(range),
-                getSimulatedNowInstant()
-        );
-
-        result.forEach(dto  -> dto.setScoreType("AVG_DELAY_MIN"));
-        return result;
-    }
-
 
     // --- ALTRI METODI (Updates) ---
 

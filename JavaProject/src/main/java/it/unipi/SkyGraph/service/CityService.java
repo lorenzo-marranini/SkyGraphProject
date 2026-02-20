@@ -1,12 +1,16 @@
 package it.unipi.SkyGraph.service;
 
+import it.unipi.SkyGraph.config.SimulationClock;
 import it.unipi.SkyGraph.dto.*;
+import it.unipi.SkyGraph.enums.TimeInterval;
 import it.unipi.SkyGraph.model.*;
 import it.unipi.SkyGraph.repository.AirportRepository;
 import it.unipi.SkyGraph.repository.CityRepository;
+import it.unipi.SkyGraph.repository.FlightRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,7 +19,8 @@ import java.util.Optional;
 public class CityService {
 
     private final CityRepository cityRepository;
-
+    private final FlightRepository flightRepository;
+    private final SimulationClock clock;
 
     // ----------------------- AIRLINE REPRESENTATIVE -----------------
     // 3)
@@ -24,7 +29,21 @@ public class CityService {
         return result;
     }
 
+        public CityStatsDTO getCityHybridStats(String cityName, TimeInterval range) {
+        Instant start = clock.calculateMinDate(range);
+        Instant end = clock.getSimulatedNowInstant();
 
+        List<String> iataCodes = cityRepository.findIataCodesByCity(cityName);
+        String country = cityRepository.findCountryByCity(cityName);
 
+        if (iataCodes == null || iataCodes.isEmpty()) {
+            return new CityStatsDTO(cityName, country != null ? country : "Unknown", 0L, 0L, 0L, 0);
+        }
+
+        long departures = flightRepository.countDeparturesByAirports(iataCodes, start, end);
+        long arrivals   = flightRepository.countArrivalsByAirports(iataCodes, start, end);
+
+        return new CityStatsDTO(cityName, country, departures, arrivals, departures + arrivals, iataCodes.size());
+    }
 
 }

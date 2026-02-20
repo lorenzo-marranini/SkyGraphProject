@@ -31,7 +31,10 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String> {
 
     // TC1 Restituisce le airlines ordinate per AVG delay
     @Aggregation(pipeline = {
-            "{ '$match': { 'flight_info.schedule.departure_datetime': { $gte: ?0, $lt: ?1 } } }",
+            "{ '$match': { " +
+                    "'flight_info.schedule.departure_datetime': { '$gte': ?0, '$lte': ?1 }, " +
+                    "'stats': { '$ne': null } " +
+                    "} }",
             "{ '$group': { '_id': '$flight_info.airline.name', 'score': { '$avg': '$stats.tot_delay_minutes' } } }",
             "{ '$sort': { 'score': 1 } }",
             "{ '$project': { '_id': 0, 'airlineName': '$_id', 'score': 1 } }"
@@ -77,7 +80,10 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String> {
 
     // TC6 Restituisce le airlines ordinate per AVG Delay su una specifica rotta ( origin -> destination )
     @Aggregation(pipeline = {
-            "{ '$match': { 'route.origin.iata': ?0, 'route.destination.iata': ?1, 'flight_info.schedule.departure_datetime': { '$gte': ?2, '$lte': ?3 } } }",
+            "{ '$match': { " +
+                    "'flight_info.schedule.departure_datetime': { '$gte': ?0, '$lte': ?1 }, " +
+                    "'stats': { '$ne': null } " +
+                    "} }",
             "{ '$group': { '_id': '$flight_info.airline.name', 'score': { '$avg': '$stats.tot_delay_minutes' } } }",
             "{ '$sort': { 'score': 1 } }",
             "{ '$project': { '_id': 0, 'airlineName': '$_id', 'score': 1 } }"
@@ -209,7 +215,10 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String> {
 
     // AR5 Restituisce gli aeroporti ordinati per ritardo medio
     @Aggregation(pipeline = {
-            "{ '$match': { 'flight_info.schedule.departure_datetime': { '$gte': ?0, '$lte': ?1 } } }",
+            "{ '$match': { " +
+                    "'flight_info.schedule.departure_datetime': { '$gte': ?0, '$lte': ?1 }, " +
+                    "'stats': { '$ne': null } " +
+                    "} }",
             "{ '$group': { " +
                     "'_id': '$route.origin.airport_name', " +
                     "'iataCode': { '$first': '$route.origin.iata' }, " +
@@ -246,7 +255,10 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String> {
 
     // AR9 Restituisce i giorni della settimana ordinati per delay medio nel time interval
     @Aggregation(pipeline = {
-            "{ '$match': { 'flight_info.schedule.departure_datetime': { '$gte': ?0, '$lte': ?1 } } }",
+            "{ '$match': { " +
+                    "'flight_info.schedule.departure_datetime': { '$gte': ?0, '$lte': ?1 }, " +
+                    "'stats': { '$ne': null } " +
+                    "} }",
             "{ '$project': { " +
                     "'dayOfWeek': { '$dayOfWeek': '$flight_info.schedule.departure_datetime' }, " +
                     "'delay': '$stats.tot_delay_minutes' " +

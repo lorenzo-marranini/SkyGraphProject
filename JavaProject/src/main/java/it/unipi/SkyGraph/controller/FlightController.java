@@ -32,7 +32,7 @@ public class FlightController {
 
     // --- 0. RICERCA VOLI ---
     @Operation(summary = "Search flights by origin IATA, destination IATA and date (YYYY-MM-DD)")
-    @GetMapping("/flights")
+    @GetMapping("/flights/search")
     public ResponseEntity<List<FlightDTO>> searchFlights(
             @RequestParam String origin,
             @RequestParam String destination,
@@ -49,47 +49,15 @@ public class FlightController {
         return flights.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(flights);
     }
 
-    // --- TRAFFIC CONTROLLER ENDPOINTS ---
-
-    // 1, 2, 3, 7
-    @Operation(summary = "Get airlines ranked by a given metric and time range")
-    @GetMapping("/stats/airlines")
-    public ResponseEntity<List<AirlineStatDTO>> getAirlineStats(
-            @RequestParam AirlineSort sort,
-            @RequestParam(defaultValue = "LAST_WEEK") TimeInterval range
-    ) {
-        List<AirlineStatDTO> result = switch (sort) {
-            case DELAY        -> flightService.getAirlinesByAvgDelay(range);
-            case FLIGHTS      -> flightService.getAirlinesByTotalFlights(range);
-            case TOT_DISTANCE -> flightService.getAirlinesByTotalDistance(range);
-            case AVG_DISTANCE -> flightService.getAirlinesByAvgRouteDistance(range);
-        };
-        return ResponseEntity.ok(result);
-    }
 
     // 4 da fare su Neo4j
 
-    // 5, 6
-    @Operation(summary = "Get airlines ranked by metric on a specific route")
-    @GetMapping("/stats/airlines/route")
-    public ResponseEntity<List<AirlineStatDTO>> getAirlineStatsByRoute(
-            @RequestParam String originIata,
-            @RequestParam String destIata,
-            @RequestParam AirlineRouteSort sort,
-            @RequestParam(defaultValue = "LAST_WEEK") TimeInterval range
-    ) {
-        List<AirlineStatDTO> result = switch (sort) {
-            case DELAY   -> flightService.getAirlinesByRouteDelay(originIata, destIata, range);
-            case FLIGHTS -> flightService.getAirlinesByRoute(originIata, destIata, range);
-        };
-        return ResponseEntity.ok(result);
-    }
 
 
     // -- AIRLINE REPRESENTATIVE
 
     @Operation(summary = "Get routes ranked by flight count, cancellations or diversions")
-    @GetMapping("/stats/routes")
+    @GetMapping("/routes/rankings")
     public ResponseEntity<List<RouteStatsDTO>> getRouteStats(
             @RequestParam RouteSort sort,
             @RequestParam(defaultValue = "LAST_WEEK") TimeInterval range
@@ -102,18 +70,11 @@ public class FlightController {
         return ResponseEntity.ok(result);
     }
     //3
-    @Operation(summary = "Get total flights, departures, and arrivals for a city in a given time range")
-    @GetMapping("/stats/cities/{city}")
-    public ResponseEntity<CityStatsDTO> getCityStats(
-            @PathVariable String city,
-            @RequestParam(defaultValue = "LAST_WEEK") TimeInterval range
-    ) {
-        return ResponseEntity.ok(flightService.getCityHybridStats(city, range));
-    }
+
 
 
     @Operation(summary = "Get average delay by day of the week in a given time range")
-    @GetMapping("/stats/days/delay")
+    @GetMapping("/routes/stats/daily-delay")
     public ResponseEntity<List<DayStatsDTO>> getDelayByDayOfWeek(
             @RequestParam(defaultValue = "LAST_WEEK") TimeInterval range
     ) {
@@ -121,31 +82,9 @@ public class FlightController {
         return result.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(result);
     }
 
-    //6.
-    @Operation(summary = "Get a comprehensive report for a specific airline in a given time range")
-    @GetMapping("/stats/airlines/report")
-    public ResponseEntity<List<AirlineReportDTO>> getAirlineReport(
-            @RequestParam String airlineName,
-            @RequestParam(defaultValue = "LAST_WEEK") TimeInterval range
-    ) {
-        List<AirlineReportDTO> report = flightService.getAirlineReport(range, airlineName);
-        return report.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(report);
-    }
-
     // 7. Top Aeroporti per ritardi
     // --- AIRPORT STATS ---
 
-    @Operation(summary = "Get airports ranked by a given metric and time range")
-    @GetMapping("/stats/airports")
-    public ResponseEntity<List<AirportStatDTO>> getAirportStats(
-            @RequestParam AirportSort sort,
-            @RequestParam(defaultValue = "LAST_WEEK") TimeInterval range
-    ) {
-        List<AirportStatDTO> result = switch (sort) {
-            case DELAY -> flightService.getAirportsByAvgDelay(range);
-        };
-        return ResponseEntity.ok(result);
-    }
 
     @Operation(summary = "Find the quickest actual route checking real flight schedules")
     @GetMapping("/routes/quickest-real")
@@ -158,4 +97,5 @@ public class FlightController {
         List<TripItineraryDTO> itineraries = flightService.findQuickestRealRoute(origin, dest, date, maxHops);
         return itineraries.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(itineraries);
     }
+
 }

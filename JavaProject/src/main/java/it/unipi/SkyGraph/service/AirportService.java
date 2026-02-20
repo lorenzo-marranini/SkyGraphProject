@@ -1,8 +1,11 @@
 package it.unipi.SkyGraph.service;
 
+import it.unipi.SkyGraph.config.SimulationClock;
 import it.unipi.SkyGraph.dto.*;
+import it.unipi.SkyGraph.enums.TimeInterval;
 import it.unipi.SkyGraph.model.Airport;
 import it.unipi.SkyGraph.repository.AirportRepository;
+import it.unipi.SkyGraph.repository.FlightRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +17,8 @@ import java.util.Optional;
 public class AirportService {
 
     private final AirportRepository airportRepository;
+    private final FlightRepository flightRepository;
+    private final SimulationClock clock;
 
     // --- GUEST ---
     public Optional<Airport> getAirportByIata(String iataCode) {
@@ -53,5 +58,18 @@ public class AirportService {
         return result;
     }
 
+
+    // 7)
+    public List<AirportStatDTO> getAirportsByAvgDelay(TimeInterval range) {
+        List<AirportStatDTO> result =  flightRepository.findAirportsByAvgDelay(
+                clock.calculateMinDate(range),
+                clock.getSimulatedNowInstant()
+        );
+
+        result.forEach(dto  -> dto.setScoreType("AVG_DELAY_MIN"));
+        return result;
+    }
+
+    // 5)
 
 }
