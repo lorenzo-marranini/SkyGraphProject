@@ -81,18 +81,4 @@ public class AirportController {
         return ResponseEntity.ok(result);
     }
 
-    /* AR 3 DA CANCELLARE
-
-    @Operation(summary = "Get the quickest route between two airports based on scheduled time")
-
-    @GetMapping("/connections/quickest")
-    public ResponseEntity<QuickestPathDTO> getQuickestRoute(
-            @RequestParam String origin,
-            @RequestParam String dest,
-            @RequestParam(defaultValue = "3") int maxHops) {
-        return airportService.getQuickestRoute(origin, dest, maxHops)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.noContent().build());
-    }
-    */
 }
