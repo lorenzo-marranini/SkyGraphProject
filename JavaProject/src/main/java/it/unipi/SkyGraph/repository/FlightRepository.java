@@ -91,7 +91,6 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String> {
     List<AirlineStatDTO> findAirlinesByRouteDelay(String originIata, String destIata, Instant start, Instant end);
 
     // TC7 Restituisce data una flightkey, gli aeroporti ordinati per distanza dal punto geografico in cui si trova adesso il volo, solo se è in volo.
-    // TO DO
 
     @Query("{ 'flight_info.flight_key': ?0, 'flight_log': { $ne: null } }")
     Optional<FlightMongo> findLiveFlightByKey(String flightKey);

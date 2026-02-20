@@ -4,6 +4,7 @@ import it.unipi.SkyGraph.config.SimulationClock;
 import it.unipi.SkyGraph.dto.*;
 import it.unipi.SkyGraph.enums.TimeInterval;
 import it.unipi.SkyGraph.model.Airport;
+import it.unipi.SkyGraph.model.FlightMongo;
 import it.unipi.SkyGraph.repository.AirportRepository;
 import it.unipi.SkyGraph.repository.FlightRepository;
 import lombok.RequiredArgsConstructor;
@@ -30,11 +31,14 @@ public class AirportService {
 
     // TC7
     public List<AirportEmergencyDTO> getNearestAirportsForEmergency(String flightKey) {
-    return FlightRepository.findLiveFlightByKey(flightKey)
-        .map(flight -> {
-            List<Double> coords = flight.getFlightLog().getLocation().getCoordinates();
-            return AirportRepository.findNearestAirports(coords.get(0), coords.get(1));
-        });
+        return flightRepository.findLiveFlightByKey(flightKey)
+                .map(flight -> {
+                    List<Double> coords = flight.getFlightLog().getLocation().getCoordinates();
+
+                    return airportRepository.findNearestAirports(coords.get(0), coords.get(1));
+                })
+                // Se il volo non esiste, restituiamo una lista vuota invece di un Optional
+                .orElse(java.util.Collections.emptyList());
     }
 
 

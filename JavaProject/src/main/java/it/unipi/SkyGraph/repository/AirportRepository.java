@@ -2,6 +2,7 @@ package it.unipi.SkyGraph.repository;
 
 import it.unipi.SkyGraph.dto.*;
 import it.unipi.SkyGraph.model.Airport;
+import org.springframework.data.mongodb.repository.Aggregation;
 import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.neo4j.repository.query.Query;
 import org.springframework.data.repository.query.Param;
@@ -27,6 +28,22 @@ public interface AirportRepository extends Neo4jRepository<Airport, String> {
 
 
     // ------------------------------- TRAFFIC CONTROLLER ------------------------
+
+    // TC7
+    @Aggregation(pipeline = {
+            """
+            {
+                $geoNear: {
+                    near: { type: 'Point', coordinates: [ ?0, ?1 ] },
+                    distanceField: 'distanceKm',
+                    spherical: true,
+                    distanceMultiplier: 0.001
+                }
+            }
+            """,
+            "{ $limit: 10 }"
+    })
+    List<AirportEmergencyDTO> findNearestAirports(double longitude, double latitude);
 
 
     // TC8 Dato un aeroporto chiuso, trovare un altro aeroporto che abbia il piu alto rapporto tra connessioni in comune fratto distanza
