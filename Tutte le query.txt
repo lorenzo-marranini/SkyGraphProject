@@ -26,7 +26,7 @@ Airline Representative:
 
 1) Neo4j + Mongo = Given origin* destination* stops*(scali) and date* (default=today), find the possible flights with less time flown. x 
 2) Neo4j = View betwenness centrality of airports x
-3) Neo4j  = Given a CITY and max_hops, views city connected
+3) Neo4j  = view ranking of cities per most traffik 
 4) Mongo = Given a time range * View the most frequent route  x 
 4.1) Mongo = Given a time range * View the most diverted route x
 4.2) Mongo = Given a time range * View the most cancelled route x (Non ne abbiamo no?)

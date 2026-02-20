@@ -16,11 +16,13 @@ public class CityService {
 
     private final CityRepository cityRepository;
 
+
+    // ----------------------- AIRLINE REPRESENTATIVE -----------------
+    // 3)
     public List<CityStatsDTO> getMostTraffickedCities() {
         List<CityStatsDTO> result = cityRepository.findMostTraffickedCities();
         return result;
     }
 
-    // ----------------------- AIRLINE REPRESENTATIVE -----------------
 
 }

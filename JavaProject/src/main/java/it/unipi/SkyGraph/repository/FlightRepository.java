@@ -98,7 +98,7 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String> {
     // 2) Restituisce gli aeroporti ordinati per betwenness centrality
     // Fatta su neo4j su AirportRepository
 
-    // 3) Restituisce la lista di città collegate ad una specifica con un numero di scali dato
+    // 3) Classifica delle Città per traffico aereo totale
     // Fatta su Neo4j su CityRepository
 
 

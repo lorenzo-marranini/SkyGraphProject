@@ -1,8 +1,6 @@
 package it.unipi.SkyGraph.repository;
 
-import it.unipi.SkyGraph.dto.AirportDTO;
 import it.unipi.SkyGraph.dto.CityStatsDTO;
-import it.unipi.SkyGraph.dto.CityReachabilityDTO;
 import it.unipi.SkyGraph.model.City;
 import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.neo4j.repository.query.Query;
@@ -12,6 +10,7 @@ import java.util.Optional;
 
 public interface CityRepository extends Neo4jRepository<City, String> {
 
+    // AIRLINE REPRESENTATIVE 3
     // Classifica delle Città per traffico aereo totale
     @Query("MATCH (c:City)<-[:LOCATED_IN]-(a:Airport)-[r:ROUTE]->() " +
             "RETURN c.name AS cityName, c.country AS country, " +
@@ -35,31 +34,6 @@ public interface CityRepository extends Neo4jRepository<City, String> {
     String findCountryByCity(@Param("cityName") String cityName);
 
 
-    // AIRLINE REPRESENTATIVE 3
-    @Query("""
-        MATCH (start:Airport {iata_code: $iataCode})
-        CALL apoc.path.expandConfig(start, {
-            relationshipFilter: "ROUTE>",
-            labelFilter: ">Airport",
-            minLevel: 1,
-            maxLevel: $maxHops
-        }) YIELD path
-        WITH start, last(nodes(path)) AS endAirport, length(path) AS hops
-        WHERE start <> endAirport
-        
-        // Attraversiamo la relazione verso la città
-        MATCH (endAirport)-[:LOCATED_IN]->(c:City)
-        
-        // Raggruppiamo per città e prendiamo il numero minimo di scali
-        WITH c.name AS name, c.country AS country, min(hops) - 1 AS scali
-        
-        // Nessun ORDER BY, la lista non sarà ordinata
-        RETURN name, country, scali
-        """)
-    List<CityReachabilityDTO> findReachableCities(
-            @Param("iataCode") String iataCode,
-            @Param("maxHops") int maxHops
-    );
 
 
 }
