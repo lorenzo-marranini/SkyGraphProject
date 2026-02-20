@@ -1,6 +1,8 @@
 package it.unipi.SkyGraph.service;
 
+import it.unipi.SkyGraph.config.SimulationClock;
 import it.unipi.SkyGraph.dto.FlightLogDTO;
+import lombok.AllArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -9,13 +11,12 @@ import java.time.temporal.ChronoUnit;
 import java.util.PriorityQueue;
 
 @Service
+@AllArgsConstructor
 public class FlightSimulationService {
 
-    private final FlightService flightMongoService;
+    private final FlightService flightService;
+    private final SimulationClock clock;
 
-    public FlightSimulationService(FlightService flightMongoService) {
-        this.flightMongoService = flightMongoService;
-    }
 
     @Async
     public void startSimulation(PriorityQueue<FlightLogDTO> originalQueue) {
@@ -24,11 +25,6 @@ public class FlightSimulationService {
         boolean loop = true;
         while (loop) {
 
-            // RESET timestamp
-            LocalDate date = LocalDate.of(2026, 2, 25);
-            Instant currentTimeStamp = date.atTime(11, 50).toInstant(ZoneOffset.UTC);
-
-            // COPIA: Assicurati che nessuno tocchi 'originalQueue' all'esterno
             PriorityQueue<FlightLogDTO> queue = new PriorityQueue<>(originalQueue);
 
             System.out.println("--- Avvio ciclo su " + queue.size() + " voli ---");
@@ -36,21 +32,25 @@ public class FlightSimulationService {
             while (!queue.isEmpty()) {
                 FlightLogDTO nextFlight = queue.peek();
 
-                while (nextFlight != null && !nextFlight.getTimestamp().isAfter(currentTimeStamp)) {
+                while (nextFlight != null && !nextFlight.getTimestamp().isAfter(clock.now())) {
                     FlightLogDTO processed = queue.poll();
 
-                    // update the mongo db
-                    // flightMongoService.updateFlightLog(processed);
+                    if (processed == null)
+                        break;
+                    // update mongo db
+                    flightService.updateFlightLog(processed);
 
                     nextFlight = queue.peek();
                 }
 
-                currentTimeStamp = currentTimeStamp.plus(10, ChronoUnit.MINUTES);
+//                System.out.println("Simulation time: " + clock.now());
+//                System.out.println("Advancing sim time");
+//                System.out.println("Queue size: " + queue.size());
+                clock.advanceSimTimeMin(10);
                 // try { Thread.sleep(2000); } catch (InterruptedException e) { return; }
             }
 
             System.out.println("Ciclo terminato.");
-            try { Thread.sleep(2000); } catch (InterruptedException e) { return; }
             loop = false;
         }
     }

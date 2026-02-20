@@ -264,57 +264,40 @@ public class FlightService {
         flightRepository.updateFlightLogByKey(dto.getFlightKey(), log);
     }
 
-    /**
-     * Questo task gira in automatico ogni minuto (60000 millisecondi)
-     * e "fa atterrare" i voli il cui ETA è stato superato.
-     */
-    @Scheduled(fixedRate = 60000)
-    public void processLandedFlights() {
-        // 1. Otteniamo l'orario attuale dalla tua simulazione
-        Instant currentSimTime = clock.getSimulatedNowInstant();
+    @Scheduled(fixedRate = 300000)
+    public void checkLandingFlights() {
+        Instant now = clock.now();
+        Instant startOfDay = now.truncatedTo(ChronoUnit.DAYS);
+        Instant endOfDay = startOfDay.plus(1, ChronoUnit.DAYS);
 
-        // 2. Cerchiamo i voli LIVE (flight_log non nullo) in cui l'ETA è minore o uguale ad adesso
-        Query query = new Query(Criteria.where("flight_log").ne(null)
-                .and("flight_log.eta").lte(currentSimTime));
+        List<FlightMongo> activeFlights = flightRepository.searchFlightsLive(startOfDay, endOfDay);
 
-        List<FlightMongo> landedFlights = mongoTemplate.find(query, FlightMongo.class);
+        for (FlightMongo flight : activeFlights) {
+            FlightMongo.FlightLog log = flight.getFlightLog();
 
-        if (landedFlights.isEmpty()) {
-            return; // Nessun volo è atterrato in questo minuto
+            if (log == null || log.getEta() == null) continue;
+
+            // 1. Verifica Altitudine Bassa (es. sotto i 500 piedi)
+            boolean isLowAltitude = log.getAltitude() < 500;
+
+            // 2. Verifica se il tempo attuale ha raggiunto o superato l'ETA
+            boolean isTimeReached = now.isAfter(log.getEta()) || now.equals(log.getEta());
+
+            if (isLowAltitude && isTimeReached) {
+                // Calcolo del ritardo effettivo: ETA (reale) - Departure + Duration (previsto)
+                // Oppure più semplicemente: ETA - Arrival_Datetime previsto
+                long delayMinutes = ChronoUnit.MINUTES.between(
+                        flight.getFlightInfo().getSchedule().getArrivalDatetime(),
+                        log.getEta()
+                );
+
+                // Se il volo è arrivato in anticipo, il delay potrebbe essere negativo.
+                // Di solito si normalizza a 0 se non si tracciano gli anticipi.
+                long finalDelay = Math.max(0, delayMinutes);
+
+                // Esegue l'aggiornamento e pulisce il log
+                flightRepository.finalizeFlight(flight.getFlightInfo().getFlightKey(), finalDelay);
+            }
         }
-
-        System.out.println(" Atterraggio in corso per " + landedFlights.size() + " voli...");
-
-        for (FlightMongo flight : landedFlights) {
-
-            // 3. Calcoliamo il ritardo effettivo (ETA al momento dell'atterraggio - Arrivo Schedulato)
-            Instant scheduledArrival = flight.getFlightInfo().getSchedule().getArrivalDatetime();
-            Instant actualArrival = flight.getFlightLog().getEta();
-
-            int delayMinutes = (int) ChronoUnit.MINUTES.between(scheduledArrival, actualArrival);
-
-            // Se è atterrato in anticipo, consideriamo il ritardo 0
-            int finalDelay = Math.max(0, delayMinutes);
-
-            // Calcoliamo l'air_time reale (durata schedulata + ritardo)
-            int scheduledDuration = flight.getFlightInfo().getSchedule().getDurationMinutes();
-            int actualAirTime = scheduledDuration + delayMinutes;
-
-            // 4. Prepariamo l'update per MongoDB
-            Update update = new Update();
-
-            // Aggiorniamo le statistiche statiche
-            update.set("stats.tot_delay_minutes", finalDelay);
-            update.set("stats.air_time_minutes", Math.max(0, actualAirTime));
-
-            // CANCELLIAMO fisicamente il flight_log (passa da live a storico)
-            update.unset("flight_log");
-
-            // 5. Eseguiamo l'update sul singolo documento
-            Query updateQuery = new Query(Criteria.where("id").is(flight.getId()));
-            mongoTemplate.updateFirst(updateQuery, update, FlightMongo.class);
-
-            System.out.println(" Volo " + flight.getFlightInfo().getFlightKey() + " atterrato. Ritardo: " + finalDelay + " min.");
-        }
-
+    }
 }

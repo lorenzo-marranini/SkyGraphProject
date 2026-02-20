@@ -6,17 +6,30 @@ import org.springframework.stereotype.Component;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
 
 @Component
 public class SimulationClock {
 
     private static final LocalDate SIMULATED_NOW = LocalDate.of(2026, 2, 25);
+    private static Instant currentTimeStamp = SIMULATED_NOW.atTime(11, 50).toInstant(ZoneOffset.UTC);
 
     // Definiamo la data di riferimento "ADESSO" statica per la simulazione
-    public Instant now() {
+    public LocalDate today() {
+        return SIMULATED_NOW;
+    }
+
+    public Instant endOfDay() {
         return SIMULATED_NOW.plusDays(1).atStartOfDay(ZoneOffset.UTC).toInstant();
     }
 
+    public Instant now() {
+        return currentTimeStamp;
+    }
+
+    public void advanceSimTimeMin(int minutes) {
+        currentTimeStamp = currentTimeStamp.plus(10, ChronoUnit.MINUTES);
+    }
     /**
      * Calcola la data di inizio (minDate) basata sull'intervallo richiesto
      * rispetto alla data simulata "SIMULATED_NOW".
