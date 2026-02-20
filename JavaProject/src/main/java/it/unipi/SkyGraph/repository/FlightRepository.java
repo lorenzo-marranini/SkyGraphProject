@@ -285,9 +285,10 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String> {
     @Update("{ '$set': { 'flight_log': ?1 } }")
     void updateFlightLogByKey(String flightKey, FlightMongo.FlightLog log);
 
-
-
-
+    // Aggiorna le statistiche e rimuove il log in modo atomico
+    @Query("{ 'flight_info.flight_key': ?0 }")
+    @Update("{ '$set': { 'stats.tot_delay_minutes': ?1, 'flight_log': null } }")
+    void finalizeFlight(String flightKey, long finalDelay);
 }
 
 

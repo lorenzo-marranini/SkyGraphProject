@@ -13,6 +13,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
@@ -263,4 +264,40 @@ public class FlightService {
         flightRepository.updateFlightLogByKey(dto.getFlightKey(), log);
     }
 
+    @Scheduled(fixedRate = 300000)
+    public void checkLandingFlights() {
+        Instant now = clock.now();
+        Instant startOfDay = now.truncatedTo(ChronoUnit.DAYS);
+        Instant endOfDay = startOfDay.plus(1, ChronoUnit.DAYS);
+
+        List<FlightMongo> activeFlights = flightRepository.searchFlightsLive(startOfDay, endOfDay);
+
+        for (FlightMongo flight : activeFlights) {
+            FlightMongo.FlightLog log = flight.getFlightLog();
+
+            if (log == null || log.getEta() == null) continue;
+
+            // 1. Verifica Altitudine Bassa (es. sotto i 500 piedi)
+            boolean isLowAltitude = log.getAltitude() < 500;
+
+            // 2. Verifica se il tempo attuale ha raggiunto o superato l'ETA
+            boolean isTimeReached = now.isAfter(log.getEta()) || now.equals(log.getEta());
+
+            if (isLowAltitude && isTimeReached) {
+                // Calcolo del ritardo effettivo: ETA (reale) - Departure + Duration (previsto)
+                // Oppure più semplicemente: ETA - Arrival_Datetime previsto
+                long delayMinutes = ChronoUnit.MINUTES.between(
+                        flight.getFlightInfo().getSchedule().getArrivalDatetime(),
+                        log.getEta()
+                );
+
+                // Se il volo è arrivato in anticipo, il delay potrebbe essere negativo.
+                // Di solito si normalizza a 0 se non si tracciano gli anticipi.
+                long finalDelay = Math.max(0, delayMinutes);
+
+                // Esegue l'aggiornamento e pulisce il log
+                flightRepository.finalizeFlight(flight.getFlightInfo().getFlightKey(), finalDelay);
+            }
+        }
+    }
 }

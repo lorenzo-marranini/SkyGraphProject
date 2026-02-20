@@ -7,10 +7,10 @@ Guest:
 Traffic Controller:
 
 Airlines statistics
-1) Mongo = AVG Delay of Airlines x
-2) Mongo = Total number of flights per Airlines x
-3) Mongo = Total KM flown by airlines x
-4) Mongo = Given a time range* view the AVG flight distance of airlines x
+1) Mongo = AVG Delay of Airlines xy
+2) Mongo = Total number of flights per Airlines xy
+3) Mongo = Total KM flown by airlines xy
+4) Mongo = Given a time range* view the AVG flight distance of airlines xy
 
 On a specific Route
 5) Mongo = Given origin* and destination* view number of flights of airlines x
@@ -31,10 +31,9 @@ Strategy Business on routes:
 2) Mongo = Given a time range * View the most frequent route  xy 
 2.1) Mongo = Given a time range * View the most diverted route xy
 2.2) Mongo = Given a time range * View the most cancelled route xy 
-3 DA CANCELLARE) Neo4j = Given origin* destination* and stops*(scali) view the quickest route x 
 
 on Airports
-4) Neo4j = View betwenness centrality of airports x
+4) Neo4j = View betwenness centrality of airports xy
 5) Mongo = View airports order by avg delay xy
 6) Neo4j = View airports order by most connections xy
 
@@ -44,7 +43,7 @@ on Cities:
 
 Others:
 9) Mongo = Given a time range* view statistic of delay per day of week   xy
-10) Mongo = Given an Airline* and time range* view total km flown, avg delay, total # of flights, AVG KM flown, effincency x
+10) Mongo = Given an Airline* and time range* view total km flown, avg delay, total # of flights, AVG KM flown, effincency xy
 
 
 
