@@ -87,6 +87,37 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String> {
     // TC7 Restituisce data una flightkey, gli aeroporti ordinati per distanza dal punto geografico in cui si trova adesso il volo, solo se è in volo.
     // TO DO
 
+    @Query("{ 'flight_info.flight_key': ?0, 'flight_log': { $ne: null } }")
+    Optional<FlightMongo> findLiveFlightByKey(String flightKey);
+
+    @Aggregation(pipeline = {
+            """
+            {
+                $geoNear: {
+                    near: { type: 'Point', coordinates: [ ?0, ?1 ] },
+                    distanceField: 'distanceKm',
+                    spherical: true,
+                    distanceMultiplier: 0.001
+                }
+            }
+            """,
+            "{ $limit: 10 }"
+    })
+    List<AirportEmergencyDTO> findTop5NearestAirports(double longitude, double latitude);
+
+    /* questo da mettere nel service
+    public List<AirportEmergencyDTO> getNearestAirportsForEmergency(String flightKey) {
+    return FlightRepository.findLiveFlightByKey(flightKey)
+        .map(flight -> {
+            List<Double> coords = flight.getFlightLog().getLocation().getCoordinates();
+            return AirtportRepository.findTop5NearestAirports(coords.get(0), coords.get(1));
+        })
+        .orElse(Collections.emptyList());
+    }
+
+     */
+
+
 
     // TC8 Dato un aeroporto chiuso, trovare un altro aeroporto che abbia il piu alto rapporto tra connessioni in comune fratto distanza
     // Fatta su Neo4j in AirportRepository
