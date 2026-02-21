@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RouteStatsDTO {
-    private String Origin;      // Nome aeroporto partenza
-    private String Destination; // Nome aeroporto arrivo
-    private Double Score;      // Score
+    private String Origin;
+    private String Destination;
+    private Double Score;
 }

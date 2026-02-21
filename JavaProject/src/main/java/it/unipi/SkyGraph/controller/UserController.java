@@ -33,6 +33,7 @@ public class UserController {
 
     @Operation(summary = "Search users with pagination")
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> browseUsers(
             @RequestParam(defaultValue = "") String username,
             @RequestParam(defaultValue = "0") @Min(0) int page,
@@ -60,15 +61,9 @@ public class UserController {
             @RequestParam String email,
             @RequestParam String roleName
     ) {
-        try {
-            userService.updateUserRole(email, roleName);
-            return ResponseEntity.ok("User role updated successfully to " + roleName.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            // Se il ruolo non esiste o l'email non è valida
-            return ResponseEntity.badRequest().body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().body("Error updating user role");
-        }
+        userService.updateUserRole(email, roleName);
+        return ResponseEntity.ok("User role updated successfully to " + roleName.toUpperCase());
+
     }
     @Operation(summary = "Delete your own account")
     @DeleteMapping("/me")

@@ -66,11 +66,7 @@ public class CityController {
     @Operation(summary = "Get a City by its city_state ID")
     @GetMapping("/{cityState}")
     public ResponseEntity<City> getCity(@PathVariable String cityState) {
-        try {
             return ResponseEntity.ok(cityService.getCityById(cityState));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.notFound().build();
-        }
     }
 
     @Operation(summary = "Delete a City")

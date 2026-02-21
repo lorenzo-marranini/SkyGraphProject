@@ -14,14 +14,6 @@ public class SimulationClock {
     private static final LocalDate SIMULATED_NOW = LocalDate.of(2026, 2, 25);
     private static Instant currentTimeStamp = SIMULATED_NOW.atTime(11, 50).toInstant(ZoneOffset.UTC);
 
-    // Definiamo la data di riferimento "ADESSO" statica per la simulazione
-    public LocalDate today() {
-        return SIMULATED_NOW;
-    }
-
-    public Instant endOfDay() {
-        return SIMULATED_NOW.plusDays(1).atStartOfDay(ZoneOffset.UTC).toInstant();
-    }
 
     public Instant now() {
         return currentTimeStamp;

@@ -21,7 +21,6 @@ public class FlightLogDTO implements Comparable<FlightLogDTO> {
     private Instant eta;
     private String flightKey;
 
-    // Metodo fondamentale per la PriorityQueue: ordina dal più vecchio al più recente
     @Override
     public int compareTo(FlightLogDTO other) {
         return this.timestamp.compareTo(other.timestamp);

@@ -49,12 +49,11 @@ public class SecurityConfig {
                         .requestMatchers("/error", "/api-docs.html", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/search/**").permitAll()
-                        .requestMatchers(
-                                "/api/neo4j/rankings/**",
-                                "/api/neo4j/routes/**",
-                                "/api/neo4j/airport/**"
-                        ).permitAll()
-                        .anyRequest().permitAll()) // authenticated()
+                        .requestMatchers("/api/airlines", "/api/airlines/**").hasRole("TRAFFIC_CONTROLLER")
+                        .requestMatchers("/api/cities", "/api/cities/**").hasRole("AIRLINE_REPRESENTATIVE")
+                        .requestMatchers("/flights/search", "/flights/live").permitAll()
+
+                        .anyRequest().authenticated())
 
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);

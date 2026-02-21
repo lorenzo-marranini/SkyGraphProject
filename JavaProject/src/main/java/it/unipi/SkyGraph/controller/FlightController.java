@@ -10,6 +10,7 @@ import it.unipi.SkyGraph.service.FlightService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -54,14 +55,13 @@ public class FlightController {
     }
 
 
-    // 4 da fare su Neo4j
-
 
 
     // -- AIRLINE REPRESENTATIVE
 
     @Operation(summary = "Get routes ranked by flight count, cancellations or diversions")
     @GetMapping("/routes/rankings")
+    @PreAuthorize("hasRole('AIRLINE_REPRESENTATIVE')")
     public ResponseEntity<List<RouteStatsDTO>> getRouteStats(
             @RequestParam RouteSort sort,
             @RequestParam(defaultValue = "LAST_WEEK") TimeInterval range,
@@ -80,6 +80,7 @@ public class FlightController {
 
     @Operation(summary = "Get average delay by day of the week in a given time range")
     @GetMapping("/routes/stats/daily-delay")
+    @PreAuthorize("hasRole('AIRLINE_REPRESENTATIVE')")
     public ResponseEntity<List<DayStatsDTO>> getDelayByDayOfWeek(
             @RequestParam(defaultValue = "LAST_WEEK") TimeInterval range
     ) {
@@ -93,6 +94,7 @@ public class FlightController {
 
     @Operation(summary = "Find the quickest actual route checking real flight schedules")
     @GetMapping("/routes/quickest-real")
+    @PreAuthorize("hasRole('AIRLINE_REPRESENTATIVE')")
     public ResponseEntity<TripItineraryDTO> getQuickestRealRoute(
             @RequestParam String origin,
             @RequestParam String dest,
@@ -105,6 +107,7 @@ public class FlightController {
 
     @Operation(summary = "Create a new flight in MongoDB using a simplified DTO and sync the ROUTE to Neo4j")
     @PostMapping("/flights")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> createFlight(@RequestBody FlightCreateDTO dto) {
         try {
             FlightMongo savedFlight = flightService.createFlight(dto);
@@ -117,12 +120,11 @@ public class FlightController {
     }
     @Operation(summary = "Update an existing flight using its flight_key and a DTO")
     @PutMapping("/{flightKey}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> updateFlight(
             @PathVariable String flightKey,
             @RequestBody FlightCreateDTO dto) {
 
-
-            // Chiama il servizio che abbiamo appena creato
         FlightMongo updatedFlight = flightService.updateFlight(flightKey, dto);
         return ResponseEntity.ok(updatedFlight);
 
@@ -131,6 +133,7 @@ public class FlightController {
 
     @Operation(summary = "Delete a flight from MongoDB")
     @DeleteMapping("/flights/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<FlightDTO> deleteFlight(@PathVariable String id) {
         FlightDTO deletedFlight = flightService.deleteFlight(id);
         return ResponseEntity.ok(deletedFlight);

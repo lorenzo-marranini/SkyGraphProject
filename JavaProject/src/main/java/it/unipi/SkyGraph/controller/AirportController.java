@@ -13,6 +13,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,6 +30,8 @@ public class AirportController {
     // --- TRAFFIC CONTROLLER ---
     @Operation(summary = "Get airports ranked by number of routes")
     @GetMapping("/rankings/connections")
+    @PreAuthorize("hasRole('TRAFFIC_CONTROLLER')")
+
     public ResponseEntity<List<AirportRankingDTO>> getAirportsConnections(
            @RequestParam(defaultValue = "10") Integer limit
     ) {
@@ -42,6 +45,8 @@ public class AirportController {
 
     @Operation(summary = "Get best emergency lading airports for a specific flight in air")
     @GetMapping("/emergency")
+    @PreAuthorize("hasRole('TRAFFIC_CONTROLLER')")
+
     public ResponseEntity<List<AirportEmergencyDTO>> getEmergencyAirports(
             @RequestParam String flightKey) {
         List<AirportEmergencyDTO> nearestAirports = airportService.getNearestAirportsForEmergency(flightKey);
@@ -53,6 +58,7 @@ public class AirportController {
 
     @Operation(summary = "Get best alternative airports for a closed airport")
     @GetMapping("/{iata}/alternative")
+    @PreAuthorize("hasRole('TRAFFIC_CONTROLLER')")
     public ResponseEntity<List<AirportRankingDTO>> getAlternativeAirports(
             @PathVariable String iata) {
         List<AirportRankingDTO> alternatives = airportService.getBestAlternativeAirports(iata);
@@ -66,6 +72,7 @@ public class AirportController {
 
     @Operation(summary = "Get top hubs by centrality score")
     @GetMapping("/rankings/hubs")
+    @PreAuthorize("hasRole('AIRLINE_REPRESENTATIVE')")
     public ResponseEntity<List<AirportRankingDTO>> getTopHubs(
             @RequestParam(defaultValue = "10") Integer limit
     ) {
@@ -78,6 +85,7 @@ public class AirportController {
 
     @Operation(summary = "Get airports ranked by a given metric and time range")
     @GetMapping("/rankings")
+    @PreAuthorize("hasRole('AIRLINE_REPRESENTATIVE')")
     public ResponseEntity<List<AirportRankingDTO>> getAirportStats(
             @RequestParam AirportSort sort,
             @RequestParam(defaultValue = "LAST_WEEK") TimeInterval range,
@@ -90,7 +98,9 @@ public class AirportController {
     }
 
     @Operation(summary = "Create an Airport and link it to a City via LOCATED_IN")
-    @PostMapping("/airports")
+    @PostMapping("/")
+    @PreAuthorize("hasRole('ADMIN')")
+
     public ResponseEntity<?> createAirport(
             @RequestBody AirportUpdateDTO airport
     ) {
@@ -103,7 +113,8 @@ public class AirportController {
     }
 
     @Operation(summary = "Update an existing Airport in Neo4j and MongoDB")
-    @PutMapping("/airports/{iataCode}")
+    @PutMapping("/{iataCode}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> updateAirport(@RequestBody AirportUpdateDTO dto) {
 
         Airport updatedAirport = airportService.updateAirport(dto);
@@ -112,6 +123,7 @@ public class AirportController {
 
     @Operation(summary = "Get all Airports")
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Page<AirportMongo>> getAllAirports(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size
@@ -132,6 +144,7 @@ public class AirportController {
 
     @Operation(summary = "Delete an Airport")
     @DeleteMapping("/{iata}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteAirport(@PathVariable String iata) {
         airportService.deleteAirport(iata);
         return ResponseEntity.noContent().build();

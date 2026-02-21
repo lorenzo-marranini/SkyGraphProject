@@ -14,7 +14,7 @@ public class FlightCreateDTO {
     private Instant departureDatetime;
     private Instant arrivalDatetime;
 
-    // Route (Just the IATAs and distance)
+    // Route
     private String originIata;
     private String destinationIata;
 
