@@ -3,7 +3,9 @@ package it.unipi.SkyGraph.service;
 import it.unipi.SkyGraph.config.SimulationClock;
 import it.unipi.SkyGraph.dto.*;
 import it.unipi.SkyGraph.enums.TimeInterval;
+import it.unipi.SkyGraph.model.AirportMongo;
 import it.unipi.SkyGraph.model.FlightMongo;
+import it.unipi.SkyGraph.repository.AirportMongoRepository;
 import it.unipi.SkyGraph.repository.AirportRepository;
 import it.unipi.SkyGraph.repository.CityRepository;
 import it.unipi.SkyGraph.repository.FlightRepository;
@@ -17,11 +19,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Duration;
+import java.time.*;
 import java.time.temporal.ChronoUnit;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -35,7 +34,7 @@ public class FlightService {
     private final CityRepository cityRepository;
     private final MongoTemplate mongoTemplate;
     private final SimulationClock clock;
-
+    private final AirportMongoRepository airportMongoRepository;
     /**
      * Transforms a FlightMongo Obj in a FlightDTO
      */
@@ -302,23 +301,59 @@ public class FlightService {
         }
     }
 
-    public FlightMongo createFlight(FlightMongo flight) {
-        // 1. Save the flight document to MongoDB
-        FlightMongo savedFlight = flightRepository.save(flight);
+    @Transactional
+    public FlightMongo createFlight(FlightCreateDTO dto) {
 
-        // 2. Extract routing info to sync with Neo4j
-        String origin = flight.getRoute().getOrigin().getIata();
-        String dest = flight.getRoute().getDestination().getIata();
+        AirportMongo origin = airportMongoRepository.findById(dto.getOriginIata())
+                .orElseThrow(() -> new IllegalArgumentException("Origin airport not found in DB: " + dto.getOriginIata()));
 
-        // Extract the scheduled duration from the Mongo document
-        double duration = flight.getFlightInfo().getSchedule().getDurationMinutes();
+        AirportMongo destination = airportMongoRepository.findById(dto.getDestinationIata())
+                .orElseThrow(() -> new IllegalArgumentException("Destination airport not found in DB: " + dto.getDestinationIata()));
 
-        // 3. Trigger the UPSERT in Neo4j to update the ROUTE relationship
-        airportRepository.upsertRouteRelationship(origin, dest, duration);
+        FlightMongo.Airline airline = new FlightMongo.Airline(dto.getAirlineIata(), dto.getAirlineName());
+        FlightMongo.Schedule schedule = new FlightMongo.Schedule(dto.getDurationMinutes(), dto.getDepartureDatetime(), dto.getArrivalDatetime());
+
+        //generazione chiave di volo
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy_M_d_HHmm").withZone(ZoneId.of("UTC"));
+        String flightKey = String.format("%s_%s_%s_%s",
+                dto.getOriginIata(), dto.getDestinationIata(), dto.getAirlineIata(), formatter.format(dto.getDepartureDatetime()));
+
+        FlightMongo.FlightInfo flightInfo = new FlightMongo.FlightInfo(flightKey, airline, schedule);
+
+        // TODO: togliere queste dopo rimozione coordinate
+        FlightMongo.GeoLocation originGeo = new FlightMongo.GeoLocation(
+                origin.getLocation().getType(),
+                origin.getLocation().getCoordinates()
+        );
+        FlightMongo.GeoLocation destGeo = new FlightMongo.GeoLocation(
+                destination.getLocation().getType(),
+                destination.getLocation().getCoordinates()
+        );
+
+        FlightMongo.AirportDetails originDetails = new FlightMongo.AirportDetails(
+                origin.getId(), origin.getName(), origin.getCity(), origin.getState(), origin.getCountry(), originGeo
+        );
+        FlightMongo.AirportDetails destDetails = new FlightMongo.AirportDetails(
+                destination.getId(), destination.getName(), destination.getCity(), destination.getState(), destination.getCountry(), destGeo
+        );
+
+        FlightMongo.Route route = new FlightMongo.Route(originDetails, destDetails, dto.getDistanceKm().doubleValue());
+
+        FlightMongo.Stats stats = new FlightMongo.Stats(
+                dto.getTotDelayMinutes(), dto.getIsCancelled(), dto.getIsDiverted(), dto.getAirTimeMinutes()
+        );
+
+        FlightMongo flightToSave = new FlightMongo();
+        flightToSave.setFlightInfo(flightInfo);
+        flightToSave.setRoute(route);
+        flightToSave.setStats(stats);
+
+        FlightMongo savedFlight = flightRepository.save(flightToSave);
+
+        airportRepository.upsertRouteRelationship(dto.getOriginIata(), dto.getDestinationIata(), dto.getDurationMinutes().doubleValue());
 
         return savedFlight;
     }
-
     public FlightMongo getFlightById(String id) {
         return flightRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Flight not found in MongoDB"));

@@ -99,19 +99,19 @@ public class FlightController {
         return itineraries.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(itineraries);
     }
 
-    @Operation(summary = "Create a new flight in MongoDB and sync the ROUTE to Neo4j")
-    @PostMapping
-    public ResponseEntity<FlightMongo> createFlight(@RequestBody FlightMongo flight) {
+    @Operation(summary = "Create a new flight in MongoDB using a simplified DTO and sync the ROUTE to Neo4j")
+    @PostMapping("/flights")
+    public ResponseEntity<?> createFlight(@RequestBody FlightCreateDTO dto) {
         try {
-            FlightMongo savedFlight = flightService.createFlight(flight);
+            FlightMongo savedFlight = flightService.createFlight(dto);
             return ResponseEntity.ok(savedFlight);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.internalServerError().build();
         }
-    }
-
-    @Operation(summary = "Get a flight by its MongoDB ObjectId")
-    @GetMapping("/{id}")
+    }    @Operation(summary = "Get a flight by its MongoDB ObjectId")
+    @GetMapping("/flights/{id}")
     public ResponseEntity<FlightMongo> getFlight(@PathVariable String id) {
         try {
             return ResponseEntity.ok(flightService.getFlightById(id));
@@ -121,7 +121,7 @@ public class FlightController {
     }
 
     @Operation(summary = "Update an existing flight in MongoDB")
-    @PutMapping("/{id}")
+    @PutMapping("/flights/{id}")
     public ResponseEntity<FlightMongo> updateFlight(
             @PathVariable String id,
             @RequestBody FlightMongo flight) {
@@ -133,7 +133,7 @@ public class FlightController {
     }
 
     @Operation(summary = "Delete a flight from MongoDB")
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/flights/{id}")
     public ResponseEntity<Void> deleteFlight(@PathVariable String id) {
         flightService.deleteFlight(id);
         return ResponseEntity.noContent().build();
