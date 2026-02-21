@@ -12,6 +12,8 @@ import it.unipi.SkyGraph.repository.FlightRepository;
 import it.unipi.SkyGraph.repository.AirportMongoRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -148,8 +150,8 @@ public class AirportService {
         // ================= 2. MONGODB =================
         airportMongoRepository.deleteById(iataCode);
     }
-    public List<AirportMongo> getAllAirports() {
-        return airportMongoRepository.findAll();
+    public Page<AirportMongo> getAllAirports(Pageable pageble) {
+        return airportMongoRepository.findAll(pageble);
     }
 
     public AirportMongo getExistingAirportByIata(String iataCode) {

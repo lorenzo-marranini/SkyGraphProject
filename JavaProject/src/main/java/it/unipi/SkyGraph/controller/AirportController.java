@@ -9,6 +9,10 @@ import it.unipi.SkyGraph.model.AirportMongo;
 import it.unipi.SkyGraph.service.AirportService;
 import it.unipi.SkyGraph.service.FlightService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -115,13 +119,17 @@ public class AirportController {
     }
 
     @Operation(summary = "Get all Airports")
-    @GetMapping("/airports")
-    public ResponseEntity<List<AirportMongo>> getAllAirports() {
-        return ResponseEntity.ok(airportService.getAllAirports());
+    @GetMapping
+    public ResponseEntity<Page<AirportMongo>> getAllAirports(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("airport._id").ascending());
+        return ResponseEntity.ok(airportService.getAllAirports(pageable));
     }
 
     @Operation(summary = "Get an Airport by IATA code")
-    @GetMapping("/airports/{iata}")
+    @GetMapping("/{iata}")
     public ResponseEntity<AirportMongo> getAirport(@PathVariable String iata) {
         try {
             return ResponseEntity.ok(airportService.getExistingAirportByIata(iata));
@@ -131,7 +139,7 @@ public class AirportController {
     }
 
     @Operation(summary = "Delete an Airport")
-    @DeleteMapping("/airports/{iata}")
+    @DeleteMapping("/{iata}")
     public ResponseEntity<Void> deleteAirport(@PathVariable String iata) {
         airportService.deleteAirport(iata);
         return ResponseEntity.noContent().build();
