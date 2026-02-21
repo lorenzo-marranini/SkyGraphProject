@@ -8,7 +8,6 @@ import java.util.PriorityQueue;
 @Service
 public class FlightSimulationManager implements CommandLineRunner {
 
-    // Teniamo la coda come variabile di stato del servizio
     private final CsvFlightLoader loader;
     private final FlightSimulationService simulationService;
 

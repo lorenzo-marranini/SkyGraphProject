@@ -92,26 +92,22 @@ public class AirportController {
     @Operation(summary = "Create an Airport and link it to a City via LOCATED_IN")
     @PostMapping("/airports")
     public ResponseEntity<?> createAirport(
-            @RequestBody Airport airport,
-            @RequestParam String cityName,
-            @RequestParam String country
+            @RequestBody AirportUpdateDTO airport
     ) {
         try {
-            Airport savedAirport = airportService.createAirport(airport, cityName, country);
+            Airport savedAirport = airportService.createAirport(airport);
             return ResponseEntity.ok(savedAirport);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
-    @Operation(summary = "Update an existing Airport")
-    @PutMapping("/airports")
-    public ResponseEntity<?> updateAirport(@RequestBody Airport airport) {
-        try {
-            return ResponseEntity.ok(airportService.updateAirport(airport));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    @Operation(summary = "Update an existing Airport in Neo4j and MongoDB")
+    @PutMapping("/airports/{iataCode}")
+    public ResponseEntity<?> updateAirport(@RequestBody AirportUpdateDTO dto) {
+
+        Airport updatedAirport = airportService.updateAirport(dto);
+        return ResponseEntity.ok(updatedAirport);
     }
 
     @Operation(summary = "Get all Airports")

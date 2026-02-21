@@ -20,7 +20,6 @@ public class FlightSimulationService {
 
     @Async
     public void startSimulation(PriorityQueue<FlightLogDTO> originalQueue) {
-        // 1. Verifica se la coda originale ha elementi all'inizio
         boolean loop = true;
         while (loop) {
 
@@ -39,9 +38,6 @@ public class FlightSimulationService {
                     nextFlight = queue.peek();
                 }
 
-//                System.out.println("Simulation time: " + clock.now());
-//                System.out.println("Advancing sim time");
-//                System.out.println("Queue size: " + queue.size());
                 clock.advanceSimTimeMin(10);
             }
             loop = false;

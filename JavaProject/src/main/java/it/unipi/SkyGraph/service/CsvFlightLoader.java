@@ -27,7 +27,7 @@ public class CsvFlightLoader {
             while ((line = br.readLine()) != null) {
                 lineNumber++;
 
-                // Rimuove l'eventuale BOM invisibile sulla primissima riga
+                // Removes eventual BOM on first line
                 if (isFirstLine) {
                     line = line.replace("\uFEFF", "");
                     isFirstLine = false;
@@ -36,7 +36,7 @@ public class CsvFlightLoader {
 
                 String[] values = line.split(",");
 
-                // Ora abbiamo 11 colonne, quindi controlliamo che ci siano abbastanza dati
+                // Check for enough data?
                 if (values.length < 11) continue;
 
                 try {
@@ -53,14 +53,11 @@ public class CsvFlightLoader {
                             parseInstantSafe(values[9]),                     // eta
                             values[10].trim()                                // flight_key (NUOVO)
                     );
-
-                    // Inseriamo solo se il timestamp fondamentale è presente
                     if (logDTO.getTimestamp() != null) {
                         flightQueue.add(logDTO);
                     }
 
                 } catch (Exception parseEx) {
-                    // Questo ci dice ESATTAMENTE quale riga del CSV sta fallendo e perché
                     System.err.println("Errore di formato alla riga " + lineNumber + ": " + parseEx.getMessage());
                 }
             }

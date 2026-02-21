@@ -10,8 +10,8 @@ import lombok.NoArgsConstructor;
 public class CityStatsDTO {
     private String CityName;
     private String StateId;
-    private Long TotalDepartures; // Aggiunto per soddisfare il requisito #3
-    private Long TotalArrivals;   // Aggiunto per soddisfare il requisito #3
+    private Long TotalDepartures;
+    private Long TotalArrivals;
     private Long TotalFlights;
     private Integer AirportCount;
 }

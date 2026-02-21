@@ -108,26 +108,35 @@ public class AirportService {
 
     }
 
+    // CRUD QUERIES
     @Transactional
-    public Airport createAirport(Airport airport, String cityName, String country) {
+    public Airport createAirport(AirportUpdateDTO dto) {
         // ================= 1. NEO4J =================
-        City city = cityRepository.findByNameIgnoreCase(cityName)
-                .orElseThrow(() -> new IllegalArgumentException("Cannot create airport: City '" + cityName + "' not found in Neo4j."));
+        // get the city from the CityName
+        City city = cityRepository.findByNameIgnoreCase(dto.getCityName())
+                .orElseThrow(() -> new IllegalArgumentException("Cannot create airport: City '" + dto.getCityName() + "' not found in Neo4j."));
 
+
+        Airport airport = new Airport();
+        airport.setIataCode(dto.getIataCode());
+        airport.setName(dto.getName());
+        airport.setLatitude(dto.getLatitude());
+        airport.setLongitude(dto.getLongitude());
         airport.setCity(city);
+
         Airport savedNeo4jAirport = airportRepository.save(airport);
 
         // ================= 2. MONGODB =================
         AirportMongo.Location location = new AirportMongo.Location();
         location.setType("Point");
-        location.setCoordinates(List.of(airport.getLongitude(), airport.getLatitude()));
+        location.setCoordinates(List.of(dto.getLongitude(), dto.getLatitude()));
 
         AirportMongo mongoDoc = new AirportMongo();
-        mongoDoc.setId(airport.getIataCode());
-        mongoDoc.setName(airport.getName());
+        mongoDoc.setId(dto.getIataCode());
+        mongoDoc.setName(dto.getName());
         mongoDoc.setCity(city.getName());
         mongoDoc.setState(city.getStateId());
-        mongoDoc.setCountry(country);
+        mongoDoc.setCountry(dto.getCountry());
         mongoDoc.setLocation(location);
 
         airportMongoRepository.save(mongoDoc);
@@ -135,28 +144,42 @@ public class AirportService {
         return savedNeo4jAirport;
     }
 
+
     @Transactional
-    public Airport updateAirport(Airport airport) {
+    public Airport updateAirport(AirportUpdateDTO dto) {
         // ================= 1. NEO4J =================
-        Airport existing = airportRepository.findById(airport.getIataCode())
+        String iataCode = dto.getIataCode();
+        Airport existingNeo = airportRepository.findById(iataCode)
                 .orElseThrow(() -> new IllegalArgumentException("Airport not found in Neo4j"));
 
-        existing.setName(airport.getName());
-        existing.setLatitude(airport.getLatitude());
-        existing.setLongitude(airport.getLongitude());
+        existingNeo.setName(dto.getName());
+        existingNeo.setLatitude(dto.getLatitude());
+        existingNeo.setLongitude(dto.getLongitude());
 
-        Airport savedAirport = airportRepository.save(existing);
+        //if the user changed city, update it making sure the city exists
+        if (!existingNeo.getCity().getName().equalsIgnoreCase(dto.getCityName())) {
+            City newCity = cityRepository.findByNameIgnoreCase(dto.getCityName())
+                    .orElseThrow(() -> new IllegalArgumentException("Cannot update: City '" + dto.getCityName() + "' not found in Neo4j."));
+            existingNeo.setCity(newCity);
+        }
+
+        Airport savedNeo4jAirport = airportRepository.save(existingNeo);
 
         // ================= 2. MONGODB =================
-        AirportMongo mongoDoc = airportMongoRepository.findById(airport.getIataCode())
+        AirportMongo existingMongo = airportMongoRepository.findById(iataCode)
                 .orElseThrow(() -> new IllegalArgumentException("Airport not found in MongoDB"));
 
-        mongoDoc.setName(airport.getName());
-        mongoDoc.getLocation().setCoordinates(List.of(airport.getLongitude(), airport.getLatitude()));
+        existingMongo.setName(dto.getName());
+        existingMongo.setCity(dto.getCityName());
+        existingMongo.setCountry(dto.getCountry());
 
-        airportMongoRepository.save(mongoDoc);
+        existingMongo.setState(existingNeo.getCity().getStateId());
 
-        return savedAirport;
+        existingMongo.getLocation().setCoordinates(List.of(dto.getLongitude(), dto.getLatitude()));
+
+        airportMongoRepository.save(existingMongo);
+
+        return savedNeo4jAirport;
     }
 
     @Transactional

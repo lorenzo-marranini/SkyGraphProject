@@ -51,6 +51,7 @@ public class AuthService {
         newUserMongo.setUsername(user.username());
         newUserMongo.setPassword(encoder.encode(user.password()));
         newUserMongo.setEmail(user.email());
+
         newUserMongo.setRole(Role.REGISTERED_USER);
 
         userRepository.save(newUserMongo);
@@ -64,12 +65,12 @@ public class AuthService {
         if (auth.isAuthenticated()) {
             UserPrincipal userPrincipal = (UserPrincipal) auth.getPrincipal();
 
-            // 1. Estrai le authorities (ruoli) dall'utente autenticato
+            //Get roles for the user
             List<String> roles = userPrincipal.getAuthorities().stream()
                     .map(GrantedAuthority::getAuthority)
                     .collect(Collectors.toList());
 
-            // 2. Passa sia l'ID che la lista dei ruoli al generatore di token
+            //Generate JWT with both UserID and user role
             return JwtUtils.generateToken(userPrincipal.getUser().getId(), roles);
         }
 

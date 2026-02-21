@@ -25,9 +25,7 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    /**
-     * Gets a paginated list of users by username.
-     */
+
     public Slice<UserIdUsernameDto> getUsers(String username, int page, int size) {
         Slice<UserMongo> userSlice = userRepository.findByUsernameContainingIgnoreCase(
                 username, PageRequest.of(page, size));
@@ -42,29 +40,6 @@ public class UserService {
         return new UserNoPwdDto(user.getUsername(), user.getEmail(), user.getRole());
     }
 
-    /**
-     * Updates user fields based on the UserUpdateDto.
-     */
-    public UserNoPwdDto updateUser(UserMongo currentUser, UserUpdateDto updates) {
-        if (updates.username() != null) {
-            currentUser.setUsername(updates.username());
-        }
-
-        if (updates.email() != null) {
-            currentUser.setEmail(updates.email());
-        }
-
-        if (updates.password() != null) {
-            currentUser.setPassword(updates.password());
-        }
-
-        UserMongo saved = userRepository.save(currentUser);
-        return new UserNoPwdDto(saved.getUsername(), saved.getEmail(), saved.getRole());
-    }
-
-    /**
-     * Deletes a user from the database.
-     */
     public void deleteUser(String userId) {
         if (!userRepository.existsById(userId)) {
             throw new IllegalArgumentException("User not found");

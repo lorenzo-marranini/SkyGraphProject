@@ -11,6 +11,6 @@ import lombok.NoArgsConstructor;
 public class AirportRankingDTO {
     private String iata;
     private String name;
-    private Double score; // Questo terrà conto dello score con cui sono restituiti i dati ordinati
+    private Double score;
     private String scoreType;
 }

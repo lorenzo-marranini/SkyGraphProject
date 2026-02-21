@@ -93,14 +93,14 @@ public class FlightController {
 
     @Operation(summary = "Find the quickest actual route checking real flight schedules")
     @GetMapping("/routes/quickest-real")
-    public ResponseEntity<List<TripItineraryDTO>> getQuickestRealRoute(
+    public ResponseEntity<TripItineraryDTO> getQuickestRealRoute(
             @RequestParam String origin,
             @RequestParam String dest,
             @RequestParam String date,
             @RequestParam(defaultValue = "2") int maxHops
     ) {
-        List<TripItineraryDTO> itineraries = flightService.findQuickestRealRoute(origin, dest, date, maxHops);
-        return itineraries.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(itineraries);
+        TripItineraryDTO itineraries = flightService.findQuickestRealRoute(origin, dest, date, maxHops);
+        return itineraries == null ? ResponseEntity.noContent().build() : ResponseEntity.ok(itineraries);
     }
 
     @Operation(summary = "Create a new flight in MongoDB using a simplified DTO and sync the ROUTE to Neo4j")
@@ -115,17 +115,18 @@ public class FlightController {
             return ResponseEntity.internalServerError().build();
         }
     }
+    @Operation(summary = "Update an existing flight using its flight_key and a DTO")
+    @PutMapping("/{flightKey}")
+    public ResponseEntity<?> updateFlight(
+            @PathVariable String flightKey,
+            @RequestBody FlightCreateDTO dto) {
 
-    @Operation(summary = "Update an existing flight in MongoDB")
-    @PutMapping("/flights/{id}")
-    public ResponseEntity<FlightMongo> updateFlight(
-            @PathVariable String id,
-            @RequestBody FlightMongo flight) {
-        try {
-            return ResponseEntity.ok(flightService.updateFlight(id, flight));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.notFound().build();
-        }
+
+            // Chiama il servizio che abbiamo appena creato
+        FlightMongo updatedFlight = flightService.updateFlight(flightKey, dto);
+        return ResponseEntity.ok(updatedFlight);
+
+
     }
 
     @Operation(summary = "Delete a flight from MongoDB")
