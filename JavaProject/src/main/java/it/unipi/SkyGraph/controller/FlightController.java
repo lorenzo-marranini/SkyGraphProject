@@ -3,8 +3,6 @@ package it.unipi.SkyGraph.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import it.unipi.SkyGraph.dto.*;
 import it.unipi.SkyGraph.enums.*;
-import it.unipi.SkyGraph.dto.AirlineStatDTO;
-import it.unipi.SkyGraph.dto.AirportStatDTO;
 import it.unipi.SkyGraph.dto.FlightDTO;
 import it.unipi.SkyGraph.dto.TripItineraryDTO;
 import it.unipi.SkyGraph.model.FlightMongo;

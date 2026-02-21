@@ -6,6 +6,10 @@ import it.unipi.SkyGraph.enums.TimeInterval;
 import it.unipi.SkyGraph.model.*;
 import it.unipi.SkyGraph.service.CityService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -44,19 +48,23 @@ public class CityController {
 
 
     @Operation(summary = "Create or update a City")
-    @PostMapping("/cities")
+    @PostMapping
     public ResponseEntity<City> saveCity(@RequestBody City city) {
         return ResponseEntity.ok(cityService.createOrUpdateCity(city));
     }
 
     @Operation(summary = "Get all Cities")
-    @GetMapping("/cities")
-    public ResponseEntity<List<City>> getAllCities() {
-        return ResponseEntity.ok(cityService.getAllCities());
+    @GetMapping
+    public ResponseEntity<Page<City>> getAllCities(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("name").ascending());
+        return ResponseEntity.ok(cityService.getAllCities(pageable));
     }
 
     @Operation(summary = "Get a City by its city_state ID")
-    @GetMapping("/cities/{cityState}")
+    @GetMapping("/{cityState}")
     public ResponseEntity<City> getCity(@PathVariable String cityState) {
         try {
             return ResponseEntity.ok(cityService.getCityById(cityState));
@@ -66,7 +74,7 @@ public class CityController {
     }
 
     @Operation(summary = "Delete a City")
-    @DeleteMapping("/cities/{cityState}")
+    @DeleteMapping("/{cityState}")
     public ResponseEntity<Void> deleteCity(@PathVariable String cityState) {
         cityService.deleteCity(cityState);
         return ResponseEntity.noContent().build();

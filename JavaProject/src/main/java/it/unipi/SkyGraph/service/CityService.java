@@ -7,6 +7,8 @@ import it.unipi.SkyGraph.model.*;
 import it.unipi.SkyGraph.repository.CityRepository;
 import it.unipi.SkyGraph.repository.FlightRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -52,8 +54,8 @@ public class CityService {
         return cityRepository.save(city);
     }
 
-    public List<City> getAllCities() {
-        return cityRepository.findAll();
+    public Page<City> getAllCities(Pageable pageable) {
+        return cityRepository.findAll(pageable);
     }
 
     public City getCityById(String cityState) {

@@ -28,6 +28,18 @@ public class AirportService {
     private final FlightRepository flightRepository;
     private final SimulationClock clock;
     private final CityRepository cityRepository;
+
+    private AirportRankingDTO convertToRankingDTO(Airport airport, Double score, String scoreType) {
+        if (airport == null) return null;
+
+        AirportRankingDTO dto = new AirportRankingDTO();
+        dto.setIata(airport.getIataCode());
+        dto.setName(airport.getName());
+        dto.setScore(score);
+        dto.setScoreType(scoreType);
+
+        return dto;
+    }
     // ----------- GUEST ---------
     public Optional<Airport> getAirportByIata(String iataCode) {
         return airportRepository.findByIataCode(iataCode);
@@ -52,7 +64,9 @@ public class AirportService {
     // TC8
     public List<AirportRankingDTO> getBestAlternativeAirports(String closedIata) {
         List<AirportRankingDTO> result = airportRepository.findBestAlternativeAirports(closedIata);
-        result.forEach(dto  -> dto.setScoreType("SHARED_CONNECTIONS/KM_DISTANCE"));
+
+        result.forEach(dto  -> dto.setScoreType("SIMILARITY_SCORE AS SHARED_CONNECTIONS_LOG_DISTANCE"));
+
         return result;
     }
 
@@ -67,13 +81,16 @@ public class AirportService {
     // AR4
     public List<AirportRankingDTO> getTopHubsByRank(Integer limit) {
         List<AirportRankingDTO> result = airportRepository.findTopHubsByRank(limit);
+
         result.forEach(dto  -> dto.setScoreType("BETWEENNESS_SCORE"));
+
         return result;
+
     }
 
     // AR5
-    public List<AirportStatDTO> getAirportsByAvgDelay(TimeInterval range, Integer limit) {
-        List<AirportStatDTO> result =  flightRepository.findAirportsByAvgDelay(
+    public List<AirportRankingDTO> getAirportsByAvgDelay(TimeInterval range, Integer limit) {
+        List<AirportRankingDTO> result =  flightRepository.findAirportsByAvgDelay(
                 clock.calculateMinDate(range),
                 clock.getSimulatedNowInstant(),
                 limit
@@ -87,8 +104,8 @@ public class AirportService {
     public List<AirportRankingDTO> getAirportsConnections(Integer limit) {
         List<AirportRankingDTO> result = airportRepository.findAirportsConnections(limit);
         result.forEach(dto  -> dto.setScoreType("NUMBER_OF_CONNECTIONS"));
-
         return result;
+
     }
 
     @Transactional

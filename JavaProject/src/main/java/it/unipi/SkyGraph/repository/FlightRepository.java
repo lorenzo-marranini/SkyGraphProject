@@ -201,7 +201,7 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String> {
                     "} }",
             "{ '$group': { " +
                     "'_id': '$route.origin.airport_name', " +
-                    "'iataCode': { '$first': '$route.origin.iata' }, " +
+                    "'iata': { '$first': '$route.origin.iata' }, " +
                     "'city': { '$first': '$route.origin.city' }, " +
                     "'score': { '$avg': '$stats.tot_delay_minutes' } " +
                     "} }",
@@ -210,12 +210,11 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String> {
             "{ '$project': { " +
                     "'_id': 0, " +
                     "'name': '$_id', " +      // Spostiamo l'id del gruppo nel campo 'name'
-                    "'iataCode': 1, " +
-                    "'city': 1, " +
+                    "'iata': 1, " +
                     "'score': 1 " +
                     "} }"
     })
-    List<AirportStatDTO> findAirportsByAvgDelay(Instant start, Instant end, Integer limit);
+    List<AirportRankingDTO> findAirportsByAvgDelay(Instant start, Instant end, Integer limit);
 
     // AR6 Aeroporti ordinati per numero di aeroporti connessi in uscita
     // NEO4J FATTA SU AirportRepository

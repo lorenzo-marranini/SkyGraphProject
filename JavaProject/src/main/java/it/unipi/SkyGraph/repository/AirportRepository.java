@@ -1,5 +1,6 @@
 package it.unipi.SkyGraph.repository;
 
+import ch.qos.logback.core.read.ListAppender;
 import it.unipi.SkyGraph.dto.*;
 import it.unipi.SkyGraph.model.Airport;
 import org.springframework.data.neo4j.repository.Neo4jRepository;
@@ -41,7 +42,7 @@ public interface AirportRepository extends Neo4jRepository<Airport, String> {
             "     ) / 1000.0 AS distKm " +
             "WHERE distKm > 0 AND distKm < 200 " +
             // Calcola il rapporto e mappa i campi all'interfaccia AirportRankingDTO
-            "RETURN alt.iata_code AS iata, alt.name AS name, (sharedConnections / log(distKm + 1)) AS score " +
+            "RETURN alt.iata_code AS iata, alt.name AS name, (sharedConnections / log(distKm + 1)) AS score, '' as scoreType " +
             "ORDER BY score DESC " +
             "LIMIT 5")
     List<AirportRankingDTO> findBestAlternativeAirports(@Param("closedIata") String closedIata);
@@ -86,7 +87,7 @@ public interface AirportRepository extends Neo4jRepository<Airport, String> {
             // 3. Calcoliamo lo score pesato e mappiamo i campi per il DTO
             "RETURN airport.iata_code AS iata, " + // Ricorda di verificare se qui ci va iata o iata_code!
             "       airport.name AS name, " +
-            "       (directTraffic * 0.6 + indirectTraffic * 0.4) AS score " +
+            "       (directTraffic * 0.6 + indirectTraffic * 0.4) AS score, '' AS scoreType " +
             "ORDER BY score DESC " +
             "LIMIT $limit")
     List<AirportRankingDTO> findTopHubsByRank(@Param("limit") Integer limit);
@@ -94,7 +95,7 @@ public interface AirportRepository extends Neo4jRepository<Airport, String> {
 
     // AR6 Aeroporti ordinati per numero di aeroporti connessi in uscita
     @Query("MATCH (a:Airport)-[r:ROUTE]->() " +
-            "RETURN a.iata_code AS iata, a.name AS name, count(r) AS score " +
+            "RETURN a.iata_code AS iata, a.name AS name, count(r) AS score, '' as scoreType " +
             "ORDER BY score DESC " +
             "LIMIT $limit")
     List<AirportRankingDTO> findAirportsConnections(@Param("limit") Integer limit);

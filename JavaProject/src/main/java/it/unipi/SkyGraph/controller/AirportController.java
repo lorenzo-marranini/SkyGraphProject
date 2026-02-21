@@ -7,14 +7,12 @@ import it.unipi.SkyGraph.enums.TimeInterval;
 import it.unipi.SkyGraph.model.Airport;
 import it.unipi.SkyGraph.model.AirportMongo;
 import it.unipi.SkyGraph.service.AirportService;
-import it.unipi.SkyGraph.service.FlightService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -80,18 +78,16 @@ public class AirportController {
 
     @Operation(summary = "Get airports ranked by a given metric and time range")
     @GetMapping("/rankings")
-    public ResponseEntity<List<AirportStatDTO>> getAirportStats(
+    public ResponseEntity<List<AirportRankingDTO>> getAirportStats(
             @RequestParam AirportSort sort,
             @RequestParam(defaultValue = "LAST_WEEK") TimeInterval range,
             @RequestParam(defaultValue = "10") Integer limit
     ) {
-        List<AirportStatDTO> result = switch (sort) {
+        List<AirportRankingDTO> result = switch (sort) {
             case DELAY -> airportService.getAirportsByAvgDelay(range, limit);
         };
         return ResponseEntity.ok(result);
     }
-
-
 
     @Operation(summary = "Create an Airport and link it to a City via LOCATED_IN")
     @PostMapping("/airports")
@@ -124,7 +120,7 @@ public class AirportController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size
     ) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("airport._id").ascending());
+        Pageable pageable = PageRequest.of(page, size, Sort.by("_id").ascending());
         return ResponseEntity.ok(airportService.getAllAirports(pageable));
     }
 
