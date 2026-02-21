@@ -19,10 +19,11 @@ public class AirlineService {
 
 
     // TC1
-    public List<AirlineStatDTO> getAirlinesByAvgDelay(TimeInterval range) {
+    public List<AirlineStatDTO> getAirlinesByAvgDelay(TimeInterval range, Integer limit) {
         List<AirlineStatDTO> result = flightRepository.findAirlinesByAvgDelay(
                 clock.calculateMinDate(range),
-                clock.getSimulatedNowInstant()
+                clock.getSimulatedNowInstant(),
+                limit
         );
         result.forEach(dto -> dto.setScoreType("AVERAGE_DELAY_MINUTES"));
         return result;
@@ -30,17 +31,18 @@ public class AirlineService {
 
 
     // TC2
-    public List<AirlineStatDTO> getAirlinesByTotalFlights(TimeInterval range) {
+    public List<AirlineStatDTO> getAirlinesByTotalFlights(TimeInterval range, Integer limit) {
         List<AirlineStatDTO> result = flightRepository.findAirlinesByTotalFlights(
                 clock.calculateMinDate(range),
-                clock.getSimulatedNowInstant()
+                clock.getSimulatedNowInstant(),
+                limit
         );
         result.forEach(dto -> dto.setScoreType("TOTAL_FLIGHTS"));
         return result;
     }
 
     // TC3
-    public List<AirlineStatDTO> getAirlinesByTotalDistance(TimeInterval range) {
+    public List<AirlineStatDTO> getAirlinesByTotalDistance(TimeInterval range, Integer limit) {
         List<AirlineStatDTO> result = flightRepository.findAirlinesByTotalDistance(
                 clock.calculateMinDate(range),
                 clock.getSimulatedNowInstant()
@@ -50,34 +52,37 @@ public class AirlineService {
     }
 
     // TC4
-    public List<AirlineStatDTO> getAirlinesByAvgRouteDistance(TimeInterval range) {
+    public List<AirlineStatDTO> getAirlinesByAvgRouteDistance(TimeInterval range, Integer limit) {
         List<AirlineStatDTO> result = flightRepository.findAirlinesByAvgRouteDistance(
                 clock.calculateMinDate(range),
-                clock.getSimulatedNowInstant()
+                clock.getSimulatedNowInstant(),
+                limit
         );
         result.forEach(dto  -> dto.setScoreType("AVG_DISTANCE_KM"));
         return result;
     }
 
     // TC5
-    public List<AirlineStatDTO> getAirlinesByRoute(String origin, String destination, TimeInterval range) {
+    public List<AirlineStatDTO> getAirlinesByRoute(String origin, String destination, TimeInterval range, Integer limit) {
         List<AirlineStatDTO> result =  flightRepository.findAirlinesByRoute(
                 origin,
                 destination,
                 clock.calculateMinDate(range),
-                clock.getSimulatedNowInstant()
+                clock.getSimulatedNowInstant(),
+                limit
         );
         result.forEach(dto -> dto.setScoreType("FLIGHT_COUNT"));
         return result;
     }
 
     // TC6
-    public List<AirlineStatDTO> getAirlinesByRouteDelay(String origin, String destination, TimeInterval range) {
+    public List<AirlineStatDTO> getAirlinesByRouteDelay(String origin, String destination, TimeInterval range, Integer limit) {
         List<AirlineStatDTO> result = flightRepository.findAirlinesByRouteDelay(
                 origin,
                 destination,
                 clock.calculateMinDate(range),
-                clock.getSimulatedNowInstant()
+                clock.getSimulatedNowInstant(),
+                limit
         );
         result.forEach(dto -> dto.setScoreType("AVG_DELAY_MIN"));
         return result;

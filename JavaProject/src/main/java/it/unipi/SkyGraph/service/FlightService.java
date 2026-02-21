@@ -10,11 +10,10 @@ import it.unipi.SkyGraph.repository.AirportRepository;
 import it.unipi.SkyGraph.repository.CityRepository;
 import it.unipi.SkyGraph.repository.FlightRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -88,7 +87,6 @@ public class FlightService {
                 .schedule(FlightDTO.Schedule.builder()
                         .departureUtc(flight.getFlightInfo().getSchedule().getDepartureDatetime())
                         .arrivalUtc(flight.getFlightInfo().getSchedule().getArrivalDatetime())
-                        .durationMinutes(flight.getFlightInfo().getSchedule().getDurationMinutes())
                         .build())
 
                 .status(FlightDTO.Status.builder()
@@ -133,18 +131,16 @@ public class FlightService {
     }
 
     // G2
-    public List<FlightDTO> findLiveFlights() {
+    public Page<FlightDTO> findLiveFlights(Pageable pageable) {
 
         Instant now = clock.getSimulatedNowInstant();
         Instant startWindow = now.minus(24, ChronoUnit.HOURS);
         Instant endWindow = now.plus(12, ChronoUnit.HOURS);
         // check dei voli live tra 24 ore prima e 12 ore dopo per essere sicuri in casi di ritardi / anticipi
 
-        List<FlightMongo> flights = flightRepository.searchFlightsLive(startWindow, endWindow);
+        Page<FlightMongo> flights = flightRepository.searchPagedFlightsLive(startWindow, endWindow, pageable);
 
-        return flights.stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
+        return flights.map(this::convertToDTO);
     }
 
     // --------------------- AIRLINE REPRESENTATIVE -------------------
@@ -220,26 +216,29 @@ public class FlightService {
 
 
     // AR2
-    public List<RouteStatsDTO> getRoutesByFlightCount(TimeInterval range) {
+    public List<RouteStatsDTO> getRoutesByFlightCount(TimeInterval range, Integer limit) {
         return flightRepository.findRoutesByFlightCount(
                 clock.calculateMinDate(range),
-                clock.getSimulatedNowInstant()
+                clock.getSimulatedNowInstant(),
+                limit
         );
     }
 
     // AR2.1
-    public List<RouteStatsDTO> getRoutesByCancelledCount(TimeInterval range) {
+    public List<RouteStatsDTO> getRoutesByCancelledCount(TimeInterval range, Integer limit) {
         return flightRepository.findRoutesByCancelledCount(
                 clock.calculateMinDate(range),
-                clock.getSimulatedNowInstant()
+                clock.getSimulatedNowInstant(),
+                limit
         );
     }
 
     // AR2.2
-    public List<RouteStatsDTO> getRoutesByDivertedCount(TimeInterval range) {
+    public List<RouteStatsDTO> getRoutesByDivertedCount(TimeInterval range, Integer limit) {
         return flightRepository.findRoutesByDivertedCount(
                 clock.calculateMinDate(range),
-                clock.getSimulatedNowInstant()
+                clock.getSimulatedNowInstant(),
+                limit
         );
     }
 
@@ -270,7 +269,7 @@ public class FlightService {
         Instant startOfDay = now.truncatedTo(ChronoUnit.DAYS);
         Instant endOfDay = startOfDay.plus(1, ChronoUnit.DAYS);
 
-        List<FlightMongo> activeFlights = flightRepository.searchFlightsLive(startOfDay, endOfDay);
+        List<FlightMongo> activeFlights = flightRepository.getAllFlightsLive(startOfDay, endOfDay);;
 
         for (FlightMongo flight : activeFlights) {
             FlightMongo.FlightLog log = flight.getFlightLog();
@@ -311,7 +310,7 @@ public class FlightService {
                 .orElseThrow(() -> new IllegalArgumentException("Destination airport not found in DB: " + dto.getDestinationIata()));
 
         FlightMongo.Airline airline = new FlightMongo.Airline(dto.getAirlineIata(), dto.getAirlineName());
-        FlightMongo.Schedule schedule = new FlightMongo.Schedule(dto.getDurationMinutes(), dto.getDepartureDatetime(), dto.getArrivalDatetime());
+        FlightMongo.Schedule schedule = new FlightMongo.Schedule(dto.getDepartureDatetime(), dto.getArrivalDatetime());
 
         //generazione chiave di volo
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy_M_d_HHmm").withZone(ZoneId.of("UTC"));
@@ -321,14 +320,14 @@ public class FlightService {
         FlightMongo.FlightInfo flightInfo = new FlightMongo.FlightInfo(flightKey, airline, schedule);
 
         // TODO: togliere queste dopo rimozione coordinate
-        FlightMongo.GeoLocation originGeo = new FlightMongo.GeoLocation(
-                origin.getLocation().getType(),
-                origin.getLocation().getCoordinates()
-        );
-        FlightMongo.GeoLocation destGeo = new FlightMongo.GeoLocation(
-                destination.getLocation().getType(),
-                destination.getLocation().getCoordinates()
-        );
+//        FlightMongo.GeoLocation originGeo = new FlightMongo.GeoLocation(
+//                origin.getLocation().getType(),
+//                origin.getLocation().getCoordinates()
+//        );
+//        FlightMongo.GeoLocation destGeo = new FlightMongo.GeoLocation(
+//                destination.getLocation().getType(),
+//                destination.getLocation().getCoordinates()
+//        );
         double originLon = origin.getLocation().getCoordinates().get(0);
         double originLat = origin.getLocation().getCoordinates().get(1);
 
@@ -340,10 +339,10 @@ public class FlightService {
 
         // Costruisci gli AirportDetails
         FlightMongo.AirportDetails originDetails = new FlightMongo.AirportDetails(
-                origin.getId(), origin.getName(), origin.getCity(), origin.getState(), origin.getCountry(), originGeo
+                origin.getId(), origin.getName(), origin.getCity(), origin.getState(), origin.getCountry()
         );
         FlightMongo.AirportDetails destDetails = new FlightMongo.AirportDetails(
-                destination.getId(), destination.getName(), destination.getCity(), destination.getState(), destination.getCountry(), destGeo
+                destination.getId(), destination.getName(), destination.getCity(), destination.getState(), destination.getCountry()
         );
 
         // Passa la distanza calcolata al posto del DTO
@@ -379,12 +378,18 @@ public class FlightService {
         // Estrai le vecchie informazioni di rotta e durata
         String oldOrigin = existing.getRoute().getOrigin().getIata();
         String oldDest = existing.getRoute().getDestination().getIata();
-        double oldDuration = existing.getFlightInfo().getSchedule().getDurationMinutes();
+        double oldDuration = Duration.between(
+                existing.getFlightInfo().getSchedule().getDepartureDatetime(),
+                existing.getFlightInfo().getSchedule().getArrivalDatetime()
+        ).toMinutes();
 
         // Estrai le nuove informazioni (che potrebbero essere state modificate dall'utente)
         String newOrigin = updatedFlight.getRoute().getOrigin().getIata();
         String newDest = updatedFlight.getRoute().getDestination().getIata();
-        double newDuration = updatedFlight.getFlightInfo().getSchedule().getDurationMinutes();
+        double newDuration = Duration.between(
+                updatedFlight.getFlightInfo().getSchedule().getDepartureDatetime(),
+                updatedFlight.getFlightInfo().getSchedule().getArrivalDatetime()
+        ).toMinutes();
 
         // Controlla se qualcosa che impatta Neo4j è effettivamente cambiato
         boolean routeChanged = !oldOrigin.equals(newOrigin) || !oldDest.equals(newDest);
@@ -403,7 +408,7 @@ public class FlightService {
 
 
     @Transactional
-    public void deleteFlight(String flightKey) {
+    public FlightDTO deleteFlight(String flightKey) {
         // 1. Recupera il volo PRIMA di eliminarlo tramite la tua custom key
         FlightMongo existing = flightRepository.findByFlightKey(flightKey)
                 .orElseThrow(() -> new IllegalArgumentException("Flight not found with key: " + flightKey));
@@ -411,13 +416,18 @@ public class FlightService {
         // 2. Estrai le informazioni necessarie per aggiornare il grafo
         String origin = existing.getRoute().getOrigin().getIata();
         String dest = existing.getRoute().getDestination().getIata();
-        double duration = existing.getFlightInfo().getSchedule().getDurationMinutes();
+        double duration = Duration.between(
+                existing.getFlightInfo().getSchedule().getDepartureDatetime(),
+                existing.getFlightInfo().getSchedule().getArrivalDatetime()
+        ).toMinutes();
 
         // 3. Rimuovi il contributo di questo volo dalla relazione in Neo4j
         airportRepository.decrementRouteRelationship(origin, dest, duration);
 
         // 4. Elimina definitivamente il documento da MongoDB passando l'intera entità trovata
         flightRepository.delete(existing);
+
+        return convertToDTO(existing);
     }
 
     private double calculateHaversineDistance(double lat1, double lon1, double lat2, double lon2) {

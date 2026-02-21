@@ -27,8 +27,10 @@ public class AirportController {
     // --- TRAFFIC CONTROLLER ---
     @Operation(summary = "Get airports ranked by number of routes")
     @GetMapping("/rankings/connections")
-    public ResponseEntity<List<AirportRankingDTO>> getAirportsConnections() {
-        List<AirportRankingDTO> connections = airportService.getAirportsConnections();
+    public ResponseEntity<List<AirportRankingDTO>> getAirportsConnections(
+           @RequestParam(defaultValue = "10") Integer limit
+    ) {
+        List<AirportRankingDTO> connections = airportService.getAirportsConnections(limit);
         if (connections.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
@@ -60,10 +62,12 @@ public class AirportController {
 
     // --- AIRLINE REPRESENTATIVE ---
 
-    @Operation(summary = "Get top hubs by PageRank centrality score")
+    @Operation(summary = "Get top hubs by centrality score")
     @GetMapping("/rankings/hubs")
-    public ResponseEntity<List<AirportRankingDTO>> getTopHubs() {
-        List<AirportRankingDTO> hubs = airportService.getTopHubsByRank();
+    public ResponseEntity<List<AirportRankingDTO>> getTopHubs(
+            @RequestParam(defaultValue = "10") Integer limit
+    ) {
+        List<AirportRankingDTO> hubs = airportService.getTopHubsByRank(limit);
         if (hubs.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
@@ -74,10 +78,11 @@ public class AirportController {
     @GetMapping("/rankings")
     public ResponseEntity<List<AirportStatDTO>> getAirportStats(
             @RequestParam AirportSort sort,
-            @RequestParam(defaultValue = "LAST_WEEK") TimeInterval range
+            @RequestParam(defaultValue = "LAST_WEEK") TimeInterval range,
+            @RequestParam(defaultValue = "10") Integer limit
     ) {
         List<AirportStatDTO> result = switch (sort) {
-            case DELAY -> airportService.getAirportsByAvgDelay(range);
+            case DELAY -> airportService.getAirportsByAvgDelay(range, limit);
         };
         return ResponseEntity.ok(result);
     }

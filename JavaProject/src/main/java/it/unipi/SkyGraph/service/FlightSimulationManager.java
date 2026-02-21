@@ -19,16 +19,11 @@ public class FlightSimulationManager implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        System.out.println("Spring Boot avviato. Inizio caricamento dati CSV...");
-
-        // Specifica il percorso del tuo file.
-        // Se lo metti nella cartella root del progetto, basta il nome del file.
         String filePath = "data/logs.csv";
 
         PriorityQueue<FlightLogDTO> simulationQueue = loader.loadFlightLogs(filePath);
 
         if (simulationQueue != null && !simulationQueue.isEmpty()) {
-            System.out.println("Caricamento completato con successo. Pronti per avviare il timer della simulazione.");
             simulationService.startSimulation(simulationQueue);
         } else {
             System.err.println("Attenzione: La coda è vuota. Controlla il percorso del file CSV.");

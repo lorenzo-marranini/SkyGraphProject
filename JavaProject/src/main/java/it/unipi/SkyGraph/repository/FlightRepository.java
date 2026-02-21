@@ -2,13 +2,14 @@ package it.unipi.SkyGraph.repository;
 
 import it.unipi.SkyGraph.dto.*;
 import it.unipi.SkyGraph.model.FlightMongo;
+import org.springframework.data.domain.Page;
 import org.springframework.data.mongodb.repository.Aggregation;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.data.mongodb.repository.Update;
 import org.springframework.stereotype.Repository;
 import org.springframework.data.domain.Pageable;
-import java.time.temporal.ChronoUnit;
+
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
@@ -26,7 +27,11 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String> {
 
     // G2 Cerca per range di data (start -> end) tutti i voli che hanno qualcosa dentro il campo fligh_tlog
     @Query("{ 'flight_info.schedule.departure_datetime': { $gte: ?0, $lt: ?1 }, 'flight_log': { $ne: null } }")
-    List<FlightMongo> searchFlightsLive(Instant start, Instant end);
+    Page<FlightMongo> searchPagedFlightsLive(Instant start, Instant end, Pageable pageable);
+
+    @Query("{ 'flight_info.schedule.departure_datetime': { $gte: ?0, $lt: ?1 }, 'flight_log': { $ne: null } }")
+    List<FlightMongo> getAllFlightsLive(Instant start, Instant end);
+
 
     // -------------------------------- TRAFFIC CONTROLLER ------------------------------
 
@@ -38,18 +43,20 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String> {
                     "} }",
             "{ '$group': { '_id': '$flight_info.airline.name', 'score': { '$avg': '$stats.tot_delay_minutes' } } }",
             "{ '$sort': { 'score': 1 } }",
+            "{ '$limit': ?2 }",
             "{ '$project': { '_id': 0, 'airlineName': '$_id', 'score': 1 } }"
     })
-    List<AirlineStatDTO> findAirlinesByAvgDelay(Instant start, Instant end);
+    List<AirlineStatDTO> findAirlinesByAvgDelay(Instant start, Instant end, Integer limit);
 
     // TC2) Restituisce le airlines ordinate per numero di voli
     @Aggregation(pipeline = {
             "{ '$match': { 'flight_info.schedule.departure_datetime': { $gte: ?0, $lt: ?1 } } }",
             "{ '$group': { '_id': '$flight_info.airline.name', 'score': { '$sum': 1 } } }",
             "{ '$sort': { 'score': -1 } }",
+            "{ '$limit': ?2 }",
             "{ '$project': { '_id': 0, 'airlineName': '$_id', 'score': 1 } }"
     })
-    List<AirlineStatDTO> findAirlinesByTotalFlights(Instant start, Instant end);
+    List<AirlineStatDTO> findAirlinesByTotalFlights(Instant start, Instant end, Integer limit);
 
     // TC3 Restituisce le airlines ordinate per km volati
     @Aggregation(pipeline = {
@@ -65,9 +72,10 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String> {
             "{ '$match': { 'flight_info.schedule.departure_datetime': { '$gte': ?0, '$lte': ?1 } } }",
             "{ '$group': { '_id': '$flight_info.airline.name', 'score': { '$avg': '$route.distance_km' } } }",
             "{ '$sort': { 'score': -1 } }",
+            "{ '$limit': ?2 }",
             "{ '$project': { '_id': 0, 'airlineName': '$_id', 'score': 1 } }"
     })
-    List<AirlineStatDTO> findAirlinesByAvgRouteDistance(Instant start, Instant end);
+    List<AirlineStatDTO> findAirlinesByAvgRouteDistance(Instant start, Instant end, Integer limit);
 
 
     // TC5 Restituiscce le airlines ordinate per numero di voli su una specifica rotta ( origin -> destination )
@@ -75,18 +83,20 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String> {
             "{ '$match': { 'route.origin.iata': ?0, 'route.destination.iata': ?1, 'flight_info.schedule.departure_datetime': { '$gte': ?2, '$lte': ?3 } } }",
             "{ '$group': { '_id': '$flight_info.airline.name', 'score': { '$sum': 1 } } }",
             "{ '$sort': { 'score': -1 } }",
+                "{ '$limit': ?4 }",
             "{ '$project': { '_id': 0, 'airlineName': '$_id', 'score': 1 } }"
     })
-    List<AirlineStatDTO> findAirlinesByRoute(String origin, String destination, Instant start, Instant end);
+    List<AirlineStatDTO> findAirlinesByRoute(String origin, String destination, Instant start, Instant end, Integer limit);
 
     // TC6 Restituisce le airlines ordinate per AVG Delay su una specifica rotta ( origin -> destination )
     @Aggregation(pipeline = {
             "{ '$match': { 'route.origin.iata': ?0, 'route.destination.iata': ?1, 'flight_info.schedule.departure_datetime': { '$gte': ?2, '$lte': ?3 }, 'stats.tot_delay_minutes': { '$ne': null } } }",
             "{ '$group': { '_id': '$flight_info.airline.name', 'score': { '$avg': '$stats.tot_delay_minutes' } } }",
             "{ '$sort': { 'score': 1 } }",
+            "{ '$limit': ?4 }",
             "{ '$project': { '_id': 0, 'airlineName': '$_id', 'score': 1 } }"
     })
-    List<AirlineStatDTO> findAirlinesByRouteDelay(String originIata, String destIata, Instant start, Instant end);
+    List<AirlineStatDTO> findAirlinesByRouteDelay(String originIata, String destIata, Instant start, Instant end, Integer limit);
 
     // TC7 Restituisce data una flightkey, gli aeroporti ordinati per distanza dal punto geografico in cui si trova adesso il volo, solo se è in volo.
 
@@ -119,7 +129,7 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String> {
                     "'count': { '$sum': 1 } " +
                     "} }",
             "{ '$sort': { 'count': -1 } }",
-            "{ '$limit': 15 }",
+            "{ '$limit': ?2 }",
             "{ '$project': { " +
                     "'_id': 0, " +
                     "'Origin': '$_id.origin', " +
@@ -127,7 +137,7 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String> {
                     "'Score': '$count' " +
                     "} }"
     })
-    List<RouteStatsDTO> findRoutesByFlightCount(Instant start, Instant end);
+    List<RouteStatsDTO> findRoutesByFlightCount(Instant start, Instant end, Integer limit);
 
     // AR2.1 Restituisce le rotte ordinate per numero di voli cancellati
     @Aggregation(pipeline = {
@@ -143,7 +153,7 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String> {
                     "'count': { '$sum': 1 } " +
                     "} }",
             "{ '$sort': { 'count': -1 } }",
-            "{ '$limit': 15 }",
+            "{ '$limit': ?2 }",
             "{ '$project': { " +
                     "'_id': 0, " +
                     "'Origin': '$_id.origin', " +
@@ -151,7 +161,7 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String> {
                     "'Score': '$count' " +
                     "} }"
     })
-    List<RouteStatsDTO> findRoutesByCancelledCount(Instant start, Instant end);
+    List<RouteStatsDTO> findRoutesByCancelledCount(Instant start, Instant end, Integer limit);
 
     // AR2.2 Restituisce le rotte ordinate per numero di voli deviati
     @Aggregation(pipeline = {
@@ -167,7 +177,7 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String> {
                     "'count': { '$sum': 1 } " +
                     "} }",
             "{ '$sort': { 'count': -1 } }",
-            "{ '$limit': 15 }",
+            "{ '$limit': ?2 }",
             "{ '$project': { " +
                     "'_id': 0, " +
                     "'Origin': '$_id.origin', " +
@@ -175,7 +185,7 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String> {
                     "'Score': '$count' " +
                     "} }"
     })
-    List<RouteStatsDTO> findRoutesByDivertedCount(Instant start, Instant end);
+    List<RouteStatsDTO> findRoutesByDivertedCount(Instant start, Instant end, Integer limit);
 
     // AR3 Visualizzare gli aeroporti ordinati per il betweenness centrality score
     // NEO4J FATTA SU AirportRepository
@@ -196,6 +206,7 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String> {
                     "'score': { '$avg': '$stats.tot_delay_minutes' } " +
                     "} }",
             "{ '$sort': { 'score': -1 } }",
+            "{ '$limit': ?2 } ",
             "{ '$project': { " +
                     "'_id': 0, " +
                     "'name': '$_id', " +      // Spostiamo l'id del gruppo nel campo 'name'
@@ -204,7 +215,7 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String> {
                     "'score': 1 " +
                     "} }"
     })
-    List<AirportStatDTO> findAirportsByAvgDelay(Instant start, Instant end);
+    List<AirportStatDTO> findAirportsByAvgDelay(Instant start, Instant end, Integer limit);
 
     // AR6 Aeroporti ordinati per numero di aeroporti connessi in uscita
     // NEO4J FATTA SU AirportRepository

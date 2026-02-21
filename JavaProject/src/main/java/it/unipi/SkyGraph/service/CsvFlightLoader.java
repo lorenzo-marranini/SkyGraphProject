@@ -64,8 +64,6 @@ public class CsvFlightLoader {
                     System.err.println("Errore di formato alla riga " + lineNumber + ": " + parseEx.getMessage());
                 }
             }
-            System.out.println("Caricati " + flightQueue.size() + " log di volo in memoria.");
-
         } catch (IOException e) {
             System.err.println("Errore nella lettura del file CSV: " + e.getMessage());
         }

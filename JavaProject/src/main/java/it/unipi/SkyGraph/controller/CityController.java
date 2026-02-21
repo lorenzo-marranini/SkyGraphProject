@@ -23,8 +23,10 @@ public class CityController {
 
     @Operation(summary = "Get most trafficked cities")
     @GetMapping("/rankings/traffic")
-    public ResponseEntity<List<CityRankDTO>> getMostTraffickedCities() {
-        List<CityRankDTO> connections = cityService.getMostTraffickedCities();
+    public ResponseEntity<List<CityRankDTO>> getMostTraffickedCities(
+            @RequestParam(defaultValue = "10") Integer limit
+    ) {
+        List<CityRankDTO> connections = cityService.getMostTraffickedCities(limit);
         if (connections.isEmpty()) {
             return ResponseEntity.noContent().build();
         }

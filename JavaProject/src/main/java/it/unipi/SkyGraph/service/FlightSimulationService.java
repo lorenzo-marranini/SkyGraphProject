@@ -21,13 +21,10 @@ public class FlightSimulationService {
     @Async
     public void startSimulation(PriorityQueue<FlightLogDTO> originalQueue) {
         // 1. Verifica se la coda originale ha elementi all'inizio
-        System.out.println("Elementi totali caricati per la simulazione: " + originalQueue.size());
         boolean loop = true;
         while (loop) {
 
             PriorityQueue<FlightLogDTO> queue = new PriorityQueue<>(originalQueue);
-
-            System.out.println("--- Avvio ciclo su " + queue.size() + " voli ---");
 
             while (!queue.isEmpty()) {
                 FlightLogDTO nextFlight = queue.peek();
@@ -39,7 +36,6 @@ public class FlightSimulationService {
                         break;
                     // update mongo db
                     flightService.updateFlightLog(processed);
-
                     nextFlight = queue.peek();
                 }
 
@@ -47,10 +43,7 @@ public class FlightSimulationService {
 //                System.out.println("Advancing sim time");
 //                System.out.println("Queue size: " + queue.size());
                 clock.advanceSimTimeMin(10);
-                // try { Thread.sleep(2000); } catch (InterruptedException e) { return; }
             }
-
-            System.out.println("Ciclo terminato.");
             loop = false;
         }
     }

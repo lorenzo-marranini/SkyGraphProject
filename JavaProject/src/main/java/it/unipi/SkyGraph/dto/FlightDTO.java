@@ -45,7 +45,6 @@ public class FlightDTO {
     public static class Schedule {
         private Instant departureUtc;
         private Instant arrivalUtc;
-        private Integer durationMinutes;
     }
 
     @Data

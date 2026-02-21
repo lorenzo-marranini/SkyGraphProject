@@ -53,8 +53,6 @@ public class FlightMongo {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class Schedule {
-        @Field("duration_minutes")
-        private Integer durationMinutes;
 
         @Field("departure_datetime")
         private Instant departureDatetime;
@@ -87,8 +85,6 @@ public class FlightMongo {
         private String city;
         private String state;
         private String country;
-
-        private GeoLocation location;
     }
 
     @Data

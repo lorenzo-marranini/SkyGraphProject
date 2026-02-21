@@ -4,7 +4,6 @@ import it.unipi.SkyGraph.config.SimulationClock;
 import it.unipi.SkyGraph.dto.*;
 import it.unipi.SkyGraph.enums.TimeInterval;
 import it.unipi.SkyGraph.model.*;
-import it.unipi.SkyGraph.repository.AirportRepository;
 import it.unipi.SkyGraph.repository.CityRepository;
 import it.unipi.SkyGraph.repository.FlightRepository;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -27,8 +25,8 @@ public class CityService {
 
 
     // AR7
-    public List<CityRankDTO> getMostTraffickedCities() {
-        List<CityRankDTO> result = cityRepository.findMostTraffickedCities();
+    public List<CityRankDTO> getMostTraffickedCities(Integer limit) {
+        List<CityRankDTO> result = cityRepository.findMostTraffickedCities(limit);
         return result;
     }
 

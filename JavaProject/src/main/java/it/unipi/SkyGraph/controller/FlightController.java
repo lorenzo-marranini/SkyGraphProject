@@ -10,6 +10,7 @@ import it.unipi.SkyGraph.dto.TripItineraryDTO;
 import it.unipi.SkyGraph.model.FlightMongo;
 import it.unipi.SkyGraph.service.FlightService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,8 +46,12 @@ public class FlightController {
 
     @Operation(summary = "Get live flights")
     @GetMapping("/flights/live")
-    public ResponseEntity<List<FlightDTO>> liveFlights() {
-        List<FlightDTO> flights = flightService.findLiveFlights();
+    public ResponseEntity<Page<FlightDTO>> liveFlights(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("flight_info.schedule.departure_datetime").ascending());
+        Page<FlightDTO> flights = flightService.findLiveFlights(pageable);
         return flights.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(flights);
     }
 
@@ -61,12 +66,13 @@ public class FlightController {
     @GetMapping("/routes/rankings")
     public ResponseEntity<List<RouteStatsDTO>> getRouteStats(
             @RequestParam RouteSort sort,
-            @RequestParam(defaultValue = "LAST_WEEK") TimeInterval range
+            @RequestParam(defaultValue = "LAST_WEEK") TimeInterval range,
+            @RequestParam(defaultValue = "10") Integer limit
     ) {
         List<RouteStatsDTO> result = switch (sort) {
-            case FREQUENT  -> flightService.getRoutesByFlightCount(range);
-            case CANCELLED -> flightService.getRoutesByCancelledCount(range);
-            case DIVERTED  -> flightService.getRoutesByDivertedCount(range);
+            case FREQUENT  -> flightService.getRoutesByFlightCount(range, limit);
+            case CANCELLED -> flightService.getRoutesByCancelledCount(range, limit);
+            case DIVERTED  -> flightService.getRoutesByDivertedCount(range, limit);
         };
         return ResponseEntity.ok(result);
     }
@@ -126,8 +132,8 @@ public class FlightController {
 
     @Operation(summary = "Delete a flight from MongoDB")
     @DeleteMapping("/flights/{id}")
-    public ResponseEntity<Void> deleteFlight(@PathVariable String id) {
-        flightService.deleteFlight(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<FlightDTO> deleteFlight(@PathVariable String id) {
+        FlightDTO deletedFlight = flightService.deleteFlight(id);
+        return ResponseEntity.ok(deletedFlight);
     }
 }

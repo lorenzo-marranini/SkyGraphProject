@@ -2,12 +2,10 @@ package it.unipi.SkyGraph.repository;
 
 import it.unipi.SkyGraph.dto.*;
 import it.unipi.SkyGraph.model.Airport;
-import org.springframework.data.mongodb.repository.Aggregation;
 import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.neo4j.repository.query.Query;
 import org.springframework.data.repository.query.Param;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 public interface AirportRepository extends Neo4jRepository<Airport, String> {
@@ -90,16 +88,16 @@ public interface AirportRepository extends Neo4jRepository<Airport, String> {
             "       airport.name AS name, " +
             "       (directTraffic * 0.6 + indirectTraffic * 0.4) AS score " +
             "ORDER BY score DESC " +
-            "LIMIT 10")
-    List<AirportRankingDTO> findTopHubsByRank();
+            "LIMIT $limit")
+    List<AirportRankingDTO> findTopHubsByRank(@Param("limit") Integer limit);
 
 
     // AR6 Aeroporti ordinati per numero di aeroporti connessi in uscita
     @Query("MATCH (a:Airport)-[r:ROUTE]->() " +
             "RETURN a.iata_code AS iata, a.name AS name, count(r) AS score " +
             "ORDER BY score DESC " +
-            "LIMIT 20")
-    List<AirportRankingDTO> findAirportsConnections();
+            "LIMIT $limit")
+    List<AirportRankingDTO> findAirportsConnections(@Param("limit") Integer limit);
 
     @Query("MATCH (a:Airport {iata_code: $originIata})-[r:ROUTE]->(b:Airport {iata_code: $destIata}) " +
             "SET r.mean_scheduled_time = CASE " +

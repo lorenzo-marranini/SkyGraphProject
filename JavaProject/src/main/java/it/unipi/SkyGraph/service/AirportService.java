@@ -6,7 +6,6 @@ import it.unipi.SkyGraph.enums.TimeInterval;
 import it.unipi.SkyGraph.model.Airport;
 import it.unipi.SkyGraph.model.AirportMongo;
 import it.unipi.SkyGraph.model.City;
-import it.unipi.SkyGraph.model.FlightMongo;
 import it.unipi.SkyGraph.repository.AirportRepository;
 import it.unipi.SkyGraph.repository.CityRepository;
 import it.unipi.SkyGraph.repository.FlightRepository;
@@ -64,17 +63,18 @@ public class AirportService {
     }
 
     // AR4
-    public List<AirportRankingDTO> getTopHubsByRank() {
-        List<AirportRankingDTO> result = airportRepository.findTopHubsByRank();
+    public List<AirportRankingDTO> getTopHubsByRank(Integer limit) {
+        List<AirportRankingDTO> result = airportRepository.findTopHubsByRank(limit);
         result.forEach(dto  -> dto.setScoreType("BETWEENNESS_SCORE"));
         return result;
     }
 
     // AR5
-    public List<AirportStatDTO> getAirportsByAvgDelay(TimeInterval range) {
+    public List<AirportStatDTO> getAirportsByAvgDelay(TimeInterval range, Integer limit) {
         List<AirportStatDTO> result =  flightRepository.findAirportsByAvgDelay(
                 clock.calculateMinDate(range),
-                clock.getSimulatedNowInstant()
+                clock.getSimulatedNowInstant(),
+                limit
         );
 
         result.forEach(dto  -> dto.setScoreType("AVG_DELAY_MIN"));
@@ -82,8 +82,8 @@ public class AirportService {
     }
 
     // AR6
-    public List<AirportRankingDTO> getAirportsConnections() {
-        List<AirportRankingDTO> result = airportRepository.findAirportsConnections();
+    public List<AirportRankingDTO> getAirportsConnections(Integer limit) {
+        List<AirportRankingDTO> result = airportRepository.findAirportsConnections(limit);
         result.forEach(dto  -> dto.setScoreType("NUMBER_OF_CONNECTIONS"));
 
         return result;

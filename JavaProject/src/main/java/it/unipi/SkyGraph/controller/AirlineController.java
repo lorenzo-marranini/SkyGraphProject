@@ -1,6 +1,7 @@
 package it.unipi.SkyGraph.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import it.unipi.SkyGraph.dto.AirlineReportDTO;
 import it.unipi.SkyGraph.dto.AirlineStatDTO;
 import it.unipi.SkyGraph.enums.AirlineRouteSort;
@@ -8,6 +9,7 @@ import it.unipi.SkyGraph.enums.AirlineSort;
 import it.unipi.SkyGraph.enums.TimeInterval;
 import it.unipi.SkyGraph.service.AirlineService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Limit;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,13 +29,14 @@ public class AirlineController {
     @GetMapping("/rankings")
     public ResponseEntity<List<AirlineStatDTO>> getAirlineStats(
             @RequestParam AirlineSort sort,
-            @RequestParam(defaultValue = "LAST_WEEK") TimeInterval range
-    ) {
+            @RequestParam(defaultValue = "LAST_WEEK") TimeInterval range,
+            @RequestParam(defaultValue = "10") Integer limit
+            ) {
         List<AirlineStatDTO> result = switch (sort) {
-            case DELAY        -> airlineService.getAirlinesByAvgDelay(range);
-            case FLIGHTS      -> airlineService.getAirlinesByTotalFlights(range);
-            case TOT_DISTANCE -> airlineService.getAirlinesByTotalDistance(range);
-            case AVG_DISTANCE -> airlineService.getAirlinesByAvgRouteDistance(range);
+            case DELAY        -> airlineService.getAirlinesByAvgDelay(range, limit);
+            case FLIGHTS      -> airlineService.getAirlinesByTotalFlights(range, limit);
+            case TOT_DISTANCE -> airlineService.getAirlinesByTotalDistance(range, limit);
+            case AVG_DISTANCE -> airlineService.getAirlinesByAvgRouteDistance(range, limit);
         };
         return ResponseEntity.ok(result);
     }
@@ -46,11 +49,12 @@ public class AirlineController {
             @RequestParam String originIata,
             @RequestParam String destIata,
             @RequestParam AirlineRouteSort sort,
-            @RequestParam(defaultValue = "LAST_WEEK") TimeInterval range
+            @RequestParam(defaultValue = "LAST_WEEK") TimeInterval range,
+            @RequestParam(defaultValue = "10") Integer limit
     ) {
         List<AirlineStatDTO> result = switch (sort) {
-            case DELAY   -> airlineService.getAirlinesByRouteDelay(originIata, destIata, range);
-            case FLIGHTS -> airlineService.getAirlinesByRoute(originIata, destIata, range);
+            case DELAY   -> airlineService.getAirlinesByRouteDelay(originIata, destIata, range, limit);
+            case FLIGHTS -> airlineService.getAirlinesByRoute(originIata, destIata, range, limit);
         };
         return ResponseEntity.ok(result);
     }
