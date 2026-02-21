@@ -329,7 +329,16 @@ public class FlightService {
                 destination.getLocation().getType(),
                 destination.getLocation().getCoordinates()
         );
+        double originLon = origin.getLocation().getCoordinates().get(0);
+        double originLat = origin.getLocation().getCoordinates().get(1);
 
+        double destLon = destination.getLocation().getCoordinates().get(0);
+        double destLat = destination.getLocation().getCoordinates().get(1);
+
+        // Calcola la distanza in chilometri
+        double calculatedDistanceKm = calculateHaversineDistance(originLat, originLon, destLat, destLon);
+
+        // Costruisci gli AirportDetails
         FlightMongo.AirportDetails originDetails = new FlightMongo.AirportDetails(
                 origin.getId(), origin.getName(), origin.getCity(), origin.getState(), origin.getCountry(), originGeo
         );
@@ -337,8 +346,8 @@ public class FlightService {
                 destination.getId(), destination.getName(), destination.getCity(), destination.getState(), destination.getCountry(), destGeo
         );
 
-        FlightMongo.Route route = new FlightMongo.Route(originDetails, destDetails, dto.getDistanceKm().doubleValue());
-
+        // Passa la distanza calcolata al posto del DTO
+        FlightMongo.Route route = new FlightMongo.Route(originDetails, destDetails, calculatedDistanceKm);
         FlightMongo.Stats stats = new FlightMongo.Stats(
                 dto.getTotDelayMinutes(), dto.getIsCancelled(), dto.getIsDiverted(), dto.getAirTimeMinutes()
         );
@@ -405,5 +414,22 @@ public class FlightService {
         airportRepository.decrementRouteRelationship(origin, dest, duration);
 
         flightRepository.deleteById(id);
+    }
+
+
+    private double calculateHaversineDistance(double lat1, double lon1, double lat2, double lon2) {
+        final int R = 6371; // Raggio medio della Terra in chilometri
+
+        double latDistance = Math.toRadians(lat2 - lat1);
+        double lonDistance = Math.toRadians(lon2 - lon1);
+
+        double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
+                + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
+                * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
+
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+        // Arrotondiamo a 2 cifre decimali per pulizia, oppure restituisci direttamente (R * c)
+        return Math.round((R * c) * 100.0) / 100.0;
     }
 }

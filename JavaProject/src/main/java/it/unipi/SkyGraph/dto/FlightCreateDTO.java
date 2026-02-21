@@ -17,7 +17,6 @@ public class FlightCreateDTO {
     // Route (Just the IATAs and distance)
     private String originIata;
     private String destinationIata;
-    private Integer distanceKm;
 
     // Stats
     private Integer totDelayMinutes;
