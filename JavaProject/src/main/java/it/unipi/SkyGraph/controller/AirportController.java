@@ -5,6 +5,7 @@ import it.unipi.SkyGraph.dto.*;
 import it.unipi.SkyGraph.enums.AirportSort;
 import it.unipi.SkyGraph.enums.TimeInterval;
 import it.unipi.SkyGraph.model.Airport;
+import it.unipi.SkyGraph.model.AirportMongo;
 import it.unipi.SkyGraph.service.AirportService;
 import it.unipi.SkyGraph.service.FlightService;
 import lombok.RequiredArgsConstructor;
@@ -79,6 +80,56 @@ public class AirportController {
             case DELAY -> airportService.getAirportsByAvgDelay(range);
         };
         return ResponseEntity.ok(result);
+    }
+
+
+
+    @Operation(summary = "Create an Airport and link it to a City via LOCATED_IN")
+    @PostMapping("/airports")
+    public ResponseEntity<?> createAirport(
+            @RequestBody Airport airport,
+            @RequestParam String cityName,
+            @RequestParam String country
+    ) {
+        try {
+            Airport savedAirport = airportService.createAirport(airport, cityName, country);
+            return ResponseEntity.ok(savedAirport);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @Operation(summary = "Update an existing Airport")
+    @PutMapping("/airports")
+    public ResponseEntity<?> updateAirport(@RequestBody Airport airport) {
+        try {
+            return ResponseEntity.ok(airportService.updateAirport(airport));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @Operation(summary = "Get all Airports")
+    @GetMapping("/airports")
+    public ResponseEntity<List<AirportMongo>> getAllAirports() {
+        return ResponseEntity.ok(airportService.getAllAirports());
+    }
+
+    @Operation(summary = "Get an Airport by IATA code")
+    @GetMapping("/airports/{iata}")
+    public ResponseEntity<AirportMongo> getAirport(@PathVariable String iata) {
+        try {
+            return ResponseEntity.ok(airportService.getExistingAirportByIata(iata));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @Operation(summary = "Delete an Airport")
+    @DeleteMapping("/airports/{iata}")
+    public ResponseEntity<Void> deleteAirport(@PathVariable String iata) {
+        airportService.deleteAirport(iata);
+        return ResponseEntity.noContent().build();
     }
 
 }

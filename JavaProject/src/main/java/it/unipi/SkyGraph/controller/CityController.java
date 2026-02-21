@@ -40,4 +40,34 @@ public class CityController {
         return ResponseEntity.ok(cityService.getCityHybridStats(city, range));
     }
 
+
+    @Operation(summary = "Create or update a City")
+    @PostMapping("/cities")
+    public ResponseEntity<City> saveCity(@RequestBody City city) {
+        return ResponseEntity.ok(cityService.createOrUpdateCity(city));
+    }
+
+    @Operation(summary = "Get all Cities")
+    @GetMapping("/cities")
+    public ResponseEntity<List<City>> getAllCities() {
+        return ResponseEntity.ok(cityService.getAllCities());
+    }
+
+    @Operation(summary = "Get a City by its city_state ID")
+    @GetMapping("/cities/{cityState}")
+    public ResponseEntity<City> getCity(@PathVariable String cityState) {
+        try {
+            return ResponseEntity.ok(cityService.getCityById(cityState));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @Operation(summary = "Delete a City")
+    @DeleteMapping("/cities/{cityState}")
+    public ResponseEntity<Void> deleteCity(@PathVariable String cityState) {
+        cityService.deleteCity(cityState);
+        return ResponseEntity.noContent().build();
+    }
+
 }

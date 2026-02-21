@@ -1,6 +1,7 @@
 package it.unipi.SkyGraph.model;
 
 import it.unipi.SkyGraph.model.UserMongo;
+import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -8,22 +9,17 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.Collections;
 
+@Getter
 public class UserPrincipal implements UserDetails {
 
-    private final UserMongo user; // Your MongoDB Entity
+    private final UserMongo user;
 
     public UserPrincipal(UserMongo user) {
         this.user = user;
     }
 
-    // This allows you to get the full user object later in your Service/Controller
-    public UserMongo getUser() {
-        return this.user;
-    }
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // Converts your Role Enum (USER/ADMIN) into a Spring Security Authority
         return Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()));
     }
 

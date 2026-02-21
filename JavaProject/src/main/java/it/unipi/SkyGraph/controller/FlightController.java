@@ -7,6 +7,7 @@ import it.unipi.SkyGraph.dto.AirlineStatDTO;
 import it.unipi.SkyGraph.dto.AirportStatDTO;
 import it.unipi.SkyGraph.dto.FlightDTO;
 import it.unipi.SkyGraph.dto.TripItineraryDTO;
+import it.unipi.SkyGraph.model.FlightMongo;
 import it.unipi.SkyGraph.service.FlightService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -98,4 +99,43 @@ public class FlightController {
         return itineraries.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(itineraries);
     }
 
+    @Operation(summary = "Create a new flight in MongoDB and sync the ROUTE to Neo4j")
+    @PostMapping
+    public ResponseEntity<FlightMongo> createFlight(@RequestBody FlightMongo flight) {
+        try {
+            FlightMongo savedFlight = flightService.createFlight(flight);
+            return ResponseEntity.ok(savedFlight);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @Operation(summary = "Get a flight by its MongoDB ObjectId")
+    @GetMapping("/{id}")
+    public ResponseEntity<FlightMongo> getFlight(@PathVariable String id) {
+        try {
+            return ResponseEntity.ok(flightService.getFlightById(id));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @Operation(summary = "Update an existing flight in MongoDB")
+    @PutMapping("/{id}")
+    public ResponseEntity<FlightMongo> updateFlight(
+            @PathVariable String id,
+            @RequestBody FlightMongo flight) {
+        try {
+            return ResponseEntity.ok(flightService.updateFlight(id, flight));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @Operation(summary = "Delete a flight from MongoDB")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteFlight(@PathVariable String id) {
+        flightService.deleteFlight(id);
+        return ResponseEntity.noContent().build();
+    }
 }

@@ -50,4 +50,22 @@ public class CityService {
         return new CityStatsDTO(cityName, country, departures, arrivals, departures + arrivals, iataCodes.size());
     }
 
+    public City createOrUpdateCity(City city) {
+        return cityRepository.save(city);
+    }
+
+    public List<City> getAllCities() {
+        return cityRepository.findAll();
+    }
+
+    public City getCityById(String cityState) {
+        return cityRepository.findById(cityState)
+                .orElseThrow(() -> new IllegalArgumentException("City not found"));
+    }
+
+    public void deleteCity(String cityState) {
+        cityRepository.deleteById(cityState);
+    }
+
+
 }
