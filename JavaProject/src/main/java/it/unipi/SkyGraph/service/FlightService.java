@@ -363,10 +363,6 @@ public class FlightService {
 
         return savedFlight;
     }
-    public FlightMongo getFlightById(String id) {
-        return flightRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Flight not found in MongoDB"));
-    }
 
     public List<FlightMongo> getAllFlights() {
         // Caution: In a real app, you'd want to paginate this!
@@ -374,9 +370,11 @@ public class FlightService {
     }
 
     @Transactional
-    public FlightMongo updateFlight(String id, FlightMongo updatedFlight) {
+    public FlightMongo updateFlight(String flightKey, FlightMongo updatedFlight) {
         // 1. Recupera il volo esistente da MongoDB prima della modifica
-        FlightMongo existing = getFlightById(id);
+        FlightMongo existing = flightRepository.findByFlightKey(flightKey)
+                .orElseThrow(() -> new IllegalArgumentException("Flight not found with key: " + flightKey));
+        ;
 
         // Estrai le vecchie informazioni di rotta e durata
         String oldOrigin = existing.getRoute().getOrigin().getIata();
@@ -404,18 +402,23 @@ public class FlightService {
     }
 
 
-    public void deleteFlight(String id) {
-        FlightMongo existing = getFlightById(id);
+    @Transactional
+    public void deleteFlight(String flightKey) {
+        // 1. Recupera il volo PRIMA di eliminarlo tramite la tua custom key
+        FlightMongo existing = flightRepository.findByFlightKey(flightKey)
+                .orElseThrow(() -> new IllegalArgumentException("Flight not found with key: " + flightKey));
 
+        // 2. Estrai le informazioni necessarie per aggiornare il grafo
         String origin = existing.getRoute().getOrigin().getIata();
         String dest = existing.getRoute().getDestination().getIata();
         double duration = existing.getFlightInfo().getSchedule().getDurationMinutes();
 
+        // 3. Rimuovi il contributo di questo volo dalla relazione in Neo4j
         airportRepository.decrementRouteRelationship(origin, dest, duration);
 
-        flightRepository.deleteById(id);
+        // 4. Elimina definitivamente il documento da MongoDB passando l'intera entità trovata
+        flightRepository.delete(existing);
     }
-
 
     private double calculateHaversineDistance(double lat1, double lon1, double lat2, double lon2) {
         final int R = 6371; // Raggio medio della Terra in chilometri

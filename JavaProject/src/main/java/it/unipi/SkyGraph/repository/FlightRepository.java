@@ -289,6 +289,10 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String> {
     @Query("{ 'flight_info.flight_key': ?0 }")
     @Update("{ '$set': { 'stats.tot_delay_minutes': ?1, 'flight_log': null } }")
     void finalizeFlight(String flightKey, long finalDelay);
+
+
+    @Query("{ 'flight_info.flight_key': ?0 }")
+    Optional<FlightMongo> findByFlightKey(String flightKey);
 }
 
 

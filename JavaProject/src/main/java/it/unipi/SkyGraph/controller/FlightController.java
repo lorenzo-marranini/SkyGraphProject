@@ -110,14 +110,6 @@ public class FlightController {
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
         }
-    }    @Operation(summary = "Get a flight by its MongoDB ObjectId")
-    @GetMapping("/flights/{id}")
-    public ResponseEntity<FlightMongo> getFlight(@PathVariable String id) {
-        try {
-            return ResponseEntity.ok(flightService.getFlightById(id));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.notFound().build();
-        }
     }
 
     @Operation(summary = "Update an existing flight in MongoDB")
