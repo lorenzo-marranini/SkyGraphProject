@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface FlightRepository extends MongoRepository<FlightMongo, String> {
+public interface FlightRepository extends MongoRepository<FlightMongo, String>, FlightRepositoryCustom {
 
 
 
@@ -291,9 +291,9 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String> {
     List<AirlineReportDTO> generateAirlineReport(Instant start, Instant end, String AirlineIata);
 
 
-    @Query("{ 'flight_info.flight_key': ?0 }")
-    @Update("{ '$set': { 'flight_log': ?1 } }")
-    void updateFlightLogByKey(String flightKey, FlightMongo.FlightLog log);
+//    @Query("{ 'flight_info.flight_key': ?0 }")
+//    @Update("{ '$set': { 'flight_log': ?1 } }")
+//    void updateFlightLogByKey(String flightKey, FlightMongo.FlightLog log);
 
     // Aggiorna le statistiche e rimuove il log in modo atomico
     @Query("{ 'flight_info.flight_key': ?0 }")
