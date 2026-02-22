@@ -38,6 +38,7 @@ public class FlightSimulationService {
                     nextFlight = queue.peek();
                 }
 
+                System.out.println("Queue size: " + queue.size() + " | Simulated time: " + clock.now());
                 clock.advanceSimTimeMin(10);
             }
             loop = false;
