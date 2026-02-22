@@ -109,7 +109,6 @@ public class AirportService {
     }
 
     // CRUD QUERIES
-    @Transactional
     public Airport createAirport(AirportUpdateDTO dto) {
         // ================= 1. NEO4J =================
         // get the city from the CityName
@@ -145,7 +144,6 @@ public class AirportService {
     }
 
 
-    @Transactional
     public Airport updateAirport(AirportUpdateDTO dto) {
         // ================= 1. NEO4J =================
         String iataCode = dto.getIataCode();
@@ -182,7 +180,6 @@ public class AirportService {
         return savedNeo4jAirport;
     }
 
-    @Transactional
     public void deleteAirport(String iataCode) {
         // ================= 1. NEO4J =================
         airportRepository.deleteById(iataCode);

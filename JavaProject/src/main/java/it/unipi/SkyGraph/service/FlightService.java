@@ -287,8 +287,6 @@ public class FlightService {
             }
         }
     }
-
-    @Transactional
     public FlightMongo createFlight(FlightCreateDTO dto) {
 
         AirportMongo origin = airportMongoRepository.findById(dto.getOriginIata())
@@ -348,7 +346,6 @@ public class FlightService {
         return flightRepository.findAll();
     }
 
-    @Transactional
     public FlightMongo updateFlight(String flightKey, FlightCreateDTO dto) {
         // 1. Recupera il volo esistente da MongoDB prima della modifica
         FlightMongo existing = flightRepository.findByFlightKey(flightKey)
@@ -418,7 +415,7 @@ public class FlightService {
         return flightRepository.save(existing);
     }
 
-    @Transactional
+
     public FlightDTO deleteFlight(String flightKey) {
         FlightMongo existing = flightRepository.findByFlightKey(flightKey)
                 .orElseThrow(() -> new IllegalArgumentException("Flight not found with key: " + flightKey));
