@@ -31,8 +31,4 @@ public interface CityRepository extends Neo4jRepository<City, String> {
             "WHERE toLower(c.name) = toLower($cityName) " +
             "RETURN c.state_id as StateId LIMIT 1")
     String findCountryByCity(@Param("cityName") String cityName);
-
-
-
-
 }

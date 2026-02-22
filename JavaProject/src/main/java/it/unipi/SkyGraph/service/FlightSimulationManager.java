@@ -28,5 +28,4 @@ public class FlightSimulationManager implements CommandLineRunner {
             System.err.println("Attenzione: La coda è vuota. Controlla il percorso del file CSV.");
         }
     }
-
 }

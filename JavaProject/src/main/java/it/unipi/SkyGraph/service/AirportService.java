@@ -30,25 +30,12 @@ public class AirportService {
     private final SimulationClock clock;
     private final CityRepository cityRepository;
 
-    private AirportRankingDTO convertToRankingDTO(Airport airport, Double score, String scoreType) {
-        if (airport == null) return null;
-
-        AirportRankingDTO dto = new AirportRankingDTO();
-        dto.setIata(airport.getIataCode());
-        dto.setName(airport.getName());
-        dto.setScore(score);
-        dto.setScoreType(scoreType);
-
-        return dto;
-    }
     // ----------- GUEST ---------
     public Optional<Airport> getAirportByIata(String iataCode) {
         return airportRepository.findByIataCode(iataCode);
     }
 
     // --------- TRAFFIC CONTROLLER ---------
-
-
     // TC7
     public List<AirportEmergencyDTO> getNearestAirportsForEmergency(String flightKey) {
         return flightRepository.findLiveFlightByKey(flightKey)
@@ -61,7 +48,6 @@ public class AirportService {
                 .orElse(java.util.Collections.emptyList());
     }
 
-
     // TC8
     public List<AirportRankingDTO> getBestAlternativeAirports(String closedIata) {
         List<AirportRankingDTO> result = airportRepository.findBestAlternativeAirports(closedIata);
@@ -73,7 +59,6 @@ public class AirportService {
 
 
     // ------------ AIRLINE REPRESENTATIVE ----------
-
     // AR3
     public Optional<QuickestPathDTO> getQuickestRoute(String origin, String dest, int maxHops) {
         return airportRepository.findQuickestRoute(origin, dest, maxHops);
@@ -238,7 +223,4 @@ public class AirportService {
         return airportMongoRepository.findById(iataCode)
                 .orElseThrow(() -> new IllegalArgumentException("Airport not found"));
     }
-
-
-
 }

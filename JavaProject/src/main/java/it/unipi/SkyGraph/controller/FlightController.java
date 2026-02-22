@@ -54,11 +54,7 @@ public class FlightController {
         return flights.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(flights);
     }
 
-
-
-
     // -- AIRLINE REPRESENTATIVE
-
     @Operation(summary = "Get routes ranked by flight count, cancellations or diversions")
     @GetMapping("/routes/rankings")
     @PreAuthorize("hasRole('AIRLINE_REPRESENTATIVE')")
@@ -74,10 +70,8 @@ public class FlightController {
         };
         return ResponseEntity.ok(result);
     }
+
     //3
-
-
-
     @Operation(summary = "Get average delay by day of the week in a given time range")
     @GetMapping("/routes/stats/daily-delay")
     @PreAuthorize("hasRole('AIRLINE_REPRESENTATIVE')")
@@ -87,10 +81,6 @@ public class FlightController {
         List<DayStatsDTO> result = flightService.getDaysByAvgDelay(range);
         return result.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(result);
     }
-
-    // 7. Top Aeroporti per ritardi
-    // --- AIRPORT STATS ---
-
 
     @Operation(summary = "Find the quickest actual route checking real flight schedules")
     @GetMapping("/routes/quickest-real")
@@ -118,6 +108,7 @@ public class FlightController {
             return ResponseEntity.internalServerError().build();
         }
     }
+
     @Operation(summary = "Update an existing flight using its flight_key and a DTO")
     @PutMapping("/{flightKey}")
     @PreAuthorize("hasRole('ADMIN')")
@@ -127,8 +118,6 @@ public class FlightController {
 
         FlightMongo updatedFlight = flightService.updateFlight(flightKey, dto);
         return ResponseEntity.ok(updatedFlight);
-
-
     }
 
     @Operation(summary = "Delete a flight from MongoDB")

@@ -25,8 +25,6 @@ public class AirportController {
 
     private final AirportService airportService;
 
-    // --- GUEST ---
-
     // --- TRAFFIC CONTROLLER ---
     @Operation(summary = "Get airports ranked by number of routes")
     @GetMapping("/rankings/connections")
@@ -46,7 +44,6 @@ public class AirportController {
     @Operation(summary = "Get best emergency lading airports for a specific flight in air")
     @GetMapping("/emergency")
     @PreAuthorize("hasRole('TRAFFIC_CONTROLLER')")
-
     public ResponseEntity<List<AirportEmergencyDTO>> getEmergencyAirports(
             @RequestParam String flightKey) {
         List<AirportEmergencyDTO> nearestAirports = airportService.getNearestAirportsForEmergency(flightKey);

@@ -11,7 +11,6 @@ import java.util.Optional;
 
 public interface AirportRepository extends Neo4jRepository<Airport, String> {
 
-
     //CRUD flights
     @Query("MATCH (a:Airport {iata_code: $originIata}), (b:Airport {iata_code: $destIata}) " +
             "MERGE (a)-[r:ROUTE]->(b) " +
@@ -27,8 +26,6 @@ public interface AirportRepository extends Neo4jRepository<Airport, String> {
 
 
     // ------------------------------- TRAFFIC CONTROLLER ------------------------
-
-
     // TC8 Dato un aeroporto chiuso, trovare un altro aeroporto che abbia il piu alto rapporto tra connessioni in comune fratto distanza
     @Query("MATCH (closed:Airport {iata_code: $closedIata})-[:ROUTE]->(dest:Airport) " +
             "MATCH (alt:Airport)-[:ROUTE]->(dest) " +
@@ -48,7 +45,6 @@ public interface AirportRepository extends Neo4jRepository<Airport, String> {
     List<AirportRankingDTO> findBestAlternativeAirports(@Param("closedIata") String closedIata);
 
     // ----------------------- AIRLINE REPRESENTATIVE ------------------------------------
-
     // AR1  Cercare un volo possibile dato origin e destinatio e numero di scali
     // AR3 Rotta più veloce (Weighted Shortest Path basato su mean_scheduled_time)
     @Query("MATCH p = (start:Airport {iata_code: $origin})-[:ROUTE*1..3]->(end:Airport {iata_code: $dest}) " +

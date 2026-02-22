@@ -17,9 +17,6 @@ import java.util.Optional;
 
 
 public interface AirportMongoRepository extends MongoRepository<AirportMongo, String> {
-
-
-
     // TC7
     @Aggregation(pipeline = {
             """

@@ -23,7 +23,6 @@ public class AirlineController {
     private final AirlineService airlineService;
 
     // --- TRAFFIC CONTROLLER ENDPOINTS ---
-
     // 1, 2, 3, 7
     @Operation(summary = "Get airlines ranked by a given metric and time range")
     @GetMapping("/rankings")
@@ -41,7 +40,6 @@ public class AirlineController {
         return ResponseEntity.ok(result);
     }
 
-
     // 5, 6
     @Operation(summary = "Get airlines ranked by metric on a specific route")
     @GetMapping("/rankings/by-route")
@@ -58,7 +56,6 @@ public class AirlineController {
         };
         return ResponseEntity.ok(result);
     }
-
 
     //6.
     @Operation(summary = "Get a comprehensive report for a specific airline in a given time range")

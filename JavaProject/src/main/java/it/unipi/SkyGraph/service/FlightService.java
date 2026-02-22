@@ -14,7 +14,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.*;
 import java.time.temporal.ChronoUnit;
@@ -29,10 +28,9 @@ public class FlightService {
 
     private final FlightRepository flightRepository;
     private final AirportRepository airportRepository;
-    private final CityRepository cityRepository;
-    private final MongoTemplate mongoTemplate;
     private final SimulationClock clock;
     private final AirportMongoRepository airportMongoRepository;
+
     /**
      * Transforms a FlightMongo Obj in a FlightDTO
      */
@@ -106,10 +104,7 @@ public class FlightService {
                 .build();
     }
 
-    // ------------------ METODI --------------------------------
-
     // ------------------------ GUEST ------------------------
-
     // G1
     public List<FlightDTO> getFlights(String origin, String destination, String dateString) {
 
@@ -142,7 +137,6 @@ public class FlightService {
     // --------------------- AIRLINE REPRESENTATIVE -------------------
 
     // AR1
-
     public TripItineraryDTO findQuickestRealRoute(String origin, String dest, String dateString, int maxHops) {
 
         LocalDate date = LocalDate.parse(dateString, DateTimeFormatter.ISO_LOCAL_DATE);
@@ -241,7 +235,6 @@ public class FlightService {
     }
 
     // --- Updates ---
-
     public void updateFlightLog(FlightLogDTO dto) {
         FlightMongo.FlightLog log = new FlightMongo.FlightLog(
                 new FlightMongo.GeoLocation("Point", List.of(dto.getLon(), dto.getLat())),
@@ -286,6 +279,7 @@ public class FlightService {
             }
         }
     }
+
     public FlightMongo createFlight(FlightCreateDTO dto) {
 
         AirportMongo origin = airportMongoRepository.findById(dto.getOriginIata())
@@ -350,7 +344,6 @@ public class FlightService {
             throw new RuntimeException("MongoDB Insertion Failed resulting in possible Neo4j inconsistency. Check system logs.", e);
         }
     }
-
 
     public FlightMongo updateFlight(String flightKey, FlightCreateDTO dto) {
         // 1. Recupera il volo esistente da MongoDB prima della modifica

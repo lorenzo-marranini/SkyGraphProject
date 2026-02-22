@@ -16,11 +16,7 @@ import java.util.Optional;
 
 @Repository
 public interface FlightRepository extends MongoRepository<FlightMongo, String>, FlightRepositoryCustom {
-
-
-
     //----------------------------- GUEST--------------------------------------
-
     // G1 Cerca per origine, destinazione e range di data (inizio giornata -> fine giornata)
     @Query("{ 'route.origin.iata': ?0, 'route.destination.iata': ?1, 'flight_info.schedule.departure_datetime': { $gte: ?2, $lt: ?3 } }")
     List<FlightMongo> searchFlights(String origin, String destination, Instant startOfDay, Instant endOfDay);
@@ -34,7 +30,6 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String>, 
 
 
     // -------------------------------- TRAFFIC CONTROLLER ------------------------------
-
     // TC1 Restituisce le airlines ordinate per AVG delay
     @Aggregation(pipeline = {
             "{ '$match': { " +
@@ -77,7 +72,6 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String>, 
     })
     List<AirlineStatDTO> findAirlinesByAvgRouteDistance(Instant start, Instant end, Integer limit);
 
-
     // TC5 Restituiscce le airlines ordinate per numero di voli su una specifica rotta ( origin -> destination )
     @Aggregation(pipeline = {
             "{ '$match': { 'route.origin.iata': ?0, 'route.destination.iata': ?1, 'flight_info.schedule.departure_datetime': { '$gte': ?2, '$lte': ?3 } } }",
@@ -103,15 +97,10 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String>, 
     @Query("{ 'flight_info.flight_key': ?0, 'flight_log': { $ne: null } }")
     Optional<FlightMongo> findLiveFlightByKey(String flightKey);
 
-
-
     // TC8 Dato un aeroporto chiuso, trovare un altro aeroporto che abbia il piu alto rapporto tra connessioni in comune fratto distanza
     // Fatta su Neo4j in AirportRepository
 
-
-
     //------------------------AIRLINE REPRESENTATIVE-----------------------------
-
     // AR1
     @Query(value = "{ 'route.origin.iata': ?0, 'route.destination.iata': ?1, 'flight_info.schedule.departure_datetime': { $gt: ?2 } }",
             sort = "{ 'flight_info.schedule.departure_datetime': 1 }")
@@ -222,7 +211,6 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String>, 
     // AR7 Classifica delle Città per traffico aereo totale
     // NEO4J FATTA SU CityRepository
 
-
     // AR8 Restituisce tutte le statistiche di una città specifica
     // AR8 parte 1
     @Query(value = "{ 'route.origin.iata': { '$in': ?0 }, 'flight_info.schedule.departure_datetime': { '$gte': ?1, '$lte': ?2 } }", count = true)
@@ -231,7 +219,6 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String>, 
     // AR8 parte 2 = Conta gli arrivi in una lista di IATA nel time range
     @Query(value = "{ 'route.destination.iata': { '$in': ?0 }, 'flight_info.schedule.departure_datetime': { '$gte': ?1, '$lte': ?2 } }", count = true)
     long countArrivalsByAirports(List<String> iataCodes, Instant start, Instant end);
-
 
     // AR9 Restituisce i giorni della settimana ordinati per delay medio nel time interval
     @Aggregation(pipeline = {
@@ -291,15 +278,10 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String>, 
     List<AirlineReportDTO> generateAirlineReport(Instant start, Instant end, String AirlineIata);
 
 
-//    @Query("{ 'flight_info.flight_key': ?0 }")
-//    @Update("{ '$set': { 'flight_log': ?1 } }")
-//    void updateFlightLogByKey(String flightKey, FlightMongo.FlightLog log);
-
     // Aggiorna le statistiche e rimuove il log in modo atomico
     @Query("{ 'flight_info.flight_key': ?0 }")
     @Update("{ '$set': { 'stats.tot_delay_minutes': ?1, 'flight_log': null } }")
     void finalizeFlight(String flightKey, long finalDelay);
-
 
     @Query("{ 'flight_info.flight_key': ?0 }")
     Optional<FlightMongo> findByFlightKey(String flightKey);

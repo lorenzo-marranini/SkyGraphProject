@@ -12,6 +12,8 @@ public class FlightRepositoryCustomImpl implements FlightRepositoryCustom {
     @Autowired
     private MongoTemplate mongoTemplate;
 
+    // custom update method to set the flight log for a specific flight key
+    // uses write concern W1 to ensure availability while allowing for eventual consistency
     @Override
     public void updateFlightLogByKey(String flightKey, FlightMongo.FlightLog log) {
         Query query = new Query(Criteria.where("flight_info.flight_key").is(flightKey));

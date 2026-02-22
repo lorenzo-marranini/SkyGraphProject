@@ -17,7 +17,6 @@ public class AirlineService {
     private final FlightRepository flightRepository;
     private final SimulationClock clock;
 
-
     // TC1
     public List<AirlineStatDTO> getAirlinesByAvgDelay(TimeInterval range, Integer limit) {
         List<AirlineStatDTO> result = flightRepository.findAirlinesByAvgDelay(
@@ -28,7 +27,6 @@ public class AirlineService {
         result.forEach(dto -> dto.setScoreType("AVERAGE_DELAY_MINUTES"));
         return result;
     }
-
 
     // TC2
     public List<AirlineStatDTO> getAirlinesByTotalFlights(TimeInterval range, Integer limit) {

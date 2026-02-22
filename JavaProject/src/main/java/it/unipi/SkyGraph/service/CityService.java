@@ -22,14 +22,10 @@ public class CityService {
     private final FlightRepository flightRepository;
     private final SimulationClock clock;
 
-
     // ----------------------- AIRLINE REPRESENTATIVE -----------------
-
-
     // AR7
     public List<CityRankDTO> getMostTraffickedCities(Integer limit) {
-        List<CityRankDTO> result = cityRepository.findMostTraffickedCities(limit);
-        return result;
+        return cityRepository.findMostTraffickedCities(limit);
     }
 
     // AR8
@@ -66,6 +62,4 @@ public class CityService {
     public void deleteCity(String cityState) {
         cityRepository.deleteById(cityState);
     }
-
-
 }
