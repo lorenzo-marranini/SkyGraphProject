@@ -1,0 +1,272 @@
+2026-02-22T17:50:05.047+01:00  INFO 35257 --- [SkyGraph] [restartedMain] it.unipi.SkyGraph.SkyGraphApplication    : Starting SkyGraphApplication using Java 25 with PID 35257 (/home/lucag/SkyGraphProject/JavaProject/target/classes started by lucag in /home/lucag/SkyGraphProject/JavaProject)
+2026-02-22T17:50:05.049+01:00  INFO 35257 --- [SkyGraph] [restartedMain] it.unipi.SkyGraph.SkyGraphApplication    : No active profile set, falling back to 1 default profile: "default"
+2026-02-22T17:50:05.091+01:00  INFO 35257 --- [SkyGraph] [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-02-22T17:50:05.091+01:00  INFO 35257 --- [SkyGraph] [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-02-22T17:50:05.572+01:00  INFO 35257 --- [SkyGraph] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode
+2026-02-22T17:50:05.572+01:00  INFO 35257 --- [SkyGraph] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data MongoDB repositories in DEFAULT mode.
+2026-02-22T17:50:05.642+01:00  INFO 35257 --- [SkyGraph] [restartedMain] .RepositoryConfigurationExtensionSupport : Spring Data MongoDB - Could not safely identify store assignment for repository candidate interface it.unipi.SkyGraph.repository.AirportRepository; If you want this repository to be a MongoDB repository, consider annotating your entities with one of these annotations: org.springframework.data.mongodb.core.mapping.Document (preferred), or consider extending one of the following types with your repository: org.springframework.data.mongodb.repository.MongoRepository
+2026-02-22T17:50:05.642+01:00  INFO 35257 --- [SkyGraph] [restartedMain] .RepositoryConfigurationExtensionSupport : Spring Data MongoDB - Could not safely identify store assignment for repository candidate interface it.unipi.SkyGraph.repository.CityRepository; If you want this repository to be a MongoDB repository, consider annotating your entities with one of these annotations: org.springframework.data.mongodb.core.mapping.Document (preferred), or consider extending one of the following types with your repository: org.springframework.data.mongodb.repository.MongoRepository
+2026-02-22T17:50:05.654+01:00  INFO 35257 --- [SkyGraph] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 78 ms. Found 3 MongoDB repository interfaces.
+2026-02-22T17:50:05.669+01:00  INFO 35257 --- [SkyGraph] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode
+2026-02-22T17:50:05.670+01:00  INFO 35257 --- [SkyGraph] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data Neo4j repositories in DEFAULT mode.
+2026-02-22T17:50:05.674+01:00  INFO 35257 --- [SkyGraph] [restartedMain] .RepositoryConfigurationExtensionSupport : Spring Data Neo4j - Could not safely identify store assignment for repository candidate interface it.unipi.SkyGraph.repository.AirportMongoRepository; If you want this repository to be a Neo4j repository, consider annotating your entities with one of these annotations: org.springframework.data.neo4j.core.schema.Node, org.springframework.data.neo4j.core.schema.RelationshipProperties (preferred), or consider extending one of the following types with your repository: org.springframework.data.neo4j.repository.ReactiveNeo4jRepository
+2026-02-22T17:50:05.675+01:00  INFO 35257 --- [SkyGraph] [restartedMain] .RepositoryConfigurationExtensionSupport : Spring Data Neo4j - Could not safely identify store assignment for repository candidate interface it.unipi.SkyGraph.repository.FlightRepository; If you want this repository to be a Neo4j repository, consider annotating your entities with one of these annotations: org.springframework.data.neo4j.core.schema.Node, org.springframework.data.neo4j.core.schema.RelationshipProperties (preferred), or consider extending one of the following types with your repository: org.springframework.data.neo4j.repository.ReactiveNeo4jRepository
+2026-02-22T17:50:05.675+01:00  INFO 35257 --- [SkyGraph] [restartedMain] .RepositoryConfigurationExtensionSupport : Spring Data Neo4j - Could not safely identify store assignment for repository candidate interface it.unipi.SkyGraph.repository.UserRepository; If you want this repository to be a Neo4j repository, consider annotating your entities with one of these annotations: org.springframework.data.neo4j.core.schema.Node, org.springframework.data.neo4j.core.schema.RelationshipProperties (preferred), or consider extending one of the following types with your repository: org.springframework.data.neo4j.repository.ReactiveNeo4jRepository
+2026-02-22T17:50:05.675+01:00  INFO 35257 --- [SkyGraph] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 3 ms. Found 0 Neo4j repository interfaces.
+2026-02-22T17:50:05.677+01:00  INFO 35257 --- [SkyGraph] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode
+2026-02-22T17:50:05.677+01:00  INFO 35257 --- [SkyGraph] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data Neo4j repositories in DEFAULT mode.
+2026-02-22T17:50:05.679+01:00  INFO 35257 --- [SkyGraph] [restartedMain] .RepositoryConfigurationExtensionSupport : Spring Data Neo4j - Could not safely identify store assignment for repository candidate interface it.unipi.SkyGraph.repository.AirportMongoRepository; If you want this repository to be a Neo4j repository, consider annotating your entities with one of these annotations: org.springframework.data.neo4j.core.schema.Node, org.springframework.data.neo4j.core.schema.RelationshipProperties (preferred), or consider extending one of the following types with your repository: org.springframework.data.neo4j.repository.Neo4jRepository
+2026-02-22T17:50:05.680+01:00  INFO 35257 --- [SkyGraph] [restartedMain] .RepositoryConfigurationExtensionSupport : Spring Data Neo4j - Could not safely identify store assignment for repository candidate interface it.unipi.SkyGraph.repository.FlightRepository; If you want this repository to be a Neo4j repository, consider annotating your entities with one of these annotations: org.springframework.data.neo4j.core.schema.Node, org.springframework.data.neo4j.core.schema.RelationshipProperties (preferred), or consider extending one of the following types with your repository: org.springframework.data.neo4j.repository.Neo4jRepository
+2026-02-22T17:50:05.680+01:00  INFO 35257 --- [SkyGraph] [restartedMain] .RepositoryConfigurationExtensionSupport : Spring Data Neo4j - Could not safely identify store assignment for repository candidate interface it.unipi.SkyGraph.repository.UserRepository; If you want this repository to be a Neo4j repository, consider annotating your entities with one of these annotations: org.springframework.data.neo4j.core.schema.Node, org.springframework.data.neo4j.core.schema.RelationshipProperties (preferred), or consider extending one of the following types with your repository: org.springframework.data.neo4j.repository.Neo4jRepository
+2026-02-22T17:50:05.682+01:00  INFO 35257 --- [SkyGraph] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 4 ms. Found 2 Neo4j repository interfaces.
+2026-02-22T17:50:05.999+01:00  INFO 35257 --- [SkyGraph] [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2026-02-22T17:50:06.007+01:00  INFO 35257 --- [SkyGraph] [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-02-22T17:50:06.007+01:00  INFO 35257 --- [SkyGraph] [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.41]
+2026-02-22T17:50:06.025+01:00  INFO 35257 --- [SkyGraph] [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2026-02-22T17:50:06.026+01:00  INFO 35257 --- [SkyGraph] [restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 935 ms
+2026-02-22T17:50:06.138+01:00  INFO 35257 --- [SkyGraph] [restartedMain] org.mongodb.driver.cluster               : Adding discovered server 10.1.1.44:27017 to client view of cluster
+2026-02-22T17:50:06.157+01:00  INFO 35257 --- [SkyGraph] [restartedMain] org.mongodb.driver.cluster               : Adding discovered server 10.1.1.45:27017 to client view of cluster
+2026-02-22T17:50:06.159+01:00  INFO 35257 --- [SkyGraph] [restartedMain] org.mongodb.driver.cluster               : Adding discovered server 10.1.1.46:27017 to client view of cluster
+2026-02-22T17:50:06.171+01:00  INFO 35257 --- [SkyGraph] [restartedMain] org.mongodb.driver.client                : MongoClient with metadata {"driver": {"name": "mongo-java-driver|sync|spring-boot", "version": "5.4.0"}, "os": {"type": "Linux", "name": "Linux", "architecture": "amd64", "version": "6.18.9-arch1-2"}, "platform": "Java/Oracle Corporation/25+36-3489"} created with settings MongoClientSettings{readPreference=ReadPreference{name=nearest, hedgeOptions=null}, writeConcern=WriteConcern{w=null, wTimeout=null ms, journal=null}, retryWrites=true, retryReads=true, readConcern=ReadConcern{level=null}, credential=null, transportSettings=null, commandListeners=[], codecRegistry=ProvidersCodecRegistry{codecProviders=[ValueCodecProvider{}, BsonValueCodecProvider{}, DBRefCodecProvider{}, DBObjectCodecProvider{}, DocumentCodecProvider{}, CollectionCodecProvider{}, IterableCodecProvider{}, MapCodecProvider{}, GeoJsonCodecProvider{}, GridFSFileCodecProvider{}, Jsr310CodecProvider{}, JsonObjectCodecProvider{}, BsonCodecProvider{}, EnumCodecProvider{}, com.mongodb.client.model.mql.ExpressionCodecProvider@541d9961, com.mongodb.Jep395RecordCodecProvider@232b7b4a, com.mongodb.KotlinCodecProvider@31ae6dc9]}, loggerSettings=LoggerSettings{maxDocumentLength=1000}, clusterSettings={hosts=[10.1.1.44:27017, 10.1.1.45:27017, 10.1.1.46:27017], srvServiceName=mongodb, mode=MULTIPLE, requiredClusterType=REPLICA_SET, requiredReplicaSetName='progetto_lsm', serverSelector='null', clusterListeners='[]', serverSelectionTimeout='30000 ms', localThreshold='15 ms'}, socketSettings=SocketSettings{connectTimeoutMS=10000, readTimeoutMS=0, receiveBufferSize=0, proxySettings=ProxySettings{host=null, port=null, username=null, password=null}}, heartbeatSocketSettings=SocketSettings{connectTimeoutMS=10000, readTimeoutMS=10000, receiveBufferSize=0, proxySettings=ProxySettings{host=null, port=null, username=null, password=null}}, connectionPoolSettings=ConnectionPoolSettings{maxSize=100, minSize=0, maxWaitTimeMS=120000, maxConnectionLifeTimeMS=0, maxConnectionIdleTimeMS=0, maintenanceInitialDelayMS=0, maintenanceFrequencyMS=60000, connectionPoolListeners=[], maxConnecting=2}, serverSettings=ServerSettings{heartbeatFrequencyMS=10000, minHeartbeatFrequencyMS=500, serverMonitoringMode=AUTO, serverListeners='[]', serverMonitorListeners='[]'}, sslSettings=SslSettings{enabled=false, invalidHostNameAllowed=false, context=null}, applicationName='null', compressorList=[], uuidRepresentation=JAVA_LEGACY, serverApi=null, autoEncryptionSettings=null, dnsClient=null, inetAddressResolver=null, contextProvider=null, timeoutMS=null}
+2026-02-22T17:50:06.215+01:00  WARN 35257 --- [SkyGraph] [restartedMain] o.s.data.convert.CustomConversions       : Registering converter from interface java.util.List to interface org.springframework.data.domain.Vector as reading converter although it doesn't convert from a store-supported type; You might want to check your annotation setup at the converter implementation
+2026-02-22T17:50:06.270+01:00  INFO 35257 --- [SkyGraph] [restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2026-02-22T17:50:06.296+01:00  WARN 35257 --- [SkyGraph] [restartedMain] o.s.data.convert.CustomConversions       : Registering converter from interface java.util.List to interface org.springframework.data.domain.Vector as reading converter although it doesn't convert from a store-supported type; You might want to check your annotation setup at the converter implementation
+2026-02-22T17:50:06.486+01:00  INFO 35257 --- [SkyGraph] [restartedMain] o.neo4j.driver.internal.DriverFactory    : Direct driver instance 228856815 created for server address 10.1.1.45:7687
+2026-02-22T17:50:06.540+01:00  WARN 35257 --- [SkyGraph] [restartedMain] o.s.d.n.c.mapping.Neo4jPersistentEntity  : The entity it.unipi.SkyGraph.model.Route is using a Long value for storing internally generated Neo4j ids. The Neo4j internal Long Ids are deprecated, please consider using an external ID generator.
+2026-02-22T17:50:06.663+01:00  INFO 35257 --- [SkyGraph] [restartedMain] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name customUserDetailsService
+2026-02-22T17:50:07.159+01:00  INFO 35257 --- [SkyGraph] [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2026-02-22T17:50:07.164+01:00  INFO 35257 --- [SkyGraph] [restartedMain] it.unipi.SkyGraph.SkyGraphApplication    : Started SkyGraphApplication in 2.451 seconds (process running for 2.858)
+2026-02-22T17:50:07.259+01:00  INFO 35257 --- [SkyGraph] [task-1] org.mongodb.driver.cluster               : Waiting for server to become available for operation with ID 5. Remaining time: 29996 ms. Selector: WritableServerSelector, topology description: {type=REPLICA_SET, servers=[{address=10.1.1.44:27017, type=UNKNOWN, state=CONNECTING}, {address=10.1.1.46:27017, type=UNKNOWN, state=CONNECTING}, {address=10.1.1.45:27017, type=UNKNOWN, state=CONNECTING}].
+2026-02-22T17:50:16.191+01:00  INFO 35257 --- [SkyGraph] [cluster-ClusterId{value='699b33be4ca4371dd22de93c', description='null'}-10.1.1.45:27017] org.mongodb.driver.cluster               : Exception in monitor thread while connecting to server 10.1.1.45:27017
+
+com.mongodb.MongoSocketOpenException: Exception opening socket
+	at com.mongodb.internal.connection.SocketStream.lambda$open$0(SocketStream.java:85) ~[mongodb-driver-core-5.4.0.jar:na]
+	at java.base/java.util.Optional.orElseThrow(Optional.java:403) ~[na:na]
+	at com.mongodb.internal.connection.SocketStream.open(SocketStream.java:85) ~[mongodb-driver-core-5.4.0.jar:na]
+	at com.mongodb.internal.connection.InternalStreamConnection.open(InternalStreamConnection.java:233) ~[mongodb-driver-core-5.4.0.jar:na]
+	at com.mongodb.internal.connection.DefaultServerMonitor$ServerMonitor.lookupServerDescription(DefaultServerMonitor.java:219) ~[mongodb-driver-core-5.4.0.jar:na]
+	at com.mongodb.internal.connection.DefaultServerMonitor$ServerMonitor.run(DefaultServerMonitor.java:176) ~[mongodb-driver-core-5.4.0.jar:na]
+Caused by: java.net.SocketTimeoutException: Connect timed out
+	at java.base/sun.nio.ch.NioSocketImpl.timedFinishConnect(NioSocketImpl.java:547) ~[na:na]
+	at java.base/sun.nio.ch.NioSocketImpl.connect(NioSocketImpl.java:594) ~[na:na]
+	at java.base/java.net.SocksSocketImpl.connect(SocksSocketImpl.java:284) ~[na:na]
+	at java.base/java.net.Socket.connect(Socket.java:659) ~[na:na]
+	at com.mongodb.internal.connection.SocketStreamHelper.initialize(SocketStreamHelper.java:76) ~[mongodb-driver-core-5.4.0.jar:na]
+	at com.mongodb.internal.connection.SocketStream.initializeSocket(SocketStream.java:104) ~[mongodb-driver-core-5.4.0.jar:na]
+	at com.mongodb.internal.connection.SocketStream.open(SocketStream.java:79) ~[mongodb-driver-core-5.4.0.jar:na]
+	... 3 common frames omitted
+
+2026-02-22T17:50:16.191+01:00  INFO 35257 --- [SkyGraph] [cluster-ClusterId{value='699b33be4ca4371dd22de93c', description='null'}-10.1.1.44:27017] org.mongodb.driver.cluster               : Exception in monitor thread while connecting to server 10.1.1.44:27017
+
+com.mongodb.MongoSocketOpenException: Exception opening socket
+	at com.mongodb.internal.connection.SocketStream.lambda$open$0(SocketStream.java:85) ~[mongodb-driver-core-5.4.0.jar:na]
+	at java.base/java.util.Optional.orElseThrow(Optional.java:403) ~[na:na]
+	at com.mongodb.internal.connection.SocketStream.open(SocketStream.java:85) ~[mongodb-driver-core-5.4.0.jar:na]
+	at com.mongodb.internal.connection.InternalStreamConnection.open(InternalStreamConnection.java:233) ~[mongodb-driver-core-5.4.0.jar:na]
+	at com.mongodb.internal.connection.DefaultServerMonitor$ServerMonitor.lookupServerDescription(DefaultServerMonitor.java:219) ~[mongodb-driver-core-5.4.0.jar:na]
+	at com.mongodb.internal.connection.DefaultServerMonitor$ServerMonitor.run(DefaultServerMonitor.java:176) ~[mongodb-driver-core-5.4.0.jar:na]
+Caused by: java.net.SocketTimeoutException: Connect timed out
+	at java.base/sun.nio.ch.NioSocketImpl.timedFinishConnect(NioSocketImpl.java:547) ~[na:na]
+	at java.base/sun.nio.ch.NioSocketImpl.connect(NioSocketImpl.java:594) ~[na:na]
+	at java.base/java.net.SocksSocketImpl.connect(SocksSocketImpl.java:284) ~[na:na]
+	at java.base/java.net.Socket.connect(Socket.java:659) ~[na:na]
+	at com.mongodb.internal.connection.SocketStreamHelper.initialize(SocketStreamHelper.java:76) ~[mongodb-driver-core-5.4.0.jar:na]
+	at com.mongodb.internal.connection.SocketStream.initializeSocket(SocketStream.java:104) ~[mongodb-driver-core-5.4.0.jar:na]
+	at com.mongodb.internal.connection.SocketStream.open(SocketStream.java:79) ~[mongodb-driver-core-5.4.0.jar:na]
+	... 3 common frames omitted
+
+2026-02-22T17:50:16.191+01:00  INFO 35257 --- [SkyGraph] [cluster-ClusterId{value='699b33be4ca4371dd22de93c', description='null'}-10.1.1.46:27017] org.mongodb.driver.cluster               : Exception in monitor thread while connecting to server 10.1.1.46:27017
+
+com.mongodb.MongoSocketOpenException: Exception opening socket
+	at com.mongodb.internal.connection.SocketStream.lambda$open$0(SocketStream.java:85) ~[mongodb-driver-core-5.4.0.jar:na]
+	at java.base/java.util.Optional.orElseThrow(Optional.java:403) ~[na:na]
+	at com.mongodb.internal.connection.SocketStream.open(SocketStream.java:85) ~[mongodb-driver-core-5.4.0.jar:na]
+	at com.mongodb.internal.connection.InternalStreamConnection.open(InternalStreamConnection.java:233) ~[mongodb-driver-core-5.4.0.jar:na]
+	at com.mongodb.internal.connection.DefaultServerMonitor$ServerMonitor.lookupServerDescription(DefaultServerMonitor.java:219) ~[mongodb-driver-core-5.4.0.jar:na]
+	at com.mongodb.internal.connection.DefaultServerMonitor$ServerMonitor.run(DefaultServerMonitor.java:176) ~[mongodb-driver-core-5.4.0.jar:na]
+Caused by: java.net.SocketTimeoutException: Connect timed out
+	at java.base/sun.nio.ch.NioSocketImpl.timedFinishConnect(NioSocketImpl.java:547) ~[na:na]
+	at java.base/sun.nio.ch.NioSocketImpl.connect(NioSocketImpl.java:594) ~[na:na]
+	at java.base/java.net.SocksSocketImpl.connect(SocksSocketImpl.java:284) ~[na:na]
+	at java.base/java.net.Socket.connect(Socket.java:659) ~[na:na]
+	at com.mongodb.internal.connection.SocketStreamHelper.initialize(SocketStreamHelper.java:76) ~[mongodb-driver-core-5.4.0.jar:na]
+	at com.mongodb.internal.connection.SocketStream.initializeSocket(SocketStream.java:104) ~[mongodb-driver-core-5.4.0.jar:na]
+	at com.mongodb.internal.connection.SocketStream.open(SocketStream.java:79) ~[mongodb-driver-core-5.4.0.jar:na]
+	... 3 common frames omitted
+
+2026-02-22T17:50:28.504+01:00  INFO 35257 --- [SkyGraph] [SpringApplicationShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2026-02-22T17:50:28.506+01:00  INFO 35257 --- [SkyGraph] [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2026-02-22T17:50:37.260+01:00 ERROR 35257 --- [SkyGraph] [task-1] .a.i.SimpleAsyncUncaughtExceptionHandler : Unexpected exception occurred invoking async method: public void it.unipi.SkyGraph.service.FlightSimulationService.startSimulation(java.util.PriorityQueue)
+
+org.springframework.dao.DataAccessResourceFailureException: Timed out while waiting for a server that matches WritableServerSelector. Client view of cluster state is {type=REPLICA_SET, servers=[{address=10.1.1.44:27017, type=UNKNOWN, state=CONNECTING, exception={com.mongodb.MongoSocketOpenException: Exception opening socket}, caused by {java.net.SocketTimeoutException: Connect timed out}}, {address=10.1.1.46:27017, type=UNKNOWN, state=CONNECTING, exception={com.mongodb.MongoSocketOpenException: Exception opening socket}, caused by {java.net.SocketTimeoutException: Connect timed out}}, {address=10.1.1.45:27017, type=UNKNOWN, state=CONNECTING, exception={com.mongodb.MongoSocketOpenException: Exception opening socket}, caused by {java.net.SocketTimeoutException: Connect timed out}}]
+	at org.springframework.data.mongodb.core.MongoExceptionTranslator.doTranslateException(MongoExceptionTranslator.java:97) ~[spring-data-mongodb-4.5.0.jar:4.5.0]
+	at org.springframework.data.mongodb.core.MongoExceptionTranslator.translateExceptionIfPossible(MongoExceptionTranslator.java:74) ~[spring-data-mongodb-4.5.0.jar:4.5.0]
+	at org.springframework.data.mongodb.core.MongoTemplate.potentiallyConvertRuntimeException(MongoTemplate.java:3033) ~[spring-data-mongodb-4.5.0.jar:4.5.0]
+	at org.springframework.data.mongodb.core.MongoTemplate.execute(MongoTemplate.java:609) ~[spring-data-mongodb-4.5.0.jar:4.5.0]
+	at org.springframework.data.mongodb.core.MongoTemplate.doUpdate(MongoTemplate.java:1741) ~[spring-data-mongodb-4.5.0.jar:4.5.0]
+	at org.springframework.data.mongodb.core.ExecutableUpdateOperationSupport$ExecutableUpdateSupport.doUpdate(ExecutableUpdateOperationSupport.java:202) ~[spring-data-mongodb-4.5.0.jar:4.5.0]
+	at org.springframework.data.mongodb.core.ExecutableUpdateOperationSupport$ExecutableUpdateSupport.all(ExecutableUpdateOperationSupport.java:160) ~[spring-data-mongodb-4.5.0.jar:4.5.0]
+	at org.springframework.data.mongodb.repository.query.MongoQueryExecution$UpdateExecution.execute(MongoQueryExecution.java:313) ~[spring-data-mongodb-4.5.0.jar:4.5.0]
+	at org.springframework.data.mongodb.repository.query.AbstractMongoQuery.doExecute(AbstractMongoQuery.java:184) ~[spring-data-mongodb-4.5.0.jar:4.5.0]
+	at org.springframework.data.mongodb.repository.query.AbstractMongoQuery.execute(AbstractMongoQuery.java:156) ~[spring-data-mongodb-4.5.0.jar:4.5.0]
+	at org.springframework.data.repository.core.support.RepositoryMethodInvoker.doInvoke(RepositoryMethodInvoker.java:170) ~[spring-data-commons-3.5.0.jar:3.5.0]
+	at org.springframework.data.repository.core.support.RepositoryMethodInvoker.invoke(RepositoryMethodInvoker.java:158) ~[spring-data-commons-3.5.0.jar:3.5.0]
+	at org.springframework.data.repository.core.support.QueryExecutorMethodInterceptor.doInvoke(QueryExecutorMethodInterceptor.java:170) ~[spring-data-commons-3.5.0.jar:3.5.0]
+	at org.springframework.data.repository.core.support.QueryExecutorMethodInterceptor.invoke(QueryExecutorMethodInterceptor.java:149) ~[spring-data-commons-3.5.0.jar:3.5.0]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.2.7.jar:6.2.7]
+	at org.springframework.data.projection.DefaultMethodInvokingMethodInterceptor.invoke(DefaultMethodInvokingMethodInterceptor.java:69) ~[spring-data-commons-3.5.0.jar:3.5.0]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.2.7.jar:6.2.7]
+	at org.springframework.data.mongodb.repository.support.CrudMethodMetadataPostProcessor$CrudMethodMetadataPopulatingMethodInterceptor.invoke(CrudMethodMetadataPostProcessor.java:129) ~[spring-data-mongodb-4.5.0.jar:4.5.0]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.2.7.jar:6.2.7]
+	at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:223) ~[spring-aop-6.2.7.jar:6.2.7]
+	at jdk.proxy3/jdk.proxy3.$Proxy110.updateFlightLogByKey(Unknown Source) ~[na:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565) ~[na:na]
+	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:359) ~[spring-aop-6.2.7.jar:6.2.7]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.invokeJoinpoint(ReflectiveMethodInvocation.java:196) ~[spring-aop-6.2.7.jar:6.2.7]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:163) ~[spring-aop-6.2.7.jar:6.2.7]
+	at org.springframework.dao.support.PersistenceExceptionTranslationInterceptor.invoke(PersistenceExceptionTranslationInterceptor.java:138) ~[spring-tx-6.2.7.jar:6.2.7]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.2.7.jar:6.2.7]
+	at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:223) ~[spring-aop-6.2.7.jar:6.2.7]
+	at jdk.proxy3/jdk.proxy3.$Proxy110.updateFlightLogByKey(Unknown Source) ~[na:na]
+	at it.unipi.SkyGraph.service.FlightService.updateFlightLog(FlightService.java:256) ~[classes/:na]
+	at it.unipi.SkyGraph.service.FlightSimulationService.startSimulation(FlightSimulationService.java:37) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565) ~[na:na]
+	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:359) ~[spring-aop-6.2.7.jar:6.2.7]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.invokeJoinpoint(ReflectiveMethodInvocation.java:196) ~[spring-aop-6.2.7.jar:6.2.7]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:163) ~[spring-aop-6.2.7.jar:6.2.7]
+	at org.springframework.aop.interceptor.AsyncExecutionInterceptor.lambda$invoke$0(AsyncExecutionInterceptor.java:114) ~[spring-aop-6.2.7.jar:6.2.7]
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1090) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:614) ~[na:na]
+	at java.base/java.lang.Thread.run(Thread.java:1474) ~[na:na]
+Caused by: com.mongodb.MongoTimeoutException: Timed out while waiting for a server that matches WritableServerSelector. Client view of cluster state is {type=REPLICA_SET, servers=[{address=10.1.1.44:27017, type=UNKNOWN, state=CONNECTING, exception={com.mongodb.MongoSocketOpenException: Exception opening socket}, caused by {java.net.SocketTimeoutException: Connect timed out}}, {address=10.1.1.46:27017, type=UNKNOWN, state=CONNECTING, exception={com.mongodb.MongoSocketOpenException: Exception opening socket}, caused by {java.net.SocketTimeoutException: Connect timed out}}, {address=10.1.1.45:27017, type=UNKNOWN, state=CONNECTING, exception={com.mongodb.MongoSocketOpenException: Exception opening socket}, caused by {java.net.SocketTimeoutException: Connect timed out}}]
+	at com.mongodb.internal.connection.BaseCluster.logAndThrowTimeoutException(BaseCluster.java:427) ~[mongodb-driver-core-5.4.0.jar:na]
+	at com.mongodb.internal.connection.BaseCluster.lambda$selectServer$0(BaseCluster.java:154) ~[mongodb-driver-core-5.4.0.jar:na]
+	at com.mongodb.internal.time.Timeout.lambda$onExistsAndExpired$16(Timeout.java:236) ~[mongodb-driver-core-5.4.0.jar:na]
+	at com.mongodb.internal.time.Timeout.lambda$run$10(Timeout.java:201) ~[mongodb-driver-core-5.4.0.jar:na]
+	at com.mongodb.internal.time.TimePoint.checkedCall(TimePoint.java:99) ~[mongodb-driver-core-5.4.0.jar:na]
+	at com.mongodb.internal.time.Timeout.call(Timeout.java:174) ~[mongodb-driver-core-5.4.0.jar:na]
+	at com.mongodb.internal.time.Timeout.run(Timeout.java:194) ~[mongodb-driver-core-5.4.0.jar:na]
+	at com.mongodb.internal.time.Timeout.onExistsAndExpired(Timeout.java:233) ~[mongodb-driver-core-5.4.0.jar:na]
+	at com.mongodb.internal.time.Timeout.onExpired(Timeout.java:226) ~[mongodb-driver-core-5.4.0.jar:na]
+	at com.mongodb.internal.connection.BaseCluster.selectServer(BaseCluster.java:153) ~[mongodb-driver-core-5.4.0.jar:na]
+	at com.mongodb.internal.connection.AbstractMultiServerCluster.selectServer(AbstractMultiServerCluster.java:59) ~[mongodb-driver-core-5.4.0.jar:na]
+	at com.mongodb.internal.binding.ClusterBinding.getWriteConnectionSource(ClusterBinding.java:100) ~[mongodb-driver-core-5.4.0.jar:na]
+	at com.mongodb.client.internal.ClientSessionBinding.getConnectionSource(ClientSessionBinding.java:108) ~[mongodb-driver-sync-5.4.0.jar:na]
+	at com.mongodb.client.internal.ClientSessionBinding.getWriteConnectionSource(ClientSessionBinding.java:98) ~[mongodb-driver-sync-5.4.0.jar:na]
+	at com.mongodb.internal.operation.SyncOperationHelper.withSuppliedResource(SyncOperationHelper.java:148) ~[mongodb-driver-core-5.4.0.jar:na]
+	at com.mongodb.internal.operation.SyncOperationHelper.withSourceAndConnection(SyncOperationHelper.java:129) ~[mongodb-driver-core-5.4.0.jar:na]
+	at com.mongodb.internal.operation.MixedBulkWriteOperation.lambda$execute$3(MixedBulkWriteOperation.java:191) ~[mongodb-driver-core-5.4.0.jar:na]
+	at com.mongodb.internal.operation.MixedBulkWriteOperation.lambda$decorateWriteWithRetries$0(MixedBulkWriteOperation.java:148) ~[mongodb-driver-core-5.4.0.jar:na]
+	at com.mongodb.internal.async.function.RetryingSyncSupplier.get(RetryingSyncSupplier.java:67) ~[mongodb-driver-core-5.4.0.jar:na]
+	at com.mongodb.internal.operation.MixedBulkWriteOperation.execute(MixedBulkWriteOperation.java:210) ~[mongodb-driver-core-5.4.0.jar:na]
+	at com.mongodb.internal.operation.MixedBulkWriteOperation.execute(MixedBulkWriteOperation.java:80) ~[mongodb-driver-core-5.4.0.jar:na]
+	at com.mongodb.client.internal.MongoClusterImpl$OperationExecutorImpl.execute(MongoClusterImpl.java:446) ~[mongodb-driver-sync-5.4.0.jar:na]
+	at com.mongodb.client.internal.MongoCollectionImpl.executeSingleWriteRequest(MongoCollectionImpl.java:1116) ~[mongodb-driver-sync-5.4.0.jar:na]
+	at com.mongodb.client.internal.MongoCollectionImpl.executeUpdate(MongoCollectionImpl.java:1099) ~[mongodb-driver-sync-5.4.0.jar:na]
+	at com.mongodb.client.internal.MongoCollectionImpl.updateMany(MongoCollectionImpl.java:654) ~[mongodb-driver-sync-5.4.0.jar:na]
+	at org.springframework.data.mongodb.core.MongoTemplate.lambda$doUpdate$21(MongoTemplate.java:1767) ~[spring-data-mongodb-4.5.0.jar:4.5.0]
+	at org.springframework.data.mongodb.core.MongoTemplate.execute(MongoTemplate.java:607) ~[spring-data-mongodb-4.5.0.jar:4.5.0]
+	... 38 common frames omitted
+
+2026-02-22T17:50:37.263+01:00  INFO 35257 --- [SkyGraph] [SpringApplicationShutdownHook] o.neo4j.driver.internal.InternalDriver   : Closing driver instance 228856815
+2026-02-22T17:50:38.950+01:00  INFO 35472 --- [SkyGraph] [restartedMain] it.unipi.SkyGraph.SkyGraphApplication    : Starting SkyGraphApplication using Java 25 with PID 35472 (/home/lucag/SkyGraphProject/JavaProject/target/classes started by lucag in /home/lucag/SkyGraphProject/JavaProject)
+2026-02-22T17:50:38.951+01:00  INFO 35472 --- [SkyGraph] [restartedMain] it.unipi.SkyGraph.SkyGraphApplication    : No active profile set, falling back to 1 default profile: "default"
+2026-02-22T17:50:39.000+01:00  INFO 35472 --- [SkyGraph] [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-02-22T17:50:39.001+01:00  INFO 35472 --- [SkyGraph] [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-02-22T17:50:39.547+01:00  INFO 35472 --- [SkyGraph] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode
+2026-02-22T17:50:39.548+01:00  INFO 35472 --- [SkyGraph] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data MongoDB repositories in DEFAULT mode.
+2026-02-22T17:50:39.628+01:00  INFO 35472 --- [SkyGraph] [restartedMain] .RepositoryConfigurationExtensionSupport : Spring Data MongoDB - Could not safely identify store assignment for repository candidate interface it.unipi.SkyGraph.repository.AirportRepository; If you want this repository to be a MongoDB repository, consider annotating your entities with one of these annotations: org.springframework.data.mongodb.core.mapping.Document (preferred), or consider extending one of the following types with your repository: org.springframework.data.mongodb.repository.MongoRepository
+2026-02-22T17:50:39.629+01:00  INFO 35472 --- [SkyGraph] [restartedMain] .RepositoryConfigurationExtensionSupport : Spring Data MongoDB - Could not safely identify store assignment for repository candidate interface it.unipi.SkyGraph.repository.CityRepository; If you want this repository to be a MongoDB repository, consider annotating your entities with one of these annotations: org.springframework.data.mongodb.core.mapping.Document (preferred), or consider extending one of the following types with your repository: org.springframework.data.mongodb.repository.MongoRepository
+2026-02-22T17:50:39.642+01:00  INFO 35472 --- [SkyGraph] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 91 ms. Found 3 MongoDB repository interfaces.
+2026-02-22T17:50:39.659+01:00  INFO 35472 --- [SkyGraph] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode
+2026-02-22T17:50:39.660+01:00  INFO 35472 --- [SkyGraph] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data Neo4j repositories in DEFAULT mode.
+2026-02-22T17:50:39.664+01:00  INFO 35472 --- [SkyGraph] [restartedMain] .RepositoryConfigurationExtensionSupport : Spring Data Neo4j - Could not safely identify store assignment for repository candidate interface it.unipi.SkyGraph.repository.AirportMongoRepository; If you want this repository to be a Neo4j repository, consider annotating your entities with one of these annotations: org.springframework.data.neo4j.core.schema.Node, org.springframework.data.neo4j.core.schema.RelationshipProperties (preferred), or consider extending one of the following types with your repository: org.springframework.data.neo4j.repository.ReactiveNeo4jRepository
+2026-02-22T17:50:39.665+01:00  INFO 35472 --- [SkyGraph] [restartedMain] .RepositoryConfigurationExtensionSupport : Spring Data Neo4j - Could not safely identify store assignment for repository candidate interface it.unipi.SkyGraph.repository.FlightRepository; If you want this repository to be a Neo4j repository, consider annotating your entities with one of these annotations: org.springframework.data.neo4j.core.schema.Node, org.springframework.data.neo4j.core.schema.RelationshipProperties (preferred), or consider extending one of the following types with your repository: org.springframework.data.neo4j.repository.ReactiveNeo4jRepository
+2026-02-22T17:50:39.665+01:00  INFO 35472 --- [SkyGraph] [restartedMain] .RepositoryConfigurationExtensionSupport : Spring Data Neo4j - Could not safely identify store assignment for repository candidate interface it.unipi.SkyGraph.repository.UserRepository; If you want this repository to be a Neo4j repository, consider annotating your entities with one of these annotations: org.springframework.data.neo4j.core.schema.Node, org.springframework.data.neo4j.core.schema.RelationshipProperties (preferred), or consider extending one of the following types with your repository: org.springframework.data.neo4j.repository.ReactiveNeo4jRepository
+2026-02-22T17:50:39.665+01:00  INFO 35472 --- [SkyGraph] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 4 ms. Found 0 Neo4j repository interfaces.
+2026-02-22T17:50:39.668+01:00  INFO 35472 --- [SkyGraph] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode
+2026-02-22T17:50:39.668+01:00  INFO 35472 --- [SkyGraph] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data Neo4j repositories in DEFAULT mode.
+2026-02-22T17:50:39.670+01:00  INFO 35472 --- [SkyGraph] [restartedMain] .RepositoryConfigurationExtensionSupport : Spring Data Neo4j - Could not safely identify store assignment for repository candidate interface it.unipi.SkyGraph.repository.AirportMongoRepository; If you want this repository to be a Neo4j repository, consider annotating your entities with one of these annotations: org.springframework.data.neo4j.core.schema.Node, org.springframework.data.neo4j.core.schema.RelationshipProperties (preferred), or consider extending one of the following types with your repository: org.springframework.data.neo4j.repository.Neo4jRepository
+2026-02-22T17:50:39.671+01:00  INFO 35472 --- [SkyGraph] [restartedMain] .RepositoryConfigurationExtensionSupport : Spring Data Neo4j - Could not safely identify store assignment for repository candidate interface it.unipi.SkyGraph.repository.FlightRepository; If you want this repository to be a Neo4j repository, consider annotating your entities with one of these annotations: org.springframework.data.neo4j.core.schema.Node, org.springframework.data.neo4j.core.schema.RelationshipProperties (preferred), or consider extending one of the following types with your repository: org.springframework.data.neo4j.repository.Neo4jRepository
+2026-02-22T17:50:39.671+01:00  INFO 35472 --- [SkyGraph] [restartedMain] .RepositoryConfigurationExtensionSupport : Spring Data Neo4j - Could not safely identify store assignment for repository candidate interface it.unipi.SkyGraph.repository.UserRepository; If you want this repository to be a Neo4j repository, consider annotating your entities with one of these annotations: org.springframework.data.neo4j.core.schema.Node, org.springframework.data.neo4j.core.schema.RelationshipProperties (preferred), or consider extending one of the following types with your repository: org.springframework.data.neo4j.repository.Neo4jRepository
+2026-02-22T17:50:39.673+01:00  INFO 35472 --- [SkyGraph] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 4 ms. Found 2 Neo4j repository interfaces.
+2026-02-22T17:50:40.009+01:00  INFO 35472 --- [SkyGraph] [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2026-02-22T17:50:40.017+01:00  INFO 35472 --- [SkyGraph] [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-02-22T17:50:40.017+01:00  INFO 35472 --- [SkyGraph] [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.41]
+2026-02-22T17:50:40.037+01:00  INFO 35472 --- [SkyGraph] [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2026-02-22T17:50:40.038+01:00  INFO 35472 --- [SkyGraph] [restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1037 ms
+2026-02-22T17:50:40.158+01:00  INFO 35472 --- [SkyGraph] [restartedMain] org.mongodb.driver.cluster               : Adding discovered server 10.1.1.44:27017 to client view of cluster
+2026-02-22T17:50:40.180+01:00  INFO 35472 --- [SkyGraph] [restartedMain] org.mongodb.driver.cluster               : Adding discovered server 10.1.1.45:27017 to client view of cluster
+2026-02-22T17:50:40.181+01:00  INFO 35472 --- [SkyGraph] [restartedMain] org.mongodb.driver.cluster               : Adding discovered server 10.1.1.46:27017 to client view of cluster
+2026-02-22T17:50:40.196+01:00  INFO 35472 --- [SkyGraph] [restartedMain] org.mongodb.driver.client                : MongoClient with metadata {"driver": {"name": "mongo-java-driver|sync|spring-boot", "version": "5.4.0"}, "os": {"type": "Linux", "name": "Linux", "architecture": "amd64", "version": "6.18.9-arch1-2"}, "platform": "Java/Oracle Corporation/25+36-3489"} created with settings MongoClientSettings{readPreference=ReadPreference{name=nearest, hedgeOptions=null}, writeConcern=WriteConcern{w=null, wTimeout=null ms, journal=null}, retryWrites=true, retryReads=true, readConcern=ReadConcern{level=null}, credential=null, transportSettings=null, commandListeners=[], codecRegistry=ProvidersCodecRegistry{codecProviders=[ValueCodecProvider{}, BsonValueCodecProvider{}, DBRefCodecProvider{}, DBObjectCodecProvider{}, DocumentCodecProvider{}, CollectionCodecProvider{}, IterableCodecProvider{}, MapCodecProvider{}, GeoJsonCodecProvider{}, GridFSFileCodecProvider{}, Jsr310CodecProvider{}, JsonObjectCodecProvider{}, BsonCodecProvider{}, EnumCodecProvider{}, com.mongodb.client.model.mql.ExpressionCodecProvider@7804fe04, com.mongodb.Jep395RecordCodecProvider@3658bd5c, com.mongodb.KotlinCodecProvider@2a11f115]}, loggerSettings=LoggerSettings{maxDocumentLength=1000}, clusterSettings={hosts=[10.1.1.44:27017, 10.1.1.45:27017, 10.1.1.46:27017], srvServiceName=mongodb, mode=MULTIPLE, requiredClusterType=REPLICA_SET, requiredReplicaSetName='progetto_lsm', serverSelector='null', clusterListeners='[]', serverSelectionTimeout='30000 ms', localThreshold='15 ms'}, socketSettings=SocketSettings{connectTimeoutMS=10000, readTimeoutMS=0, receiveBufferSize=0, proxySettings=ProxySettings{host=null, port=null, username=null, password=null}}, heartbeatSocketSettings=SocketSettings{connectTimeoutMS=10000, readTimeoutMS=10000, receiveBufferSize=0, proxySettings=ProxySettings{host=null, port=null, username=null, password=null}}, connectionPoolSettings=ConnectionPoolSettings{maxSize=100, minSize=0, maxWaitTimeMS=120000, maxConnectionLifeTimeMS=0, maxConnectionIdleTimeMS=0, maintenanceInitialDelayMS=0, maintenanceFrequencyMS=60000, connectionPoolListeners=[], maxConnecting=2}, serverSettings=ServerSettings{heartbeatFrequencyMS=10000, minHeartbeatFrequencyMS=500, serverMonitoringMode=AUTO, serverListeners='[]', serverMonitorListeners='[]'}, sslSettings=SslSettings{enabled=false, invalidHostNameAllowed=false, context=null}, applicationName='null', compressorList=[], uuidRepresentation=JAVA_LEGACY, serverApi=null, autoEncryptionSettings=null, dnsClient=null, inetAddressResolver=null, contextProvider=null, timeoutMS=null}
+2026-02-22T17:50:40.248+01:00  WARN 35472 --- [SkyGraph] [restartedMain] o.s.data.convert.CustomConversions       : Registering converter from interface java.util.List to interface org.springframework.data.domain.Vector as reading converter although it doesn't convert from a store-supported type; You might want to check your annotation setup at the converter implementation
+2026-02-22T17:50:40.318+01:00  INFO 35472 --- [SkyGraph] [restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2026-02-22T17:50:40.347+01:00  WARN 35472 --- [SkyGraph] [restartedMain] o.s.data.convert.CustomConversions       : Registering converter from interface java.util.List to interface org.springframework.data.domain.Vector as reading converter although it doesn't convert from a store-supported type; You might want to check your annotation setup at the converter implementation
+2026-02-22T17:50:40.566+01:00  INFO 35472 --- [SkyGraph] [restartedMain] o.neo4j.driver.internal.DriverFactory    : Direct driver instance 1716801636 created for server address 10.1.1.45:7687
+2026-02-22T17:50:40.632+01:00  WARN 35472 --- [SkyGraph] [restartedMain] o.s.d.n.c.mapping.Neo4jPersistentEntity  : The entity it.unipi.SkyGraph.model.Route is using a Long value for storing internally generated Neo4j ids. The Neo4j internal Long Ids are deprecated, please consider using an external ID generator.
+2026-02-22T17:50:40.773+01:00  INFO 35472 --- [SkyGraph] [restartedMain] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name customUserDetailsService
+2026-02-22T17:50:41.327+01:00  INFO 35472 --- [SkyGraph] [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2026-02-22T17:50:41.333+01:00  INFO 35472 --- [SkyGraph] [restartedMain] it.unipi.SkyGraph.SkyGraphApplication    : Started SkyGraphApplication in 2.659 seconds (process running for 3.132)
+2026-02-22T17:50:41.442+01:00  INFO 35472 --- [SkyGraph] [task-1] org.mongodb.driver.cluster               : Waiting for server to become available for operation with ID 5. Remaining time: 29996 ms. Selector: WritableServerSelector, topology description: {type=REPLICA_SET, servers=[{address=10.1.1.44:27017, type=UNKNOWN, state=CONNECTING}, {address=10.1.1.46:27017, type=UNKNOWN, state=CONNECTING}, {address=10.1.1.45:27017, type=UNKNOWN, state=CONNECTING}].
+2026-02-22T17:50:50.202+01:00  INFO 35472 --- [SkyGraph] [cluster-ClusterId{value='699b33e06b719b3773dc17a8', description='null'}-10.1.1.45:27017] org.mongodb.driver.cluster               : Exception in monitor thread while connecting to server 10.1.1.45:27017
+
+com.mongodb.MongoSocketOpenException: Exception opening socket
+	at com.mongodb.internal.connection.SocketStream.lambda$open$0(SocketStream.java:85) ~[mongodb-driver-core-5.4.0.jar:na]
+	at java.base/java.util.Optional.orElseThrow(Optional.java:403) ~[na:na]
+	at com.mongodb.internal.connection.SocketStream.open(SocketStream.java:85) ~[mongodb-driver-core-5.4.0.jar:na]
+	at com.mongodb.internal.connection.InternalStreamConnection.open(InternalStreamConnection.java:233) ~[mongodb-driver-core-5.4.0.jar:na]
+	at com.mongodb.internal.connection.DefaultServerMonitor$ServerMonitor.lookupServerDescription(DefaultServerMonitor.java:219) ~[mongodb-driver-core-5.4.0.jar:na]
+	at com.mongodb.internal.connection.DefaultServerMonitor$ServerMonitor.run(DefaultServerMonitor.java:176) ~[mongodb-driver-core-5.4.0.jar:na]
+Caused by: java.net.SocketTimeoutException: Connect timed out
+	at java.base/sun.nio.ch.NioSocketImpl.timedFinishConnect(NioSocketImpl.java:547) ~[na:na]
+	at java.base/sun.nio.ch.NioSocketImpl.connect(NioSocketImpl.java:594) ~[na:na]
+	at java.base/java.net.SocksSocketImpl.connect(SocksSocketImpl.java:284) ~[na:na]
+	at java.base/java.net.Socket.connect(Socket.java:659) ~[na:na]
+	at com.mongodb.internal.connection.SocketStreamHelper.initialize(SocketStreamHelper.java:76) ~[mongodb-driver-core-5.4.0.jar:na]
+	at com.mongodb.internal.connection.SocketStream.initializeSocket(SocketStream.java:104) ~[mongodb-driver-core-5.4.0.jar:na]
+	at com.mongodb.internal.connection.SocketStream.open(SocketStream.java:79) ~[mongodb-driver-core-5.4.0.jar:na]
+	... 3 common frames omitted
+
+2026-02-22T17:50:50.202+01:00  INFO 35472 --- [SkyGraph] [cluster-ClusterId{value='699b33e06b719b3773dc17a8', description='null'}-10.1.1.44:27017] org.mongodb.driver.cluster               : Exception in monitor thread while connecting to server 10.1.1.44:27017
+
+com.mongodb.MongoSocketOpenException: Exception opening socket
+	at com.mongodb.internal.connection.SocketStream.lambda$open$0(SocketStream.java:85) ~[mongodb-driver-core-5.4.0.jar:na]
+	at java.base/java.util.Optional.orElseThrow(Optional.java:403) ~[na:na]
+	at com.mongodb.internal.connection.SocketStream.open(SocketStream.java:85) ~[mongodb-driver-core-5.4.0.jar:na]
+	at com.mongodb.internal.connection.InternalStreamConnection.open(InternalStreamConnection.java:233) ~[mongodb-driver-core-5.4.0.jar:na]
+	at com.mongodb.internal.connection.DefaultServerMonitor$ServerMonitor.lookupServerDescription(DefaultServerMonitor.java:219) ~[mongodb-driver-core-5.4.0.jar:na]
+	at com.mongodb.internal.connection.DefaultServerMonitor$ServerMonitor.run(DefaultServerMonitor.java:176) ~[mongodb-driver-core-5.4.0.jar:na]
+Caused by: java.net.SocketTimeoutException: Connect timed out
+	at java.base/sun.nio.ch.NioSocketImpl.timedFinishConnect(NioSocketImpl.java:547) ~[na:na]
+	at java.base/sun.nio.ch.NioSocketImpl.connect(NioSocketImpl.java:594) ~[na:na]
+	at java.base/java.net.SocksSocketImpl.connect(SocksSocketImpl.java:284) ~[na:na]
+	at java.base/java.net.Socket.connect(Socket.java:659) ~[na:na]
+	at com.mongodb.internal.connection.SocketStreamHelper.initialize(SocketStreamHelper.java:76) ~[mongodb-driver-core-5.4.0.jar:na]
+	at com.mongodb.internal.connection.SocketStream.initializeSocket(SocketStream.java:104) ~[mongodb-driver-core-5.4.0.jar:na]
+	at com.mongodb.internal.connection.SocketStream.open(SocketStream.java:79) ~[mongodb-driver-core-5.4.0.jar:na]
+	... 3 common frames omitted
+
+2026-02-22T17:50:50.202+01:00  INFO 35472 --- [SkyGraph] [cluster-ClusterId{value='699b33e06b719b3773dc17a8', description='null'}-10.1.1.46:27017] org.mongodb.driver.cluster               : Exception in monitor thread while connecting to server 10.1.1.46:27017
+
+com.mongodb.MongoSocketOpenException: Exception opening socket
+	at com.mongodb.internal.connection.SocketStream.lambda$open$0(SocketStream.java:85) ~[mongodb-driver-core-5.4.0.jar:na]
+	at java.base/java.util.Optional.orElseThrow(Optional.java:403) ~[na:na]
+	at com.mongodb.internal.connection.SocketStream.open(SocketStream.java:85) ~[mongodb-driver-core-5.4.0.jar:na]
+	at com.mongodb.internal.connection.InternalStreamConnection.open(InternalStreamConnection.java:233) ~[mongodb-driver-core-5.4.0.jar:na]
+	at com.mongodb.internal.connection.DefaultServerMonitor$ServerMonitor.lookupServerDescription(DefaultServerMonitor.java:219) ~[mongodb-driver-core-5.4.0.jar:na]
+	at com.mongodb.internal.connection.DefaultServerMonitor$ServerMonitor.run(DefaultServerMonitor.java:176) ~[mongodb-driver-core-5.4.0.jar:na]
+Caused by: java.net.SocketTimeoutException: Connect timed out
+	at java.base/sun.nio.ch.NioSocketImpl.timedFinishConnect(NioSocketImpl.java:547) ~[na:na]
+	at java.base/sun.nio.ch.NioSocketImpl.connect(NioSocketImpl.java:594) ~[na:na]
+	at java.base/java.net.SocksSocketImpl.connect(SocksSocketImpl.java:284) ~[na:na]
+	at java.base/java.net.Socket.connect(Socket.java:659) ~[na:na]
+	at com.mongodb.internal.connection.SocketStreamHelper.initialize(SocketStreamHelper.java:76) ~[mongodb-driver-core-5.4.0.jar:na]
+	at com.mongodb.internal.connection.SocketStream.initializeSocket(SocketStream.java:104) ~[mongodb-driver-core-5.4.0.jar:na]
+	at com.mongodb.internal.connection.SocketStream.open(SocketStream.java:79) ~[mongodb-driver-core-5.4.0.jar:na]
+	... 3 common frames omitted
+
+2026-02-22T17:50:59.781+01:00  INFO 35472 --- [SkyGraph] [SpringApplicationShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2026-02-22T17:50:59.783+01:00  INFO 35472 --- [SkyGraph] [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete

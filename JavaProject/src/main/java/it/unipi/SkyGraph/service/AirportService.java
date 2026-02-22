@@ -10,8 +10,8 @@ import it.unipi.SkyGraph.repository.AirportRepository;
 import it.unipi.SkyGraph.repository.CityRepository;
 import it.unipi.SkyGraph.repository.FlightRepository;
 import it.unipi.SkyGraph.repository.AirportMongoRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AirportService {
@@ -123,8 +124,18 @@ public class AirportService {
         airport.setLongitude(dto.getLongitude());
         airport.setCity(city);
 
-        Airport savedNeo4jAirport = airportRepository.save(airport);
+        Airport savedNeo4jAirport;
 
+        // ==========================================
+        // FASE 1: AGGIORNAMENTO NEO4J (Grafo)
+        // ==========================================
+        try {
+            savedNeo4jAirport = airportRepository.save(airport);
+        } catch (Exception e) {
+            // Se Neo4j fallisce, blocchiamo tutto. MongoDB non viene toccato.
+            log.error("Neo4j creation failed for airport IATA: {}. MongoDB insertion aborted.", dto.getIataCode(), e);
+            throw new RuntimeException("Neo4j Creation Failed: " + e.getMessage(), e);
+        }
         // ================= 2. MONGODB =================
         AirportMongo.Location location = new AirportMongo.Location();
         location.setType("Point");
@@ -138,55 +149,87 @@ public class AirportService {
         mongoDoc.setCountry(dto.getCountry());
         mongoDoc.setLocation(location);
 
-        airportMongoRepository.save(mongoDoc);
+        try {
+            airportMongoRepository.save(mongoDoc);
+        } catch (Exception e) {
+            log.error("POSSIBLE NEO4J INCONSISTENCY. Manual rollback needed for airport IATA: {}. " +
+                            "Action required: DELETE Airport node with IATA '{}' from Neo4j.",
+                    dto.getIataCode(), dto.getIataCode(), e);
 
+            throw new RuntimeException("MongoDB Insertion Failed resulting in possible Neo4j inconsistency. Check system logs.", e);
+        }
         return savedNeo4jAirport;
     }
 
 
     public Airport updateAirport(AirportUpdateDTO dto) {
-        // ================= 1. NEO4J =================
         String iataCode = dto.getIataCode();
+
         Airport existingNeo = airportRepository.findById(iataCode)
                 .orElseThrow(() -> new IllegalArgumentException("Airport not found in Neo4j"));
+
+        AirportMongo existingMongo = airportMongoRepository.findById(iataCode)
+                .orElseThrow(() -> new IllegalArgumentException("Airport not found in MongoDB"));
+
+        String oldName = existingNeo.getName();
+        Double oldLat = existingNeo.getLatitude();
+        Double oldLon = existingNeo.getLongitude();
+        String oldCityName = existingNeo.getCity().getName();
 
         existingNeo.setName(dto.getName());
         existingNeo.setLatitude(dto.getLatitude());
         existingNeo.setLongitude(dto.getLongitude());
 
-        //if the user changed city, update it making sure the city exists
+        // Check for existing city
         if (!existingNeo.getCity().getName().equalsIgnoreCase(dto.getCityName())) {
             City newCity = cityRepository.findByNameIgnoreCase(dto.getCityName())
                     .orElseThrow(() -> new IllegalArgumentException("Cannot update: City '" + dto.getCityName() + "' not found in Neo4j."));
             existingNeo.setCity(newCity);
         }
 
-        Airport savedNeo4jAirport = airportRepository.save(existingNeo);
-
-        // ================= 2. MONGODB =================
-        AirportMongo existingMongo = airportMongoRepository.findById(iataCode)
-                .orElseThrow(() -> new IllegalArgumentException("Airport not found in MongoDB"));
+        Airport savedNeo4jAirport;
+        try {
+            savedNeo4jAirport = airportRepository.save(existingNeo);
+        } catch (Exception e) {
+            log.error("Neo4j update failed for airport IATA: {}. MongoDB update aborted.", iataCode, e);
+            throw new RuntimeException("Neo4j Update Failed: " + e.getMessage(), e);
+        }
 
         existingMongo.setName(dto.getName());
         existingMongo.setCity(dto.getCityName());
         existingMongo.setCountry(dto.getCountry());
-
         existingMongo.setState(existingNeo.getCity().getStateId());
-
         existingMongo.getLocation().setCoordinates(List.of(dto.getLongitude(), dto.getLatitude()));
 
-        airportMongoRepository.save(existingMongo);
+        try {
+            airportMongoRepository.save(existingMongo);
+        } catch (Exception e) {
+            log.error("POSSIBLE NEO4J INCONSISTENCY. Manual rollback needed for airport IATA: {}. " +
+                            "Action required: REVERT Neo4j node to -> Name: '{}', City: '{}', Lat: {}, Lon: {}.",
+                    iataCode, oldName, oldCityName, oldLat, oldLon, e);
 
+            throw new RuntimeException("MongoDB Update Failed resulting in possible Neo4j inconsistency. Check system logs.", e);
+        }
         return savedNeo4jAirport;
     }
 
     public void deleteAirport(String iataCode) {
-        // ================= 1. NEO4J =================
-        airportRepository.deleteById(iataCode);
+        try {
+            airportRepository.deleteById(iataCode);
+        } catch (Exception e) {
+            log.error("Neo4j deletion failed for airport IATA: {}. MongoDB deletion aborted.", iataCode, e);
+            throw new RuntimeException("Neo4j Deletion Failed: " + e.getMessage(), e);
+        }
 
-        // ================= 2. MONGODB =================
-        airportMongoRepository.deleteById(iataCode);
-    }
+        try {
+            airportMongoRepository.deleteById(iataCode);
+        } catch (Exception e) {
+            log.error("POSSIBLE NEO4J INCONSISTENCY. Manual rollback needed for airport IATA: {}. " +
+                            "Action required: RECREATE Neo4j Airport node -> IATA: {}'.",
+                    iataCode, iataCode, e);
+
+            throw new RuntimeException("MongoDB Deletion Failed resulting in possible Neo4j inconsistency. Check system logs.", e);
+        }    }
     public Page<AirportMongo> getAllAirports(Pageable pageble) {
         return airportMongoRepository.findAll(pageble);
     }

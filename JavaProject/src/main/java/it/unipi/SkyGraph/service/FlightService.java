@@ -10,6 +10,7 @@ import it.unipi.SkyGraph.repository.AirportRepository;
 import it.unipi.SkyGraph.repository.CityRepository;
 import it.unipi.SkyGraph.repository.FlightRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -24,6 +25,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class FlightService {
@@ -334,17 +336,24 @@ public class FlightService {
         flightToSave.setRoute(route);
         flightToSave.setStats(stats);
 
-        FlightMongo savedFlight = flightRepository.save(flightToSave);
+        try {
+            airportRepository.upsertRouteRelationship(dto.getOriginIata(), dto.getDestinationIata(), dto.getDurationMinutes().doubleValue());
+        } catch (Exception e) {
+            log.error("Neo4j creation failed for flightKey: {}. MongoDB insertion aborted.", flightKey, e);
+            throw new RuntimeException("Neo4j Creation Failed: " + e.getMessage(), e);
+        }
 
-        airportRepository.upsertRouteRelationship(dto.getOriginIata(), dto.getDestinationIata(), dto.getDurationMinutes().doubleValue());
+        try {
+            return flightRepository.save(flightToSave);
+        } catch (Exception e) {
+            log.error("POSSIBLE NEO4J INCONSISTENCY. Manual rollback needed for flightKey: {}. " +
+                            "Action required: DECREMENT (remove) route {}->{} with duration {}.",
+                    flightKey, dto.getOriginIata(), dto.getDestinationIata(), dto.getDurationMinutes().doubleValue(), e);
 
-        return savedFlight;
+            throw new RuntimeException("MongoDB Insertion Failed resulting in possible Neo4j inconsistency. Check system logs.", e);
+        }
     }
 
-    public List<FlightMongo> getAllFlights() {
-        // Caution: In a real app, you'd want to paginate this!
-        return flightRepository.findAll();
-    }
 
     public FlightMongo updateFlight(String flightKey, FlightCreateDTO dto) {
         // 1. Recupera il volo esistente da MongoDB prima della modifica
@@ -367,10 +376,14 @@ public class FlightService {
 
         boolean routeChanged = !oldOrigin.equals(newOrigin) || !oldDest.equals(newDest);
         boolean durationChanged = oldDuration != newDuration;
-
-        if (routeChanged || durationChanged) {
-            airportRepository.decrementRouteRelationship(oldOrigin, oldDest, oldDuration);
-            airportRepository.upsertRouteRelationship(newOrigin, newDest, newDuration);
+        try {
+            if (routeChanged || durationChanged) {
+                airportRepository.decrementRouteRelationship(oldOrigin, oldDest, oldDuration);
+                airportRepository.upsertRouteRelationship(newOrigin, newDest, newDuration);
+            }
+        } catch (Exception e) {
+            log.error("Neo4j update failed for flightKey: {}. MongoDB updates aborted.", flightKey, e);
+            throw new RuntimeException("Neo4j Update Failed: " + e.getMessage(), e);
         }
 
         AirportMongo originAirport = airportMongoRepository.findById(newOrigin)
@@ -411,8 +424,15 @@ public class FlightService {
         existing.getStats().setIsCancelled(dto.getIsCancelled());
         existing.getStats().setIsDiverted(dto.getIsDiverted());
         existing.getStats().setAirTimeMinutes(dto.getAirTimeMinutes());
-
+        try {
         return flightRepository.save(existing);
+        } catch (Exception e) {
+            log.error("POSSIBLE NEO4J INCONSISTENCY. Manual rollback needed for flightKey: {}. " +
+                            "Old Route: {}->{} (duration: {}), New Route: {}->{} (duration: {}).",
+                    flightKey, oldOrigin, oldDest, oldDuration, newOrigin, newDest, newDuration, e);
+
+            throw new RuntimeException("MongoDB Update Failed resulting in possible Neo4j inconsistency. Check system logs.", e);
+        }
     }
 
 
@@ -427,11 +447,22 @@ public class FlightService {
                 existing.getFlightInfo().getSchedule().getDepartureDatetime(),
                 existing.getFlightInfo().getSchedule().getArrivalDatetime()
         ).toMinutes();
+        try {
+            airportRepository.decrementRouteRelationship(origin, dest, duration);
+        } catch (Exception e) {
+            log.error("Neo4j update failed during deletion of flightKey: {}. MongoDB deletion aborted.", flightKey, e);
+            throw new RuntimeException("Neo4j Deletion Update Failed: " + e.getMessage(), e);
+        }
 
-        airportRepository.decrementRouteRelationship(origin, dest, duration);
+        try {
+            flightRepository.delete(existing);
+        } catch (Exception e) {
+            log.error("POSSIBLE NEO4J INCONSISTENCY. Manual rollback needed for flightKey: {}. " +
+                            "Action required: RESTORE (increment) route {}->{} with duration {}.",
+                    flightKey, origin, dest, duration, e);
 
-        flightRepository.delete(existing);
-
+            throw new RuntimeException("MongoDB Deletion Failed resulting in possible Neo4j inconsistency. Check system logs.", e);
+        }
         return convertToDTO(existing);
     }
 
