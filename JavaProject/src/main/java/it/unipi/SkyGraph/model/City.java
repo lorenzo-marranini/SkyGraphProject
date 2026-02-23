@@ -23,9 +23,6 @@ public class City {
     @Property("state_id")
     private String stateId;
 
-    @Property("state_name")
-    private String stateName;
-
     @Property("population")
     private Integer population; // Era toInteger nel Cypher
 
@@ -35,6 +32,4 @@ public class City {
     @Property("timezone")
     private String timezone;
 
-    @Property("country")
-    private String country;
 }
