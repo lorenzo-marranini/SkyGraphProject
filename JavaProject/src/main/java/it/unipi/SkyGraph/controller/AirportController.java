@@ -109,7 +109,7 @@ public class AirportController {
         }
     }
 
-    @Operation(summary = "Update an existing Airport in Neo4j and MongoDB")
+    @Operation(summary = "Update an existing Airport")
     @PutMapping("/{iataCode}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> updateAirport(@RequestBody AirportUpdateDTO dto) {
