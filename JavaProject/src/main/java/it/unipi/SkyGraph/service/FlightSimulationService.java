@@ -3,6 +3,7 @@ package it.unipi.SkyGraph.service;
 import it.unipi.SkyGraph.config.SimulationClock;
 import it.unipi.SkyGraph.dto.FlightLogDTO;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -10,6 +11,7 @@ import java.time.*;
 import java.time.temporal.ChronoUnit;
 import java.util.PriorityQueue;
 
+@Slf4j
 @Service
 @AllArgsConstructor
 public class FlightSimulationService {
@@ -46,6 +48,7 @@ public class FlightSimulationService {
                     nextFlight = queue.peek();
                 }
 
+                log.info("Simulated time: {}. Remaining logs in queue: {}", clock.now(), queue.size());
                 clock.advanceSimTimeMin(10);
             }
             loop = false;
