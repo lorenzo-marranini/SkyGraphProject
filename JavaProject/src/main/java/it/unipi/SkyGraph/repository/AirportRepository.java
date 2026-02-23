@@ -11,7 +11,11 @@ import java.util.Optional;
 
 public interface AirportRepository extends Neo4jRepository<Airport, String> {
 
-    //CRUD flights
+    /**
+     * Upserts a ROUTE relationship between two airports. On creation, sets {@code num_voli = 1}
+     * and {@code mean_scheduled_time} to the given duration. On match, incrementally updates
+     * the running average using the formula: (old_mean * n + new_value) / (n + 1).
+     */
     @Query("MATCH (a:Airport {iata_code: $originIata}), (b:Airport {iata_code: $destIata}) " +
             "MERGE (a)-[r:ROUTE]->(b) " +
             "ON CREATE SET r.num_voli = 1, r.mean_scheduled_time = toFloat($duration) " +
@@ -26,7 +30,12 @@ public interface AirportRepository extends Neo4jRepository<Airport, String> {
 
 
     // ------------------------------- TRAFFIC CONTROLLER ------------------------
-    // TC8 Dato un aeroporto chiuso, trovare un altro aeroporto che abbia il piu alto rapporto tra connessioni in comune fratto distanza
+    /**
+     * Finds the best alternative airports for a closed one. Matches destinations reachable from
+     * the closed airport, then finds other airports sharing those destinations. Filters candidates
+     * within 200 km and ranks them by {@code sharedConnections / log(distKm + 1)} to balance
+     * connectivity and proximity.
+     */
     @Query("MATCH (closed:Airport {iata_code: $closedIata})-[:ROUTE]->(dest:Airport) " +
             "MATCH (alt:Airport)-[:ROUTE]->(dest) " +
             "WHERE alt.iata_code <> $closedIata " +
@@ -44,8 +53,11 @@ public interface AirportRepository extends Neo4jRepository<Airport, String> {
     List<AirportRankingDTO> findBestAlternativeAirports(@Param("closedIata") String closedIata);
 
     // ----------------------- AIRLINE REPRESENTATIVE ------------------------------------
-    // AR1  Cercare un volo possibile dato origin e destinatio e numero di scali
-    // Rotta più veloce (Weighted Shortest Path basato su mean_scheduled_time)
+    /**
+     * Returns the quickest path (up to {@code maxHops} hops) by summing {@code mean_scheduled_time}
+     * across ROUTE relationships via {@code reduce}. Returns total duration and the ordered list
+     * of airports in the path.
+     */
     @Query("MATCH p = (start:Airport {iata_code: $origin})-[:ROUTE*1..3]->(end:Airport {iata_code: $dest}) " +
             "WHERE length(p) <= $maxHops " +
             "WITH p, reduce(weight = 0.0, r in relationships(p) | weight + r.mean_scheduled_time) AS totalTime " +
@@ -59,7 +71,11 @@ public interface AirportRepository extends Neo4jRepository<Airport, String> {
             @Param("maxHops") int maxHops
     );
 
-    // AR1 PARTE 2
+    /**
+     * Returns up to 10 candidate IATA code sequences as comma-separated strings (e.g. "JFK,LHR,FCO")
+     * for paths with at most {@code maxHops} hops. Used to enumerate possible routes before
+     * applying real-flight filtering.
+     */
     @Query("MATCH p = (start:Airport {iata_code: $origin})-[:ROUTE*1..4]->(end:Airport {iata_code: $dest}) " +
             "WHERE length(p) <= $maxHops " +
             "WITH [n in nodes(p) | n.iata_code] AS codes " +
@@ -70,7 +86,11 @@ public interface AirportRepository extends Neo4jRepository<Airport, String> {
                                     @Param("maxHops") int maxHops);
 
 
-    // AR4 Visualizzare gli aeroporti ordinati per il betweenness centrality score
+    /**
+     * Ranks airports by a weighted hub score: {@code directTraffic * 0.6 + indirectTraffic * 0.4},
+     * where {@code directTraffic} is the total outgoing flights and {@code indirectTraffic} is the
+     * sum of outgoing flights from all directly reachable airports (two-hop influence).
+     */
     @Query("MATCH (airport:Airport)-[r1:ROUTE]->(dest:Airport) " +
 
             "WITH airport, sum(r1.num_voli) AS directTraffic " +
@@ -87,13 +107,18 @@ public interface AirportRepository extends Neo4jRepository<Airport, String> {
     List<AirportRankingDTO> findTopHubsByRank(@Param("limit") Integer limit);
 
 
-    // AR6 Aeroporti ordinati per numero di aeroporti connessi in uscita
+    // AR6
     @Query("MATCH (a:Airport)-[r:ROUTE]->() " +
             "RETURN a.iata_code AS iata, a.name AS name, count(r) AS score, '' as scoreType " +
             "ORDER BY score DESC " +
             "LIMIT $limit")
     List<AirportRankingDTO> findAirportsConnections(@Param("limit") Integer limit);
 
+    /**
+     * Decrements {@code num_voli} and recalculates {@code mean_scheduled_time} by reversing the
+     * incremental average. If {@code num_voli} reaches 0 after decrement, the ROUTE relationship
+     * is deleted entirely.
+     */
     @Query("MATCH (a:Airport {iata_code: $originIata})-[r:ROUTE]->(b:Airport {iata_code: $destIata}) " +
             "SET r.mean_scheduled_time = CASE " +
             "    WHEN r.num_voli > 1 THEN ((r.mean_scheduled_time * r.num_voli) - toFloat($duration)) / (r.num_voli - 1) " +

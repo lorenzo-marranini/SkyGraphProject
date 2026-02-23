@@ -17,7 +17,15 @@ public class FlightSimulationService {
     private final FlightService flightService;
     private final SimulationClock clock;
 
-
+    /**
+     * Runs the simulation asynchronously. A fresh copy of the original queue is processed
+     * each iteration. Flight logs are dispatched in chronological order: all entries whose
+     * timestamp does not exceed the current simulated time are flushed and persisted to
+     * MongoDB via {@link FlightService#updateFlightLog}. The simulation clock is then
+     * advanced by 10 minutes and the loop repeats until the queue is exhausted.
+     *
+     * @param originalQueue min-heap of flight log entries sorted by timestamp
+     */
     @Async
     public void startSimulation(PriorityQueue<FlightLogDTO> originalQueue) {
         boolean loop = true;
@@ -38,7 +46,6 @@ public class FlightSimulationService {
                     nextFlight = queue.peek();
                 }
 
-                // System.out.println("Queue size: " + queue.size() + " | Simulated time: " + clock.now());
                 clock.advanceSimTimeMin(10);
             }
             loop = false;

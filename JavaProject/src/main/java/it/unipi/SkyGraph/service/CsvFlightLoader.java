@@ -1,6 +1,7 @@
 package it.unipi.SkyGraph.service;
 
 import it.unipi.SkyGraph.dto.FlightLogDTO;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
@@ -12,9 +13,17 @@ import java.time.Instant;
 import java.time.format.DateTimeParseException;
 import java.util.PriorityQueue;
 
+@Slf4j
 @Component
 public class CsvFlightLoader {
 
+    /**
+     * Parses the CSV at the given path into a priority queue of {@link FlightLogDTO}.
+     * The header line is skipped; rows with fewer than 11 columns or a null timestamp are discarded.
+     *
+     * @param filePath absolute or relative path to the CSV file
+     * @return a {@link PriorityQueue} of flight logs sorted by natural order (timestamp)
+     */
     public PriorityQueue<FlightLogDTO> loadFlightLogs(String filePath) {
         PriorityQueue<FlightLogDTO> flightQueue = new PriorityQueue<>();
         Path path = Paths.get(filePath);
@@ -27,7 +36,7 @@ public class CsvFlightLoader {
             while ((line = br.readLine()) != null) {
                 lineNumber++;
 
-                // Removes eventual BOM on first line
+                // Strip BOM and skip header
                 if (isFirstLine) {
                     line = line.replace("\uFEFF", "");
                     isFirstLine = false;
@@ -58,17 +67,21 @@ public class CsvFlightLoader {
                     }
 
                 } catch (Exception parseEx) {
-                    System.err.println("Errore di formato alla riga " + lineNumber + ": " + parseEx.getMessage());
+                    log.warn("Format error at line {}: {}", lineNumber, parseEx.getMessage());
                 }
             }
         } catch (IOException e) {
-            System.err.println("Errore nella lettura del file CSV: " + e.getMessage());
+            log.error("Failed to read CSV file: {}", e.getMessage(), e);
         }
 
         return flightQueue;
     }
 
-    // Metodo di utilità per gestire stringhe vuote o malformate
+    /**
+     * Parses an ISO-8601 timestamp string, returning {@code null} for blank input.
+     *
+     * @throws IllegalArgumentException if the string is non-empty but not a valid instant
+     */
     private Instant parseInstantSafe(String dateStr) {
         if (dateStr == null || dateStr.trim().isEmpty()) {
             return null;

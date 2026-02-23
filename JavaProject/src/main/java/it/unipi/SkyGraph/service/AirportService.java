@@ -44,7 +44,6 @@ public class AirportService {
 
                     return airportMongoRepository.findNearestAirports(coords.get(0), coords.get(1));
                 })
-                // Se il volo non esiste, restituiamo una lista vuota invece di un Optional
                 .orElse(java.util.Collections.emptyList());
     }
 

@@ -137,6 +137,12 @@ public class FlightService {
     // --------------------- AIRLINE REPRESENTATIVE -------------------
 
     // AR1
+    /**
+    * Finds the quickest real itinerary from {@code origin} to {@code dest} on the given date,
+    * allowing up to {@code maxHops} intermediate stops. Candidate paths are retrieved from Neo4j;
+    * for each path, flights are chained ensuring a minimum 45-minute connection time.
+    * Returns the itinerary with the shortest total duration, or {@code null} if none is feasible.
+    */
     public TripItineraryDTO findQuickestRealRoute(String origin, String dest, String dateString, int maxHops) {
 
         LocalDate date = LocalDate.parse(dateString, DateTimeFormatter.ISO_LOCAL_DATE);
@@ -246,6 +252,12 @@ public class FlightService {
         flightRepository.updateFlightLogByKey(dto.getFlightKey(), log);
     }
 
+    /**
+    * Scheduled task (every 5 minutes) that detects landing flights.
+    * A flight is considered landed when its altitude is below 500 ft and the current
+    * simulated time has passed its ETA. On landing, the actual delay is computed and
+    * persisted via {@link FlightRepository#finalizeFlight}.
+    */
     @Scheduled(fixedRate = 300000)
     public void checkLandingFlights() {
         Instant now = clock.now();
@@ -280,6 +292,15 @@ public class FlightService {
         }
     }
 
+    /**
+     * Creates a new flight from the given DTO. Resolves origin and destination airports,
+     * computes the Haversine distance, generates a unique flight key, and persists the entity.
+     * The corresponding Neo4j route relationship is upserted first; if MongoDB insertion fails,
+     * a manual Neo4j rollback is required (logged as an error).
+     *
+     * @throws IllegalArgumentException if either airport IATA code is not found
+     * @throws RuntimeException if Neo4j or MongoDB persistence fails
+    */
     public FlightMongo createFlight(FlightCreateDTO dto) {
 
         AirportMongo origin = airportMongoRepository.findById(dto.getOriginIata())
@@ -345,6 +366,14 @@ public class FlightService {
         }
     }
 
+    /**
+     * Updates an existing flight identified by {@code flightKey}. If the route or duration changes,
+     * the old Neo4j relationship is decremented and the new one is upserted before applying
+     * MongoDB changes. If MongoDB save fails after the Neo4j update, a manual rollback is required.
+     *
+     * @throws IllegalArgumentException if the flight or either airport is not found
+     * @throws RuntimeException if Neo4j or MongoDB persistence fails
+     */
     public FlightMongo updateFlight(String flightKey, FlightCreateDTO dto) {
         // 1. Recupera il volo esistente da MongoDB prima della modifica
         FlightMongo existing = flightRepository.findByFlightKey(flightKey)
@@ -425,7 +454,14 @@ public class FlightService {
         }
     }
 
-
+    /**
+     * Deletes the flight identified by {@code flightKey} and decrements the corresponding
+     * Neo4j route relationship. If MongoDB deletion fails after the Neo4j update,
+     * a manual rollback (route increment) is required.
+     *
+     * @throws IllegalArgumentException if no flight is found with the given key
+     * @throws RuntimeException if Neo4j or MongoDB operation fails
+     */
     public FlightDTO deleteFlight(String flightKey) {
         FlightMongo existing = flightRepository.findByFlightKey(flightKey)
                 .orElseThrow(() -> new IllegalArgumentException("Flight not found with key: " + flightKey));

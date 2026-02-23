@@ -11,6 +11,11 @@ import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.function.Function;
 
+/**
+ * Utility class providing stateless JWT operations: token generation, validation,
+ * and claim extraction. The HMAC-SHA256 signing key is generated once at class
+ * loading time and held in memory for the lifetime of the application.
+ */
 public class JwtUtils {
     private static final String secretKey;
     private static final long JWT_TOKEN_VALIDITY = 2 * 60 * 60 * 1000; // 2 ore
@@ -30,6 +35,14 @@ public class JwtUtils {
         throw new UnsupportedOperationException("Utility class");
     }
 
+    /**
+     * Generates a signed JWT for the given subject and roles.
+     * The token embeds a {@code roles} claim and expires after {@link #JWT_TOKEN_VALIDITY}.
+     *
+     * @param sub   the subject (typically a user ID)
+     * @param roles list of role strings to embed as the {@code roles} claim
+     * @return compact, URL-safe JWT string
+     */
     public static String generateToken(String sub, List<String> roles) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("roles", roles);

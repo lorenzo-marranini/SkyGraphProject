@@ -40,6 +40,23 @@ public class SecurityConfig {
             """);
     }
 
+    /**
+     * Configures the security filter chain for the application.
+     * Disables CSRF, HTTP Basic and form login (stateless JWT-based API).
+     * Defines the following access rules:
+     * <ul>
+     *   <li>Public: error page, Swagger UI, API docs, auth endpoints, search endpoints and public flight endpoints</li>
+     *   <li>{@code ROLE_TRAFFIC_CONTROLLER}: airline management endpoints</li>
+     *   <li>{@code ROLE_AIRLINE_REPRESENTATIVE}: city management endpoints</li>
+     *   <li>Any other request requires authentication</li>
+     * </ul>
+     * Enforces stateless session management and registers {@link JwtFilter}
+     * before the default {@link UsernamePasswordAuthenticationFilter}.
+     *
+     * @param http the {@link HttpSecurity} builder provided by Spring Security
+     * @return the configured {@link SecurityFilterChain}
+     * @throws Exception if any security configuration step fails
+     */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)

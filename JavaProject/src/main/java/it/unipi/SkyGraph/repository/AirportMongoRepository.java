@@ -17,6 +17,15 @@ import java.util.Optional;
 
 
 public interface AirportMongoRepository extends MongoRepository<AirportMongo, String> {
+
+    /**
+     * Returns the 5 airports nearest to the given coordinates using a {@code $geoNear} aggregation.
+     * Distance is expressed in kilometres.
+     *
+     * @param longitude longitude of the reference point
+     * @param latitude  latitude of the reference point
+     * @return list of up to 5 nearest airports projected as {@link AirportEmergencyDTO}
+     */
     // TC7
     @Aggregation(pipeline = {
             """
