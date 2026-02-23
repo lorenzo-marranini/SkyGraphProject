@@ -3,3 +3,4 @@ flights
 python/.vevn/*
 .DS_Store
 JavaProject/skygraph.log
+examples/*
