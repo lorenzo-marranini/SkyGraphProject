@@ -95,7 +95,7 @@ public class FlightController {
         return itineraries == null ? ResponseEntity.noContent().build() : ResponseEntity.ok(itineraries);
     }
 
-    @Operation(summary = "Create a new flight in MongoDB using a simplified DTO and sync the ROUTE to Neo4j")
+    @Operation(summary = "Create a new flight")
     @PostMapping("/flights")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> createFlight(@RequestBody FlightCreateDTO dto) {
@@ -120,7 +120,7 @@ public class FlightController {
         return ResponseEntity.ok(updatedFlight);
     }
 
-    @Operation(summary = "Delete a flight from MongoDB")
+    @Operation(summary = "Delete a flight")
     @DeleteMapping("/flights/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<FlightDTO> deleteFlight(@PathVariable String id) {
