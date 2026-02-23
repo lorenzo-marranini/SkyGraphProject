@@ -41,7 +41,7 @@ public class AirportController {
     }
 
 
-    @Operation(summary = "Get best emergency lading airports for a specific flight in air")
+    @Operation(summary = "Get best emergency landing airports for a specific flight in air")
     @GetMapping("/emergency")
     @PreAuthorize("hasRole('TRAFFIC_CONTROLLER')")
     public ResponseEntity<List<AirportEmergencyDTO>> getEmergencyAirports(
