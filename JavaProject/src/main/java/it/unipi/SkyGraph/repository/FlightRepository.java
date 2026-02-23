@@ -198,7 +198,7 @@ public interface FlightRepository extends MongoRepository<FlightMongo, String>, 
             "{ '$limit': ?2 } ",
             "{ '$project': { " +
                     "'_id': 0, " +
-                    "'name': '$_id', " +      // Spostiamo l'id del gruppo nel campo 'name'
+                    "'name': '$_id', " +
                     "'iata': 1, " +
                     "'score': 1 " +
                     "} }"

@@ -38,7 +38,6 @@ public interface AirportRepository extends Neo4jRepository<Airport, String> {
             "       point({latitude: alt.latitude, longitude: alt.longitude}) " +
             "     ) / 1000.0 AS distKm " +
             "WHERE distKm > 0 AND distKm < 200 " +
-            // Calcola il rapporto e mappa i campi all'interfaccia AirportRankingDTO
             "RETURN alt.iata_code AS iata, alt.name AS name, (sharedConnections / log(distKm + 1)) AS score, '' as scoreType " +
             "ORDER BY score DESC " +
             "LIMIT 5")
@@ -46,7 +45,7 @@ public interface AirportRepository extends Neo4jRepository<Airport, String> {
 
     // ----------------------- AIRLINE REPRESENTATIVE ------------------------------------
     // AR1  Cercare un volo possibile dato origin e destinatio e numero di scali
-    // AR3 Rotta più veloce (Weighted Shortest Path basato su mean_scheduled_time)
+    // Rotta più veloce (Weighted Shortest Path basato su mean_scheduled_time)
     @Query("MATCH p = (start:Airport {iata_code: $origin})-[:ROUTE*1..3]->(end:Airport {iata_code: $dest}) " +
             "WHERE length(p) <= $maxHops " +
             "WITH p, reduce(weight = 0.0, r in relationships(p) | weight + r.mean_scheduled_time) AS totalTime " +
@@ -73,15 +72,14 @@ public interface AirportRepository extends Neo4jRepository<Airport, String> {
 
     // AR4 Visualizzare gli aeroporti ordinati per il betweenness centrality score
     @Query("MATCH (airport:Airport)-[r1:ROUTE]->(dest:Airport) " +
-            // 1. Calcoliamo il traffico diretto in uscita
+
             "WITH airport, sum(r1.num_voli) AS directTraffic " +
 
-            // 2. Facciamo un "salto" in avanti: guardiamo quanto sono connessi gli aeroporti di destinazione
             "MATCH (airport)-[:ROUTE]->(dest:Airport)-[r2:ROUTE]->() " +
             "WITH airport, directTraffic, sum(r2.num_voli) AS indirectTraffic " +
 
-            // 3. Calcoliamo lo score pesato e mappiamo i campi per il DTO
-            "RETURN airport.iata_code AS iata, " + // Ricorda di verificare se qui ci va iata o iata_code!
+
+            "RETURN airport.iata_code AS iata, " +
             "       airport.name AS name, " +
             "       (directTraffic * 0.6 + indirectTraffic * 0.4) AS score, '' AS scoreType " +
             "ORDER BY score DESC " +
