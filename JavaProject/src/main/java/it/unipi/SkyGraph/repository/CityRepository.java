@@ -10,7 +10,8 @@ import java.util.Optional;
 
 public interface CityRepository extends Neo4jRepository<City, String> {
 
-    // AR7 Classifica delle Città per traffico aereo totale
+    // AR7
+    // City ranking by total air traffic
     @Query("MATCH (c:City)<-[:LOCATED_IN]-(a:Airport)-[r:ROUTE]->() " +
             "RETURN c.name AS CityName, c.state_id AS StateId, " +
             "sum(r.num_voli) AS TotalFlights, count(DISTINCT a) AS AirportCount " +
@@ -20,13 +21,13 @@ public interface CityRepository extends Neo4jRepository<City, String> {
 
     Optional<City> findByNameIgnoreCase(String name);
 
-    // AR8 parte 1
+    // AR8 part 1
     @Query("MATCH (c:City)<-[:LOCATED_IN]-(a:Airport) " +
             "WHERE toLower(c.name) = toLower($cityName) " +
             "RETURN a.iata_code")
     List<String> findIataCodesByCity(@Param("cityName") String cityName);
 
-    // AR8 parte 2
+    // AR8 part 2
     @Query("MATCH (c:City) " +
             "WHERE toLower(c.name) = toLower($cityName) " +
             "RETURN c.state_id as StateId LIMIT 1")

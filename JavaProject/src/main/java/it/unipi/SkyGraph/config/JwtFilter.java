@@ -21,6 +21,18 @@ import java.util.stream.Collectors;
 public class JwtFilter extends OncePerRequestFilter {
 
 
+    /**
+     * Extracts and validates the JWT from the {@code Authorization: Bearer <token>} header.
+     * If the token is valid and no authentication is already present in the security context,
+     * builds a {@link UsernamePasswordAuthenticationToken} with the user ID and roles
+     * extracted from the token claims and registers it in the {@link SecurityContextHolder}.
+     *
+     * @param request     the incoming HTTP request
+     * @param response    the HTTP response
+     * @param filterChain the remaining filter chain to execute after this filter
+     * @throws ServletException if a servlet error occurs
+     * @throws IOException      if an I/O error occurs during filtering
+     */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {

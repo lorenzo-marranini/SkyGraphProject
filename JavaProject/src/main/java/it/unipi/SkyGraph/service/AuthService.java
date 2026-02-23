@@ -36,6 +36,12 @@ public class AuthService {
         this.encoder = encoder;
     }
 
+    /**
+     * Registers a new user after validating username and email uniqueness.
+     * The password is stored encoded; the user is assigned the REGISTERED_USER role.
+     *
+     * @throws IllegalArgumentException if username or email is already taken
+     */
     public void registerUser(UserRegistrationDto user) {
         if (userRepository.existsByUsername(user.username())) {
             throw new IllegalArgumentException("Username already exists");
@@ -57,6 +63,12 @@ public class AuthService {
         userRepository.save(newUserMongo);
     }
 
+    /**
+     * Authenticates the user via Spring Security and returns a signed JWT
+     * containing the user ID and roles.
+     *
+     * @throws RuntimeException if authentication fails
+     */
     public String loginUser(UserLoginDto user) {
         Authentication auth = authManager.authenticate(
                 new UsernamePasswordAuthenticationToken(user.email(), user.password())

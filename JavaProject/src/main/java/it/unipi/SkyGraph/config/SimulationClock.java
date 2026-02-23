@@ -19,12 +19,16 @@ public class SimulationClock {
         return currentTimeStamp;
     }
 
-    public void advanceSimTimeMin(int minutes) {
-        currentTimeStamp = currentTimeStamp.plus(10, ChronoUnit.MINUTES);
-    }
     /**
-     * Calcola la data di inizio (minDate) basata sull'intervallo richiesto
-     * rispetto alla data simulata "SIMULATED_NOW".
+     * Advances the simulated time by a specified number of minutes.
+     */
+    public void advanceSimTimeMin(int minutes) {
+        currentTimeStamp = currentTimeStamp.plus(minutes, ChronoUnit.MINUTES);
+    }
+
+    /**
+     * Calculates the start date (minDate) based on the requested interval
+     * relative to the simulated date "SIMULATED_NOW".
      */
     public Instant calculateMinDate(TimeInterval range) {
         LocalDate date = switch (range) {
@@ -37,8 +41,8 @@ public class SimulationClock {
     }
 
     /**
-     * Restituisce la fine della giornata "simulata" corrente (25 Feb 2026 23:59:59)
-     * Usato come limite superiore (maxDate) per le query.
+     * Returns the end of the current "simulated" day (25 Feb 2026 23:59:59).
+     * Used as the upper bound (maxDate) for queries.
      */
     public Instant getSimulatedNowInstant() {
         // Prendiamo la fine della giornata corrente o l'inizio del giorno dopo

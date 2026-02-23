@@ -24,11 +24,17 @@ public class CityService {
 
     // ----------------------- AIRLINE REPRESENTATIVE -----------------
     // AR7
+    /** Returns the most trafficked cities, ranked by total flight activity. */
     public List<CityRankDTO> getMostTraffickedCities(Integer limit) {
         return cityRepository.findMostTraffickedCities(limit);
     }
 
     // AR8
+    /**
+     * Returns aggregated flight statistics (departures, arrivals, total) for all airports
+     * in the given city within the specified time range.
+     * Returns zeroed stats if no IATA codes are found for the city.
+     */
     public CityStatsDTO getCityHybridStats(String cityName, TimeInterval range) {
         Instant start = clock.calculateMinDate(range);
         Instant end = clock.getSimulatedNowInstant();
